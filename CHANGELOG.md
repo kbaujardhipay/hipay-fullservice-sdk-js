@@ -1,3 +1,6 @@
+# Version 1.0.2
+Fixes composer download.
+
 # Version 1.0.1
 Fixes a UI issue with the example app.
 
