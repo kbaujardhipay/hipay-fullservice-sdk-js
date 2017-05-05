@@ -7,3 +7,7 @@ npm-debug.log
 .grunt
 
 example/vendor
+
+example/composer\.phar
+
+\.idea/
