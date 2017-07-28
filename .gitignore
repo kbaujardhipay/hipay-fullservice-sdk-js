@@ -11,3 +11,5 @@ example/vendor
 example/composer\.phar
 
 \.idea/
+
+etc/ssl/
