@@ -115,17 +115,17 @@ var HiPay = (function (HiPay, reqwest) {
 
             //ie 8 9 debug
             if ('XDomainRequest' in window && window.XDomainRequest !== null) {
-                // alert('toto');
+
                 params['Authorization'] = 'Basic ' + window.btoa(HiPay.username + ':' + HiPay.publicKey);
 
 
 
                 var xdr;
                 function err() {
-                    alert('Error');
+                    fn_failure({message: 'Une erreur est survenue.'});
                 }
                 function timeo() {
-                    alert('Time off');
+                    fn_failure({message: 'Une erreur est survenue.'});
                 }
                 function loadd() {
                 	var resp = xdr.responseText;
@@ -149,11 +149,10 @@ var HiPay = (function (HiPay, reqwest) {
                     xdr.send(JSON.stringify(params));
                     //xdr.send('foo=<?php echo $foo; ?>'); to send php variable
                 } else {
-                    alert('XDR undefined');
+                    fn_failure({message: 'Une erreur est survenue.'});
                 }
 
             } else {
-
 
                 reqwest({
                     url: endpoint,
@@ -165,8 +164,8 @@ var HiPay = (function (HiPay, reqwest) {
                     crossOrigin: true,
                     method: 'post',
                     headers: {
-                        'Authorization': 'Basic ' + window.btoa(HiPay.username + ':' + HiPay.publicKey),
-                        'accept': 'application/json'
+                        'Authorization': 'Basic ' + window.btoa(HiPay.username + ':' + HiPay.publicKey)
+                        // 'accept': 'application/json'
                     },
                     data: params,
                     success: function (resp) {

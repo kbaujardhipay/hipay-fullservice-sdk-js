@@ -2,33 +2,35 @@
 version: '2'
 services:
     web:
-        container_name: jira-sdk-jkurc.hipay-pos-platform.com
+        container_name: jira-sdk-js-web.hipay-pos-platform.com
         image: nginx:latest
         ports:
-            - "8685:80"
-            - "443:443"
+            - "8501:80"
+#            - "3000:443"
+#            - "3000:443"
         restart: always
         volumes:
-            - ./etc/nginx/default.conf:/etc/nginx/conf.d/default.conf
-            - ./etc/ssl:/etc/ssl
-            - ./:/web
+#            - "./etc/nginx/default.conf:/etc/nginx/conf.d/default.conf"
+#            - "./etc/ssl:/etc/ssl"
+            - "./:/web"
         depends_on:
             - "php"
+#            - "mysqldb"
     php:
-        container_name: php_bloc
+        container_name: jira-sdk-js-php.hipay-pos-platform.com
         image: nanoninja/php-fpm
         restart: always
         volumes:
-            - ./etc/php/php.ini:/usr/local/etc/php/conf.d/php.ini
+            - "./etc/php/php.ini:/usr/local/etc/php/conf.d/php.ini"
             - .:/web
     composer:
-        container_name: composer_bloc
+        container_name: jira-sdk-js-composer.hipay-pos-platform.com
         image: composer/composer
         volumes:
             - .:/app
         command: install
     npm:
-        container_name: npm_bloc
+        container_name: jira-sdk-js-npm.hipay-pos-platform.com
         image: node
         volumes:
             - .:/data
