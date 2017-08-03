@@ -14,71 +14,22 @@ require_once('credentials.php');
     <link href="./assets/basic-client.css" media="screen" rel="stylesheet" type="text/css">
     <link href="./assets/payment-methods.css" media="screen" rel="stylesheet" type="text/css">
     <link href="./assets/basicv3.css" media="screen" rel="stylesheet" type="text/css">
+    
 
-    <!--[if (gte IE 9) | (!IE)]><!-->
-    <link rel="stylesheet" href="../npm_ajeter/main/node_modules/bootstrap/dist/css/bootstrap.css">
-    <link rel="stylesheet" href="../npm_ajeter/main/node_modules/bootstrap/dist/css/bootstrap-theme.css">
-    <script type="text/javascript" src="../npm_ajeter/main/node_modules/jquery/dist/jquery.js"></script>
-    <script type="text/javascript" src="../npm_ajeter/main/node_modules/bootstrap/dist/js/bootstrap.js"></script>
-    <!--<![endif]-->
+    <link rel="stylesheet" href="../node_modules/bootstrap/dist/css/bootstrap.css">
+    <link rel="stylesheet" href="../node_modules/bootstrap/dist/css/bootstrap-theme.css">
+    <script type="text/javascript" src="../node_modules/jquery/dist/jquery.js"></script>
+    <script type="text/javascript" src="../node_modules/bootstrap/dist/js/bootstrap.js"></script>
 
     <!-- HTML5 shim, for IE6-8 support of HTML5 elements -->
     <!--[if lt IE 9]>
-
-    <link rel="stylesheet" href="../npm_ajeter/old/node_modules/bootstrap/dist/css/bootstrap.css">
-    <link rel="stylesheet" href="../npm_ajeter/old/node_modules/bootstrap/dist/css/bootstrap-theme.css">
-    <script type="text/javascript" src="../npm_ajeter/old/node_modules/jquery/dist/jquery.js"></script>
-    <script type="text/javascript" src="../npm_ajeter/old/node_modules/bootstrap/dist/js/bootstrap.js"></script>
-    <script src="https://oss.maxcdn.com/html5shiv/3.7.3/html5shiv.min.js"></script>
-    <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
-
+    <script src="../node_modules/lt-ie-9/lt-ie-9.min.js"></script>
+    <link href="./assets/old_bws.css" media="screen" rel="stylesheet" type="text/css">
     <![endif]-->
 
-    <script type="text/javascript" src="../dist/hipay-fullservice-sdk.js"></script>
-    <!--[if lt IE 9]>
+<!--    <script type="text/javascript" src="./assets/input.js"></script>-->
+    <script type="text/javascript" src="../dist/hipay-fullservice-sdk-2.js"></script>
 
-    <style>
-
-        .container
-        {
-            display:table;
-            width: 100%;
-        }
-
-        .row
-        {
-            height: 100%;
-            display: table-row;
-        }
-
-        .col-lg-5, .col-lg-7
-        {
-            display: table-cell;
-        }
-
-
-        *{
-            padding: 0;
-            margin: 0;
-            box-sizing: border-box;
-        }
-
-
-
-
-        /* here the style */
-        .vertical-align li {
-            text-align: center;
-        }
-
-        .horizontal-align li img,
-        .horizontal-align li span {
-            float: left;
-        }
-
-
-    </style>
-    <![endif]-->
 </head>
 
 <body>
@@ -113,7 +64,7 @@ require_once('credentials.php');
                             <label class="sr-only" for="input-card">Card number</label>
                             <div class="input-group">
                                 <div class="input-group-addon-icon input-group-addon"><span class="glyphicon glyphicon-credit-card" aria-hidden="true"></span></div>
-                                <input type="number" class="form-control" id="input-card" placeholder="Card number" maxlength="16" value="">
+                                <input type="tel" class="form-control" id="input-card"  placeholder="Card number" autocomplete="off" maxlength="16" pattern="\d*" name="cardNumber" value="">
                             </div>
                         </div>
                     </div>
@@ -217,7 +168,7 @@ require_once('credentials.php');
     $(document).ready(function(){
 
         var token = null;
-
+console.log(HiPay);
 
         $('#link').click(function() {
             $('#input-card').prop('value', '4111111111111111');
@@ -273,31 +224,62 @@ require_once('credentials.php');
             HiPay.setTarget('stage'); // default is production/live
             HiPay.setCredentials('<?php echo $credentials['public']['username']; ?>', '<?php echo $credentials['public']['password']; ?>');
 
-            HiPay.create(params,
-                function(result) {
+//            HiPay.create(params,
+//                function(result) {
+//
+//                    token = result.token;
+//
+//                    $("#pay-button").text("Tokenize");
+//                    $("#order").text("The token has been created using the JavaScript SDK (client side).");
+//
+//                    $('#code').text(JSON.stringify(result, null, 4));
+//                    $('#link-area').text('');
+//
+//                    $("#charge-button").show();
+//
+//                }, function (errors) {
+//                    $("#pay-button").text("Tokenize");
+//                    $("#form :input").prop("disabled", false);
+//                    $("#form :button").prop("disabled", false);
+//
+//                    if (typeof errors.message != "undefined") {
+//                        $("#error").text("Error: " + errors.message);
+//                    } else {
+//                        $("#error").text("An error occurred with the request.");
+//                    }
+//                }
+//            );
 
-                    token = result.token;
+            HiPay.tokenize(params)
+                .done(function(cardToken) {
 
+                    alert('ok');
                     $("#pay-button").text("Tokenize");
                     $("#order").text("The token has been created using the JavaScript SDK (client side).");
 
-                    $('#code').text(JSON.stringify(result, null, 4));
+                    $('#code').text(JSON.stringify(cardToken, null, 4));
                     $('#link-area').text('');
 
                     $("#charge-button").show();
+                })
+                .catch(function(error){
 
-                }, function (errors) {
+                    alert('toto');
+
                     $("#pay-button").text("Tokenize");
                     $("#form :input").prop("disabled", false);
                     $("#form :button").prop("disabled", false);
 
-                    if (typeof errors.message != "undefined") {
-                        $("#error").text("Error: " + errors.message);
-                    } else {
-                        $("#error").text("An error occurred with the request.");
+
+                    if (error.errorCollection != undefined && error.errorCollection.length > 0) {
+                        for (var i = 0; i < error.errorCollection.length; i++) {
+                            var errorParameters = error.errorCollection[i];
+                            $("#error").append(errorParameters.message);
+                        }
                     }
-                }
-            );
+
+                });
+
 
             return false;
         });
