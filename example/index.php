@@ -27,6 +27,7 @@ require_once('credentials.php');
     <link href="./assets/old_bws.css" media="screen" rel="stylesheet" type="text/css">
     <![endif]-->
 
+    <script type="text/javascript" src="./assets/input.js"></script>
     <script type="text/javascript" src="../dist/hipay-fullservice-sdk.js"></script>
 
 </head>
@@ -63,7 +64,7 @@ require_once('credentials.php');
                             <label class="sr-only" for="input-card">Card number</label>
                             <div class="input-group">
                                 <div class="input-group-addon-icon input-group-addon"><span class="glyphicon glyphicon-credit-card" aria-hidden="true"></span></div>
-                                <input type="number" class="form-control" id="input-card" placeholder="Card number" maxlength="16" value="">
+                                <input type="tel" class="form-control" id="input-card"  placeholder="Card number" autocomplete="off" maxlength="16" pattern="\d*" name="cardNumber" value="">
                             </div>
                         </div>
                     </div>
