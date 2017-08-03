@@ -9,7 +9,7 @@
 
 #cd ..
 docker-compose up -d
-docker run --rm -v $(pwd)/etc/ssl:/certificates -e "SERVER=js-sdk.hipay" jacoelho/generate-certificate
+docker run --rm -v $(pwd)/etc/ssl:/certificates -e "SERVER=localhost" jacoelho/generate-certificate
 
 echo ""
 echo "Setup completed! Do not forget to add your HiPay Fullservice credentials into the example/credentials.php file."

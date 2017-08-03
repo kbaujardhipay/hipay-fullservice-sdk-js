@@ -5,7 +5,7 @@ services:
         container_name: jira-sdk-jkurc.hipay-pos-platform.com
         image: nginx:latest
         ports:
-            - "8685:80"
+            - "80:80"
             - "443:443"
         restart: always
         volumes:
@@ -25,7 +25,7 @@ services:
         container_name: composer_bloc
         image: composer/composer
         volumes:
-            - .:/app
+            - ./example:/app
         command: install
     npm:
         container_name: npm_bloc
