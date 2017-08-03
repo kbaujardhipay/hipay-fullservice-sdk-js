@@ -142,5 +142,12 @@ input, input[placeholder], [placeholder] {
     transition: all 0.1s ease 0s;
 }
 
+#error {
+    padding-bottom: 13px;
+    font-weight: bold;
+    color: #d26a6a;
+    font-size: 14px;
+}
+
 
 /* ./form */
