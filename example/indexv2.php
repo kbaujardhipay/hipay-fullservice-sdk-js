@@ -251,7 +251,7 @@ console.log(HiPay);
 //            );
 
             HiPay.tokenize(params)
-                .done(function(cardToken) {
+                .then(function(cardToken) {
 
                     alert('ok');
                     $("#pay-button").text("Tokenize");
