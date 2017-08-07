@@ -530,9 +530,9 @@ var HiPay = (function (HiPay) {
         }
 
 
-
 // console.log(authEncoded);
         if ('XDomainRequest' in window && window.XDomainRequest !== null) {
+
 
             requestParams['Authorization'] = 'Basic ' + window.btoa(HiPay.username + ':' + HiPay.publicKey);
 
@@ -753,34 +753,34 @@ var HiPay = (function (HiPay) {
 
 // dump(appliance.getAllResponseHeaders());
 
+        // return Promise(function(resolve, reject){
+        //
+        // });
+        return new Promise(function (resolve, reject) {
+            axios.post(endpoint,requestParams,config)
+                .then(function(responseJson) {
+                    // console.log(responseJson);
 
-        axios.post(endpoint,requestParams,config)
-            .then(function(responseJson) {
-                // console.log(responseJson);
+                    if( typeof responseJson['code'] != 'undefined' )  {
+                        reject(new _APIError(responseJson));
+                        // return returnPromise.reject(new _APIError(responseJson));
+                    }
+                    else {
 
-                if( typeof responseJson['code'] != 'undefined' )  {
+                        var cardToken = new Hipay.Token(responseJson);
+                        // console.log("Hipay.cardToken");
+                        cardToken.constructor.populateProperties(cardToken, responseJson.data);
+                        // console.log("Hipay.cardToken");
+                        // console.log(Hipay.cardToken);
+
+                        // Hipay.cardToken.hydrate(responseJson);
+                        resolve(cardToken);
+                        // returnPromise.resolve(cardToken);
 
 
-                    returnPromise.reject(new _APIError(responseJson));
-                    return returnPromise;
-                    // throw new Error(responseJson);
-                }
-                else {
-
-                    var cardToken = new Hipay.Token(responseJson);
-                    // console.log("Hipay.cardToken");
-                    cardToken.constructor.populateProperties(cardToken, responseJson.data);
-                    // console.log("Hipay.cardToken");
-                    // console.log(Hipay.cardToken);
-
-                    // Hipay.cardToken.hydrate(responseJson);
-
-                    returnPromise.resolve(cardToken);
-                    return returnPromise;
-
-                }
-            }).catch(function (error) {
-
+                    }
+                }).catch(function (error) {
+                reject(new _APIError(error));
 
                 /* IE */
                 // console.log(requestParams);
@@ -803,8 +803,12 @@ var HiPay = (function (HiPay) {
                 // appliance.send(requestParams);
 
 
-                return Promise.reject(new _APIError(error));
+                // returnPromise.reject(new _APIError(error));
             });
+        });
+
+
+
         // }
     };
 
@@ -1055,18 +1059,19 @@ var HiPay = (function (HiPay) {
 
 
     HiPay.tokenize = function(params) {
+
         var returnPromise = Promise;
         // returnPromise.done = returnPromise.prototype.done;
          // return fail = function( ) {
             //     alert('toto');
             // };
         // tests if global scope is binded to window
-        if(_isBrowser()) {
+        if(!_isBrowser()) {
 
 // dump(Hipay.promise);
-            returnPromise.reject({"message" : "cant tokenize on server side"});
+            return returnPromise.reject(new _APIError('{"message" : "cant tokenize on server side"}'));
 
-            return returnPromise;
+
 
 
 

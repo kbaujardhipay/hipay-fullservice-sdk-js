@@ -21,7 +21,7 @@ module.exports = function(grunt) {
         },
         dist2: {
 
-            src: ['src/json3.js', 'node_modules/bluebird/js/browser/bluebird.js','node_modules/axios/dist/axios.js', 'src/hipay-fullservice-sdk-2.js'],
+            src: ['src/base64.js','src/json3.js', 'node_modules/bluebird/js/browser/bluebird.js','node_modules/axios/dist/axios.js', 'src/hipay-fullservice-sdk-2.js'],
             dest: 'dist/hipay-fullservice-sdk-2.js'
         }
     },
