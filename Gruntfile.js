@@ -16,7 +16,7 @@ module.exports = function(grunt) {
         separator: ';',
       },
       dist: {
-        src: ['src/reqwest.js', 'src/hipay-fullservice-sdk.js'],
+        src: ['src/reqwest.js', 'src/json3.js', 'src/hipay-fullservice-sdk.js'],
         dest: 'dist/hipay-fullservice-sdk.js',
       },
     },  

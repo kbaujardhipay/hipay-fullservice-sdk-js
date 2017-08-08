@@ -1,0 +1,153 @@
+/* main */
+
+html body {
+    background-color: #333333;
+    background-position: center top;
+    background-repeat: no-repeat;
+    font-size: 12.5px;
+    color: #666666;
+    text-align: justify;
+}
+
+#main {
+    background-color: #fff;
+    /*height: 400px;*/
+    /*max-height: 490px;*/
+    margin-top: 20px;
+    /*width: 900px;*/
+    border-radius: 3px;
+    -moz-border-radius: 3px;
+    -webkit-border-radius: 3px;
+}
+
+
+.scontainer {
+    padding:30px;
+}
+
+/* description */
+.main-title {
+    color: #005a94;
+    font-size: 2.2rem;
+    /* font-size: 20px;*/
+    font-weight: bold;
+    margin-top: 0;
+}
+
+#infos-txt #code {
+    color: #aaa;
+    font-family: "Courier New", Courier, "Lucida Sans Typewriter", "Lucida Typewriter", monospace;
+    font-size: 13.5px;
+    margin-top: 5px;
+    width: 500px;                          /* specify width  */
+    white-space: pre-wrap;                 /* CSS3 browsers  */
+    white-space: -moz-pre-wrap !important; /* 1999+ Mozilla  */
+    white-space: -pre-wrap;                /* Opera 4 thru 6 */
+    white-space: -o-pre-wrap;              /* Opera 7 and up */
+    word-wrap: break-word;                 /* IE 5.5+ and up */
+    /* overflow-x: auto; */                /* Firefox 2 only */
+    /* width: 99%; */                      /* only if needed */
+}
+
+#infos-txt #link-area a#link {
+    color: #007cc1;
+    font-size: 1.3rem;
+    font-weight: bold;
+    letter-spacing: -0.01em;
+    margin: 0;
+}
+
+/* form */
+.form-description {
+    color: #2c383d;
+    font-size: 1.3rem;
+    /*  font-size: 15px; */
+    font-weight: bold;
+    margin-bottom: 15px;
+}
+input[placeholder]:disabled, [placeholder] {
+    color: #ccc !important;
+}
+
+input, input[placeholder], [placeholder] {
+    color: #005a94 !important;
+    font-weight: bold;
+}
+
+::-webkit-input-placeholder { /* WebKit browsers */
+    color: #75a6c5 !important;
+}
+
+.input-group-addon-icon {
+    color: #005a94 !important;
+}
+
+/* cvv */
+#cvv-button {
+    border:none !important;
+    background-color: #fff !important;
+}
+#container-cvv {
+    border:none !important;
+}
+
+#cvv-button button {
+    background-color: #75a6c5;
+    border: medium none;
+    border-radius: 20px;
+    color: #fff;
+    font-size: 12.5px;
+    font-weight: bold;
+    height: 20px;
+    width: 20px;
+}
+
+
+/* submit button */
+#submit-zone {
+    width: 100%;
+}
+
+#charge-button {
+    white-space:normal !important;
+    word-wrap: break-word;
+}
+#submit-zone button {
+    border: medium none;
+    white-space:normal !important;
+    word-wrap: break-word;
+    color: #ffffff;
+    font-size: 1.4rem;
+    /* font-size: 18px */
+    font-weight: bold;
+    /*padding: 10px 0;*/
+    transition: all 0.1s ease 0s;
+    width: 100%;
+}
+
+#pay-button {
+    background-color: #50b652;
+}
+
+#pay-button:disabled {
+    background-color: #ccc;
+}
+
+#pay-button:disabled:hover {
+    background-color: #ccc;
+}
+
+#pay-button:hover {
+    background-color: #66CC66;
+    transition: all 0.1s ease 0s;
+}
+
+#error {
+    padding-bottom: 13px;
+    font-weight: bold;
+    color: #d26a6a;
+    font-size: 14px;
+}
+
+
+/* ./form */
