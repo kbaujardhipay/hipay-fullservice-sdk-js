@@ -2,7 +2,7 @@
 version: '2'
 services:
     web:
-        container_name: jira-sdk-jkurc.hipay-pos-platform.com
+        container_name: hipay-sdk-js
         image: nginx:latest
         ports:
             - "80:80"

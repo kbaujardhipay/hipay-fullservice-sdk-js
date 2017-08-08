@@ -9,6 +9,7 @@ npm-debug.log
 example/vendor
 
 example/composer\.phar
+example/credentials.php
 
 \.idea/
 
