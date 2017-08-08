@@ -1,3 +1,6 @@
+# Version 1.0.3
+Fixes issues with IE.
+
 # Version 1.0.2
 Fixes composer download.
 

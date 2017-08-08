@@ -10,6 +10,6 @@
 #cd ..
 docker-compose up -d
 docker run --rm -v $(pwd)/etc/ssl:/certificates -e "SERVER=localhost" jacoelho/generate-certificate
-
+cp example/credentials.php.dist example/credentials.php
 echo ""
 echo "Setup completed! Do not forget to add your HiPay Fullservice credentials into the example/credentials.php file."
