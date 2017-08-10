@@ -344,187 +344,195 @@ var HiPay = (function (HiPay) {
     var _cardFormatDefinition = {
         card_visa_info:
 
-        {
-            "ranges":[
-                {
-                    "first": 4,
+            {
+                "ranges":[
+                    {
+                        "first": 4,
+                        "variable": null
+                    }
+                ],
+
+                "lengths": {
+                    "length": 16,
                     "variable": null
-                }
-            ],
+                },
 
-            "lengths": {
-                "length": 16,
-                "variable": null
+                "format":[4,4,4]
             },
-
-            "format":[4,4,4]
-        },
 
 
         card_mastercard_info:
-        {
-            "ranges":[
+            {
+                "ranges":[
 
-                {
-                    "first": 51,
-                    "variable": 4
-                }
-            ],
+                    {
+                        "first": 51,
+                        "variable": 4
+                    }
+                ],
 
-            "lengths": {
-                "length": 16,
-                "variable": null
-            },
-
-            "format":[4,4,4]
-        },
-        card_diners_info:
-        {
-            "ranges":[
-
-                {
-                    "first": 300,
-                    "variable": 5
+                "lengths": {
+                    "length": 16,
+                    "variable": null
                 },
 
-                {
-                    "first": 38,
+                "format":[4,4,4]
+            },
+        card_diners_info:
+            {
+                "ranges":[
+
+                    {
+                        "first": 300,
+                        "variable": 5
+                    },
+
+                    {
+                        "first": 38,
+                        "variable": 1
+                    },
+
+                    {
+                        "first": 2014,
+                        "variable": null
+                    },
+
+                    {
+                        "first": 2149,
+                        "variable": null
+                    },
+
+                    {
+                        "first": 309,
+                        "variable": null
+                    },
+
+                    {
+                        "first": 36,
+                        "variable": null
+                    }
+                ],
+
+                "lengths": {
+                    "length": 14,
                     "variable": 1
                 },
 
-                {
-                    "first": 2014,
-                    "variable": null
-                },
-
-                {
-                    "first": 2149,
-                    "variable": null
-                },
-
-                {
-                    "first": 309,
-                    "variable": null
-                },
-
-                {
-                    "first": 36,
-                    "variable": null
-                }
-            ],
-
-            "lengths": {
-                "length": 14,
-                "variable": 1
+                "format":[4,6]
             },
-
-            "format":[4,6]
-        },
         card_american_express_info:
-        {
-            "ranges":[
+            {
+                "ranges":[
 
-                {
-                    "first": 34,
+                    {
+                        "first": 34,
+                        "variable": null
+                    },
+
+                    {
+                        "first": 37,
+                        "variable": null
+                    }
+
+                ],
+
+                "lengths": {
+                    "length": 15,
                     "variable": null
                 },
 
-                {
-                    "first": 37,
-                    "variable": null
-                }
-
-            ],
-
-            "lengths": {
-                "length": 15,
-                "variable": null
+                "format":[4,6]
             },
+        card_maestro_info:
+            {
+                "ranges":[
 
-            "format":[4,6]
-        },
-            card_maestro_info:
-        {
-            "ranges":[
+                    {
+                        "first": 50,
+                        "variable": null
+                    },
 
-                {
-                    "first": 50,
-                    "variable": null
+                    {
+                        "first": 56,
+                        "variable": 13
+                    }
+
+                ],
+
+                "lengths": {
+                    "length": 12,
+                    "variable": 7
                 },
 
-                {
-                    "first": 56,
-                    "variable": 13
-                }
-
-            ],
-
-            "lengths": {
-                "length": 12,
-                "variable": 7
-            },
-
-            "format":[4,4,4,4]
-        }
+                "format":[4,4,4,4]
+            }
 
     }
 
+    /**
+     * Format card number
+     * @private
+     */
 
-var _formatCC = function() {
+    var _formatCC = function() {
 
 // dump(_cardFormatDefinition);
-        var range= {};
-    var cardNumberString = document.getElementById(_idInputMapper.cardNumber).value;
-    document.getElementById(_idInputMapper.cardType).innerHTML = '';
-    for(var propt in _cardFormatDefinition){
-        // alert(_cardFormatDefinition[propt]["ranges"]);
+//         var range= {};
+        var cardNumberString = document.getElementById(_idInputMapper.cardNumber).value;
+        document.getElementById(_idInputMapper.cardType).innerHTML = '';
+        for(var propt in _cardFormatDefinition){
 
-
-        for (var i = 0; i < _cardFormatDefinition[propt]["ranges"].length; i++) {
-            // console.log(_cardFormatDefinition[propt]["ranges"][i]["first"]);
-
-
-
-            // console.log(cardNumberString.indexOf(_cardFormatDefinition[propt]["ranges"][i]["first"]));
-            // console.log(_cardFormatDefinition[propt]["ranges"][i]["variable"]);
-
-
-
+            /* range */
+            for (var i = 0; i < _cardFormatDefinition[propt]["ranges"].length; i++) {
                 if (_cardFormatDefinition[propt]["ranges"][i]["variable"] != null) {
                     for (var j = 0; j < _cardFormatDefinition[propt]["ranges"][i]["variable"]; j++) {
-
                         var startNumber = _cardFormatDefinition[propt]["ranges"][i]["first"] + j;
-
-
                         if (cardNumberString.indexOf(startNumber) === 0) {
-
                             document.getElementById(_idInputMapper.cardType).innerHTML = propt;
-
                             break;
                         }
-
                     }
                 } else {
                     if (cardNumberString.indexOf(_cardFormatDefinition[propt]["ranges"][i]["first"]) === 0) {
-                        // alert(propt);
                         document.getElementById(_idInputMapper.cardType).innerHTML = propt;
-
                         break;
                     }
                 }
+            }
+            /* ./ range */
+
+            /* format */
+            // cardNumberString.replace(/(.{4}) (.{4}) (.{4})/g, '$1 $2 $3 ').trim();
+            console.log(_formatDisplayNumber(cardNumberString,_cardFormatDefinition[propt]["format"]));
+            // document.getElementById(_idInputMapper.cardNumber).value = cardNumberString;
 
 
+
+
+
+            /* ./ format */
         }
-
-
 
 
 
     }
 
 
-
-}
+    var _formatDisplayNumber = function(cardNumberString,format) {
+        cardNumberString = cardNumberString.replace(" ","");
+        var regex = "";
+        var newFormat = "";
+        for (var i = 0; i < format.length; i++) {
+            regex = regex + '(.{' + format[i]+ '})';
+            newFormat = newFormat + '$'+(i+1)+ ' ';
+            // _cardFormatDefinition[propt]["format"][i]
+            }
+            console.log(regex);
+            console.log(newFormat);
+            // return cardNumberString.replace(/^(.{1})(.{2})/g, '$1 $2 ');
+            // return cardNumberString.replace(/^regex/g, newFormat);
+            return cardNumberString.replace(/^(.{4})(.{4})(.{4})/g, '$1 $2 $3 ');
+    }
 
     HiPay.Form = {};
 
@@ -548,11 +556,11 @@ var _formatCC = function() {
             // }
 
             if (propt == 'cardNumber') {
-            document.getElementById(_idInputMapper[propt]).addEventListener('keyup', function () {
+                document.getElementById(_idInputMapper[propt]).addEventListener('keyup', function () {
 
                     _formatCC();
                     _callbackEventFormChange();
-            });
+                });
             } else {
                 document.getElementById(_idInputMapper[propt]).addEventListener('keyup', function () {
                     _callbackEventFormChange();
@@ -1109,7 +1117,7 @@ var _formatCC = function() {
                         resolve(cardToken);
                     }
                 }).catch(function (error) {
-                    reject(new _APIError(error));
+                reject(new _APIError(error));
 
                 /* IE */
                 // console.log(requestParams);
