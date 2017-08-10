@@ -168,7 +168,7 @@ require_once('credentials.php');
     $(document).ready(function(){
 
         var token = null;
-console.log(HiPay);
+//        console.log(HiPay);
 
         $('#link').click(function() {
             $('#input-card').prop('value', '4111111111111111');
@@ -177,6 +177,16 @@ console.log(HiPay);
             $('#input-year').prop('value', '2020');
             $('#input-name').prop('value', 'John Doe');
         });
+
+//        HiPay.Form.change(function() {
+//            alert('toto');
+//            $("#pay-button").prop('disabled', !HiPay.Form.paymentFormDataIsValid());
+//        });
+//
+//        window.onload = function(e){
+//            document.getElementById('input-card').addEventListener('change', HiPay.Form.change);
+//        }
+
 
         $("#charge-button").click(function() {
 
@@ -202,6 +212,17 @@ console.log(HiPay);
             });
 
         });
+
+        $(function() {
+            HiPay.Form.change(function() {
+
+                console.info(HiPay.Form.paymentFormDataIsValid());
+            $("#pay-button").prop('disabled', !HiPay.Form.paymentFormDataIsValid());
+//                alert('toto');
+            });
+        })
+
+
 
         $("#pay-button").click(function() {
 
@@ -252,8 +273,7 @@ console.log(HiPay);
 
             HiPay.tokenize(params)
                 .then(function(cardToken) {
-
-                    alert('ok');
+                    token = cardToken.token;
                     $("#pay-button").text("Tokenize");
                     $("#order").text("The token has been created using the JavaScript SDK (client side).");
 
@@ -263,12 +283,21 @@ console.log(HiPay);
                     $("#charge-button").show();
                 })
                 .catch(function(error){
+                    if (error.code === HiPay.ErrorReason.APIIncorrectCredentials) { // égal à 1012003
+                        console.log("Invalid crédentials");
+                    }
 
-                    alert('toto');
+                    if (error.code === HiPay.ErrorReason.InvalidCardToken) { // égal à 1012003
+                        console.log("Token passé invalide…");
+                    }
+
 
                     $("#pay-button").text("Tokenize");
                     $("#form :input").prop("disabled", false);
                     $("#form :button").prop("disabled", false);
+
+
+
 
 
                     if (error.errorCollection != undefined && error.errorCollection.length > 0) {

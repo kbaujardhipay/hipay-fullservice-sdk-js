@@ -3,7 +3,7 @@
  */
 
 var HiPay = (function (HiPay) {
-    var Hipay = {};
+    var HiPay = {};
 
     /**
      * dump
@@ -106,7 +106,7 @@ var HiPay = (function (HiPay) {
              * @default "production"
              * @type string
              * @example
-             *    Hipay.target = "stage";
+             *    HiPay.target = "stage";
              */
 
             target: {enumerable: true, writable: true, value:'production'},
@@ -143,14 +143,11 @@ var HiPay = (function (HiPay) {
                 'generate_request_id':true
             }
         }
-        HipayPrivate.target = 'production';
+        HiPayPrivate.target = 'production';
     }
 
     // Define property helper
     var _defineProperties = function(object, properties) {
-        // console.log("properties");
-        // console.log(properties);
-
         for (var key in properties) {
             // properties[key].propertyDescriptors = Object.assign({}, {enumerable: true, writable: false, configurable: false}, properties[key].propertyDescriptors || {});
             properties[key].propertyDescriptors = _extend({}, {enumerable: true, writable: false, configurable: false}, properties[key].propertyDescriptors || {});
@@ -158,7 +155,6 @@ var HiPay = (function (HiPay) {
         }
         // var mapping = Object.assign({}, object.prototype._mapping || {}, properties);
         var mapping = _extend({}, object.prototype._mapping || {}, properties);
-
 
         // console.log("mapping");
         // console.log(mapping);
@@ -237,8 +233,8 @@ var HiPay = (function (HiPay) {
 
     };
 
-
-    var ValidatorCC = function (errorCollection) {
+    // HiPay.ValidationError
+    var _validatorCC = function (errorCollection) {
         var validatorCC = {};
 
         validatorCC.errorCollection = errorCollection || [];
@@ -275,6 +271,7 @@ var HiPay = (function (HiPay) {
             return (nCheck % 10) == 0;
 
         };
+
 
         /* @todo valid card type */
         // var _isValidType = {
@@ -317,6 +314,231 @@ var HiPay = (function (HiPay) {
         return validatorCC;
     };
 
+
+    // var _fireEvent = function(element,event){
+    //     if (document.createEventObject){
+    //         // dispatch for IE
+    //         var evt = document.createEventObject();
+    //         return element.fireEvent('on'+event,evt)
+    //     }
+    //     else{
+    //         // dispatch for firefox + others
+    //         var evt = document.createEvent("HTMLEvents");
+    //         evt.initEvent(event, true, true ); // event type,bubbling,cancelable
+    //         return !element.dispatchEvent(evt);
+    //     }
+    // };
+
+    // _fireEvent(document.getElementById('input-card'), 'change');
+
+    var _cardFormatDefinition = {
+        card_visa_info:
+
+        {
+            "ranges":[
+                {
+                    "first": 4,
+                    "variable": null
+                }
+            ],
+
+            "lengths": {
+                "length": 16,
+                "variable": null
+            },
+
+            "format":[4,4,4]
+        },
+
+
+        card_mastercard_info:
+        {
+            "ranges":[
+
+                {
+                    "first": 51,
+                    "variable": 4
+                }
+            ],
+
+            "lengths": {
+                "length": 16,
+                "variable": null
+            },
+
+            "format":[4,4,4]
+        },
+        card_diners_info:
+        {
+            "ranges":[
+
+                {
+                    "first": 300,
+                    "variable": 5
+                },
+
+                {
+                    "first": 38,
+                    "variable": 1
+                },
+
+                {
+                    "first": 2014,
+                    "variable": null
+                },
+
+                {
+                    "first": 2149,
+                    "variable": null
+                },
+
+                {
+                    "first": 309,
+                    "variable": null
+                },
+
+                {
+                    "first": 36,
+                    "variable": null
+                }
+            ],
+
+            "lengths": {
+                "length": 14,
+                "variable": 1
+            },
+
+            "format":[4,6]
+        },
+        card_american_express_info:
+        {
+            "ranges":[
+
+                {
+                    "first": 34,
+                    "variable": null
+                },
+
+                {
+                    "first": 37,
+                    "variable": null
+                }
+
+            ],
+
+            "lengths": {
+                "length": 15,
+                "variable": null
+            },
+
+            "format":[4,6]
+        },
+            card_maestro_info:
+        {
+            "ranges":[
+
+                {
+                    "first": 50,
+                    "variable": null
+                },
+
+                {
+                    "first": 56,
+                    "variable": 13
+                }
+
+            ],
+
+            "lengths": {
+                "length": 12,
+                "variable": 7
+            },
+
+            "format":[4,4,4,4]
+        }
+
+    }
+
+
+var _formatCC = function() {
+
+// dump(_cardFormatDefinition);
+        var range= {};
+    for(var propt in _cardFormatDefinition){
+        // alert(_cardFormatDefinition[propt]["ranges"]);
+
+
+        for (var i = 0; i < _cardFormatDefinition[propt]["ranges"].length; i++) {
+            console.log(_cardFormatDefinition[propt]["ranges"][i]["first"]);
+        }
+
+
+
+    }
+
+
+
+}
+
+    HiPay.Form = {};
+
+    var _callbackEventFormChange;
+
+    // _callbackEventFormChange();
+
+    HiPay.Form.change = function(callback) {
+        _callbackEventFormChange = callback;
+    };
+
+    var _idInputMapper = {
+        cardNumber: 'input-card',
+        cardHolder: 'input-name',
+        expiryMonth: 'input-month',
+        expiryYear: 'input-year',
+        cvv: 'input-cvv'
+    }
+
+
+    /* add listener on all input form */
+    window.onload = function() {
+        for(var propt in _idInputMapper){
+            // if (propt == 'cardNumber') {
+            //     alert(_idInputMapper[propt]);
+            //     _formatCC();
+            // }
+
+            if (propt == 'cardNumber') {
+            document.getElementById(_idInputMapper[propt]).addEventListener('keyup', function () {
+
+                    _formatCC();
+                    _callbackEventFormChange();
+            });
+            } else {
+                document.getElementById(_idInputMapper[propt]).addEventListener('keyup', function () {
+                    _callbackEventFormChange();
+                });
+            }
+
+        }
+    };
+
+    HiPay.Form.paymentFormDataIsValid = function() {
+        var params = {
+            card_number: $('#input-card')[0].value,
+            cvc: $('#input-cvv')[0].value,
+            card_expiry_month: $('#input-month')[0].value,
+            card_expiry_year: $('#input-year')[0].value,
+            card_holder: $('#input-name')[0].value,
+            multi_use: '0'
+        };
+
+        // console.info('_isValidCCForm(params)');
+        // console.info(_isValidCCForm(params).length);
+
+        return _isValidCCForm(params).length === 0;
+    }
+
+
     /**
      *
      * @param params
@@ -355,7 +577,7 @@ var HiPay = (function (HiPay) {
             errors.message = message;
         }
 
-        var validatorCC = new ValidatorCC(errorCollection);
+        var validatorCC = new _validatorCC(errorCollection);
         if ( ! validatorCC.isValid(params['card_number']) ) {
 
             errorCollection = validatorCC.errorCollection;
@@ -421,7 +643,125 @@ var HiPay = (function (HiPay) {
         }
     };
 
-    Hipay.Token = function (responseJSON) {
+    HiPay.ErrorReason = {
+        APIIncorrectCredentials: 1000001,
+        APIIncorrectSignature: 1000002,
+        APIAccountNotActive: 1000003,
+        APIAccountLocked: 1000004,
+        APIInsufficientPermissions: 1000005,
+        APIForbiddenAccess: 1000006,
+        APIUnsupportedVersion: 1000007,
+        APITemporarilyUnavailable: 1000008,
+        APINotAllowed: 1000009,
+        APIMethodNotAllowedGateway: 1010001,
+        APIInvalidParameter: 1010002,
+        APIMethodNotAllowedSecureVault: 1010003,
+        APIInvalidCardToken: 1012003,
+        APIRequiredParameterMissing: 1010101,
+        APIInvalidParameterFormat: 1010201,
+        APIInvalidParameterLength: 1010202,
+        APIInvalidParameterNonAlpha: 1010203,
+        APIInvalidParameterNonNum: 1010204,
+        //     APIInvalidParameterNonDecimal (1010205),
+        //     APIInvalidDate (1010206),
+        //     APIInvalidTime (1010207),
+        //     APIInvalidIPAddress (1010208),
+        //     APIInvalidEmailAddress (1010209),
+        //     APIInvalidSoftDescriptorCodeMessage (1010301),
+        //     APINoRouteToAcquirer (1020001),
+        //     APIUnsupportedECIDescription (1020002),
+        //     APIUnsupported (1020003),
+        //
+        //     // Validation errors
+        //     APIUnknownOrder (3000001),
+        //     APIUnknownTransaction (3000002),
+        //     APIUnknownMerchant (3000003),
+        //     APIUnsupportedOperation (3000101),
+        //     APIUnknownIPAddress (3000102),
+        //     APISuspicionOfFraud (3000201),
+        //     APIFraudSuspicion (3040001),
+        //     APIUnknownToken (3030001),
+        //     APILuhnCheckFailed (409),
+        //
+        //     // Error codes relating to the Checkout Process
+        //     APIUnsupportedCurrency (3010001),
+        //     APIAmountLimitExceeded (3010002),
+        //     APIMaxAttemptsExceeded (3010003),
+        //     APIDuplicateOrder (3010004),
+        //     APICheckoutSessionExpired (3010005),
+        //     APIOrderCompleted (3010006),
+        //     APIOrderExpired (3010007),
+        //     APIOrderVoided (3010008),
+        //
+        //     // Error codes relating to Maintenance Operations
+        //     APIAuthorizationExpired (3020001),
+        //     APIAllowableAmountLimitExceeded (3020002),
+        //     APINotEnabled (3020101),
+        //     APINotAllowedCapture (3020102),
+        //     APINotAllowedPartialCapture (3020103),
+        //     APIPermissionDenied (3020104),
+        //     APICurrencyMismatch (3020105),
+        //     APIAuthorizationCompleted (3020106),
+        //     APINoMore (3020107),
+        //     APIInvalidAmount (3020108),
+        //     APIAmountLimitExceededCapture (3020109),
+        //     APIAmountLimitExceededPartialCapture (3020110),
+        //     APIOperationNotPermittedClosed (3020111),
+        //     APIOperationNotPermittedFraud (3020112),
+        //     APIRefundNotEnabled (3020201),
+        //     APIRefundNotAllowed (3020202),
+        //     APIPartialRefundNotAllowed (3020203),
+        //     APIRefundPermissionDenied (3020204),
+        //     APIRefundCurrencyMismatch (3020205),
+        //     APIAlreadyRefunded (3020206),
+        //     APIRefundNoMore (3020207),
+        //     APIRefundInvalidAmount (3020208),
+        //     APIRefundAmountLimitExceeded (3020209),
+        //     APIRefundAmountLimitExceededPartial (3020210),
+        //     APIOperationNotPermitted (3020211),
+        //     APITooLate (3020212),
+        //     APIReauthorizationNotEnabled (3020301),
+        //     APIReauthorizationNotAllowed (3020302),
+        //     APICannotReauthorize (3020303),
+        //     APIMaxLimitExceeded (3020304),
+        //     APIVoidNotAllowed (3020401),
+        //     APICannotVoid (3020402),
+        //     APIAuthorizationVoided (3020403),
+        //
+        //     // Acquirer Reason Codes
+        //     APIDeclinedAcquirer (4000001),
+        //     APIDeclinedFinancialInstituion (4000002),
+        //     APIInsufficientFundsAccount (4000003),
+        //     APITechnicalProblem (4000004),
+        //     APICommunicationFailure (4000005),
+        //     APIAcquirerUnavailable (4000006),
+        //     APIDuplicateTransaction (4000007),
+        //     APIPaymentCancelledByTheCustomer (4000008),
+        //     APIInvalidTransaction (4000009),
+        //     APIPleaseCallTheAcquirerSupportCallNumber (4000010),
+        //     APIAuthenticationFailedPleaseRetryOrCancel (4000011),
+        //     APINoUIDConfiguredForThisOperation (4000012),
+        //     APIRefusalNoExplicitReason (4010101),
+        //     APIIssuerNotAvailable (4010102),
+        //     APIInsufficientFundsCredit (4010103),
+        //     APITransactionNotPermitted (4010201),
+        //     APIInvalidCardNumber (4010202),
+        //     APIUnsupportedCard (4010203),
+        //     APICardExpired (4010204),
+        //     APIExpiryDateIncorrect (4010205),
+        //     APICVCRequired (4010206),
+        //     APICVCError (4010207),
+        //     APIAVSFailed (4010301),
+        //     APIRetainCard (4010302),
+        //     APILostOrStolenCard (4010303),
+        // APIRestrictedCard (4010304),
+        // APICardLimitExceeded (4010305),
+        // APICardBlacklisted (4010306),
+        // APIUnauthorisedIPAddressCountry (4010307),
+        // APICardnotInAuthorisersDatabase (4010309);
+    }
+
+    HiPay.Token = function (responseJSON) {
 
 
         // console.log('responseJSON');
@@ -447,24 +787,11 @@ var HiPay = (function (HiPay) {
         }
     };
 
-
-    // Hipay.Token.prototype = {
-    //     hydrate : function(responseJson) {
-    //
-    //         if (responseJson.data) {
-    //
-    //         }
-    //         console.log("responseJson.data");
-    //         console.log(responseJson.data);
-    //     }
-    //
-    // }
-
-    Hipay.Token = function() {
+    HiPay.Token = function() {
         _bootstrapInstanceProperties(this);
     }
 
-    Hipay.Token.populateProperties = function (context, payload) {
+    HiPay.Token.populateProperties = function (context, payload) {
 
 
         // console.log("payload");
@@ -516,12 +843,11 @@ var HiPay = (function (HiPay) {
 
         if ((typeof checkKey === 'undefined' || checkKey) && (typeof HiPay.publicKey === 'undefined' || typeof HiPay.username === 'undefined')) {
             throw new _Error('missing_public_key', 'You have to provide a HiPay username and public key in order to perform API calls.');
+
+            // {"code":'+APIInvalidCardToken+',
+
         }
-
-
         // console.log(typeof window.btoa === 'function');
-
-
 
         try{
             var authEncoded = window.btoa(HiPay.username + ':' + HiPay.publicKey);
@@ -532,10 +858,7 @@ var HiPay = (function (HiPay) {
 
 // console.log(authEncoded);
         if ('XDomainRequest' in window && window.XDomainRequest !== null) {
-
-
             requestParams['Authorization'] = 'Basic ' + window.btoa(HiPay.username + ':' + HiPay.publicKey);
-
         }
 
         var config = {
@@ -611,31 +934,7 @@ var HiPay = (function (HiPay) {
         //     params['generate_request_id'] = 0;
         // }
 
-        // dump(window.btoa(HiPay.username + ':' + HiPay.publicKey));
 
-        // reqwest({
-        //     url: endpoint,
-        //     withCredentials: true,
-        //     crossOrigin: true,
-        //     method: 'post',
-        //     // contentType: 'application/json',
-        //     headers: {
-        //         'Authorization': 'Basic ' + window.btoa(HiPay.username + ':' + HiPay.publicKey)
-        //     },
-        //     data: requestParams,
-        //     success: function(resp) {
-        //
-        //         if( typeof resp['code'] != 'undefined' )  {
-        //             fn_failure({ code: resp['code'], message: resp['message'] });
-        //         }  else {
-        //             fn_success(resp);
-        //         }
-        //     },
-        //     error: function (err) {
-        //         obj = JSON.parse(err['response']);
-        //         fn_failure({ code: obj['code'], message: obj['message'] });
-        //     }
-        // });
 
 
 
@@ -756,31 +1055,21 @@ var HiPay = (function (HiPay) {
         // return Promise(function(resolve, reject){
         //
         // });
+        // alert('toto');
         return new Promise(function (resolve, reject) {
             axios.post(endpoint,requestParams,config)
                 .then(function(responseJson) {
-                    // console.log(responseJson);
 
                     if( typeof responseJson['code'] != 'undefined' )  {
                         reject(new _APIError(responseJson));
-                        // return returnPromise.reject(new _APIError(responseJson));
                     }
                     else {
-
-                        var cardToken = new Hipay.Token(responseJson);
-                        // console.log("Hipay.cardToken");
+                        var cardToken = new HiPay.Token(responseJson);
                         cardToken.constructor.populateProperties(cardToken, responseJson.data);
-                        // console.log("Hipay.cardToken");
-                        // console.log(Hipay.cardToken);
-
-                        // Hipay.cardToken.hydrate(responseJson);
                         resolve(cardToken);
-                        // returnPromise.resolve(cardToken);
-
-
                     }
                 }).catch(function (error) {
-                reject(new _APIError(error));
+                    reject(new _APIError(error));
 
                 /* IE */
                 // console.log(requestParams);
@@ -822,43 +1111,28 @@ var HiPay = (function (HiPay) {
 
         var payload;
 
-        if (typeof data.responseJSON !== 'undefined') {
-            payload = data.responseJSON;
+
+        // dump(data.response.data);
+        if (typeof data.response.data !== 'undefined') {
+            payload = data.response.data;
         }
 
         if (typeof payload === 'object') {
             _processObjectPayload(this, $.extend({}, payload, {
-                description: 'An API error occurred. Check the message parameter for more details.',
-                type: 'api'
+                code: payload.code,
+                message: payload.message,
+                description: payload.description,
             }));
         } else {
             _processObjectPayload(this, $.extend({}, payload, {
+                code: 'code',
                 message: 'other',
-                description: 'An error occurred while sending the request.',
-                server_response: payload,
-                type: 'api'
+                description: 'description'
             }));
         }
     };
 
     _APIError.prototype = new _Error();
-
-    /**
-     *
-     * @param code
-     * @param message
-     * @private
-     */
-    var _InvalidParametersError = function (code, message) {
-        _processObjectPayload(this, {
-            type: 'invalid_parameters',
-            code: code,
-            message: message
-            // description: description
-        });
-    };
-
-    _InvalidParametersError.prototype = new _Error();
 
     /**
      *
@@ -892,7 +1166,7 @@ var HiPay = (function (HiPay) {
     _InvalidFormTokenizationError.prototype = new _Error();
 
 
-    _defineProperties(Hipay.Token, {
+    _defineProperties(HiPay.Token, {
 
         /**
          * The type of error.
@@ -947,22 +1221,13 @@ var HiPay = (function (HiPay) {
         /**
          * Additional details such as a list of invalid parameters. Refer to the API reference for more information.
          *
-         * @property details
+         * @property message
          * @type Object
          * @final
          */
 
-        details: {name: 'details'},
+        message: {name: 'message'},
 
-        /**
-         * The server response body.
-         *
-         * @property serverResponse
-         * @type string
-         * @final
-         */
-
-        server_response: {name: 'serverResponse'}
     });
 
 
@@ -1038,44 +1303,11 @@ var HiPay = (function (HiPay) {
         server_response: {name: 'serverResponse'}
     });
 
-
-    /**
-     *
-     * @param params
-     * @returns {*}
-     */
-
-
-
-    // Hipay.Promise = function(promise) {
-    //     var publicPromise = {};
-    //
-    //
-    //
-    //     publicPromise.done = promise.prototype.done;
-    //     publicPromise.fail = promise.prototype.catch;
-    //     return publicPromise;
-    // }
-
-
     HiPay.tokenize = function(params) {
 
         var returnPromise = Promise;
-        // returnPromise.done = returnPromise.prototype.done;
-         // return fail = function( ) {
-            //     alert('toto');
-            // };
-        // tests if global scope is binded to window
         if(!_isBrowser()) {
-
-// dump(Hipay.promise);
-            return returnPromise.reject(new _APIError('{"message" : "cant tokenize on server side"}'));
-
-
-
-
-
-
+            return returnPromise.reject(new _APIError('"message" : "cant tokenize on server side"}'));
         }
 
         if(params['card_expiry_month'].length < 2) {
@@ -1087,7 +1319,7 @@ var HiPay = (function (HiPay) {
         var errorCollection = _isValidCCForm(params);
 
         if (errorCollection.length > 0) {
-            var customError = new Error('Form error');
+            // var customError = new Error('Form error');
             var customError = new _InvalidFormTokenizationError(errorCollection);
             customError.errorCollection = errorCollection;
             return Promise.reject(customError);
