@@ -331,6 +331,16 @@ var HiPay = (function (HiPay) {
 
     // _fireEvent(document.getElementById('input-card'), 'change');
 
+    var _idInputMapper = {
+        cardNumber: 'input-card',
+        cardType: 'card-type',
+        cardHolder: 'input-name',
+        expiryMonth: 'input-month',
+        expiryYear: 'input-year',
+        cvv: 'input-cvv'
+    }
+
+
     var _cardFormatDefinition = {
         card_visa_info:
 
@@ -464,13 +474,49 @@ var _formatCC = function() {
 
 // dump(_cardFormatDefinition);
         var range= {};
+    var cardNumberString = document.getElementById(_idInputMapper.cardNumber).value;
+    document.getElementById(_idInputMapper.cardType).innerHTML = '';
     for(var propt in _cardFormatDefinition){
         // alert(_cardFormatDefinition[propt]["ranges"]);
 
 
         for (var i = 0; i < _cardFormatDefinition[propt]["ranges"].length; i++) {
-            console.log(_cardFormatDefinition[propt]["ranges"][i]["first"]);
+            // console.log(_cardFormatDefinition[propt]["ranges"][i]["first"]);
+
+
+
+            // console.log(cardNumberString.indexOf(_cardFormatDefinition[propt]["ranges"][i]["first"]));
+            // console.log(_cardFormatDefinition[propt]["ranges"][i]["variable"]);
+
+
+
+                if (_cardFormatDefinition[propt]["ranges"][i]["variable"] != null) {
+                    for (var j = 0; j < _cardFormatDefinition[propt]["ranges"][i]["variable"]; j++) {
+
+                        var startNumber = _cardFormatDefinition[propt]["ranges"][i]["first"] + j;
+
+
+                        if (cardNumberString.indexOf(startNumber) === 0) {
+
+                            document.getElementById(_idInputMapper.cardType).innerHTML = propt;
+
+                            break;
+                        }
+
+                    }
+                } else {
+                    if (cardNumberString.indexOf(_cardFormatDefinition[propt]["ranges"][i]["first"]) === 0) {
+                        // alert(propt);
+                        document.getElementById(_idInputMapper.cardType).innerHTML = propt;
+
+                        break;
+                    }
+                }
+
+
         }
+
+
 
 
 
@@ -490,13 +536,7 @@ var _formatCC = function() {
         _callbackEventFormChange = callback;
     };
 
-    var _idInputMapper = {
-        cardNumber: 'input-card',
-        cardHolder: 'input-name',
-        expiryMonth: 'input-month',
-        expiryYear: 'input-year',
-        cvv: 'input-cvv'
-    }
+
 
 
     /* add listener on all input form */
