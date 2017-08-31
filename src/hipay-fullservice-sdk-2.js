@@ -237,6 +237,16 @@ var HiPay = (function (HiPay) {
     var _validatorCC = function (errorCollection) {
         var validatorCC = {};
 
+        var _cardLengthMin = '';
+        var _cardLengthMax = '';
+
+
+
+
+
+
+
+
         validatorCC.errorCollection = errorCollection || [];
 
 
@@ -245,10 +255,108 @@ var HiPay = (function (HiPay) {
             return _isCardNumberValid(value);
         }
 
+
+        var _init = function(value) {
+
+            var cardNumberString = value.split(' ').join('');
+
+            var cardLengthMin = 0;
+            var cardLengthMax = null;
+            for (var propt in _cardFormatDefinition) {
+
+                /* range */
+
+                for (var i = 0; i < _cardFormatDefinition[propt]["ranges"].length; i++) {
+                    if (_cardFormatDefinition[propt]["ranges"][i]["variable"] != null) {
+
+                        for (var j = 0; j < _cardFormatDefinition[propt]["ranges"][i]["variable"]; j++) {
+                            var startNumber = _cardFormatDefinition[propt]["ranges"][i]["first"] + j;
+                            if (cardNumberString.indexOf(startNumber) === 0) {
+                                // console.log(cardNumberString.indexOf(startNumber));
+                                document.getElementById(_idInputMapper.cardType).innerHTML = propt;
+                                cardFormatArray = _cardFormatDefinition[propt]["format"];
+                                /* length */
+                                cardLengthMin = cardLengthMax = _cardFormatDefinition[propt]["lengths"]["length"];
+                                if (_cardFormatDefinition[propt]["lengths"]["variable"] != null) {
+                                    cardLengthMax = cardLengthMin + _cardFormatDefinition[propt]["lengths"]["variable"];
+                                }
+                                /* ./ length */
+
+                                break;
+                            } else {
+                                // console.log(cardNumberString.indexOf(startNumber));
+                            }
+                        }
+                    } else {
+                        // if (cardNumberString == "41") {
+                        //     console.log('variable null');
+                        //     console.log(_cardFormatDefinition[propt]["ranges"][i]["first"]);
+                        //     console.log(cardNumberString.indexOf(_cardFormatDefinition[propt]["ranges"][i]["first"]));
+                        // }
+                        if (cardNumberString.indexOf(_cardFormatDefinition[propt]["ranges"][i]["first"]) === 0) {
+                            document.getElementById(_idInputMapper.cardType).innerHTML = propt;
+                            cardFormatArray = _cardFormatDefinition[propt]["format"];
+                            /* length */
+                            cardLengthMin = _cardFormatDefinition[propt]["lengths"]["length"];
+                            if (_cardFormatDefinition[propt]["lengths"]["variable"] != null) {
+                                cardLengthMax = cardLengthMin + _cardFormatDefinition[propt]["lengths"]["variable"];
+                            }
+
+                            /* ./ length */
+                            break;
+                        }
+                    }
+                }
+                /* ./ range */
+            }
+
+            _cardLengthMin = cardLengthMin;
+            _cardLengthMax = cardLengthMax;
+
+
+        }
+
+
+        var _isLengthValid = function (value) {
+
+            // console.log(value);
+            // console.log('minLength');
+            // console.log(value.length < _cardLengthMin || value.length > _cardLengthMax);
+
+
+            if (value.length < _cardLengthMin || (_cardLengthMax != null && value.length > _cardLengthMax) ) {
+                return false;
+            }
+            return true;
+
+
+        }
+
+
         var _isCardNumberValid = function (value) {
+
+            value = value.split(' ').join('');
+
+
+            _init(value);
+
+
+
+
             if (/[^0-9-\s]+/.test(value)) return false;
+
+            console.log("_isLengthValid(value)");
+            console.log(_isLengthValid(value));
+
+            if (_isLengthValid(value) === false) {
+                console.log("false length");
+                return false;
+            }
+
             return _isLuhnValid(value);
         }
+
+
         var _isLuhnValid = function (value) {
             // The Luhn Algorithm. It's so pretty.
             var nCheck = 0, nDigit = 0, bEven = false;
@@ -480,12 +588,17 @@ var HiPay = (function (HiPay) {
 //         var range= {};
         var cardNumberString = document.getElementById(_idInputMapper.cardNumber).value;
         console.log(cardNumberString.length);
-         document.getElementById(_idInputMapper.cardType).innerHTML = '';
+        document.getElementById(_idInputMapper.cardType).innerHTML = '';
 
         var cardFormatArray = [];
+
+        var cardLengthMin = 0;
+        var cardLengthMax = null;
+
         for(var propt in _cardFormatDefinition){
 
             /* range */
+
             for (var i = 0; i < _cardFormatDefinition[propt]["ranges"].length; i++) {
                 if (_cardFormatDefinition[propt]["ranges"][i]["variable"] != null) {
 
@@ -495,6 +608,13 @@ var HiPay = (function (HiPay) {
                             // console.log(cardNumberString.indexOf(startNumber));
                             document.getElementById(_idInputMapper.cardType).innerHTML = propt;
                             cardFormatArray = _cardFormatDefinition[propt]["format"];
+                            /* length */
+                            cardLengthMin = cardLengthMax = _cardFormatDefinition[propt]["lengths"]["length"];
+                            if (_cardFormatDefinition[propt]["lengths"]["variable"] !=null) {
+                                cardLengthMax = cardLengthMin + _cardFormatDefinition[propt]["lengths"]["variable"];
+                            }
+                            /* ./ length */
+
                             break;
                         } else {
                             // console.log(cardNumberString.indexOf(startNumber));
@@ -509,11 +629,26 @@ var HiPay = (function (HiPay) {
                     if (cardNumberString.indexOf(_cardFormatDefinition[propt]["ranges"][i]["first"]) === 0) {
                         document.getElementById(_idInputMapper.cardType).innerHTML = propt;
                         cardFormatArray = _cardFormatDefinition[propt]["format"];
+                        /* length */
+                        cardLengthMin = cardLengthMax = _cardFormatDefinition[propt]["lengths"]["length"];
+                        if (_cardFormatDefinition[propt]["lengths"]["variable"] !=null) {
+                            cardLengthMax = cardLengthMin + _cardFormatDefinition[propt]["lengths"]["variable"];
+                        }
+
+                        /* ./ length */
                         break;
                     }
                 }
             }
             /* ./ range */
+
+            console.log("cardLengthMin");
+            console.log(cardLengthMin);
+            console.log("cardLengthMax");
+            console.log(cardLengthMax);
+
+
+
 
             /* format */
             // cardNumberString.replace(/(.{4}) (.{4}) (.{4})/g, '$1 $2 $3 ').trim();
@@ -534,10 +669,16 @@ var HiPay = (function (HiPay) {
         var start = document.getElementById(_idInputMapper.cardNumber).selectionStart,
             end = document.getElementById(_idInputMapper.cardNumber).selectionEnd;
 
-       var beforeFormatLength = document.getElementById(_idInputMapper.cardNumber).value.length;
+        var beforeFormatLength = document.getElementById(_idInputMapper.cardNumber).value.length;
 
         console.log(document.getElementById(_idInputMapper.cardNumber).value.length);
-        document.getElementById(_idInputMapper.cardNumber).value = _formatDisplayNumber(cardNumberString,cardFormatArray);
+        document.getElementById(_idInputMapper.cardNumber).value = _formatDisplayNumber(cardNumberString,cardFormatArray,cardLengthMin,cardLengthMax);
+
+
+        /* change input if number between min and max and luhn is ok */
+        _inputCCFinish( document.getElementById(_idInputMapper.cardHolder),cardNumberString, cardLengthMin, cardLengthMax);
+
+
         var afterFormatLength = document.getElementById(_idInputMapper.cardNumber).value.length;
 
 
@@ -549,72 +690,98 @@ var HiPay = (function (HiPay) {
 
     }
 
+    var _inputCCFinish = function(element, cardNumberString, cardLengthMin, cardLengthMax) {
+
+
+        var validatorCC = new _validatorCC([]);
+
+
+        if ( cardNumberString != '' && validatorCC.isValid(cardNumberString) ) {
+
+            console.log(element);
+            console.log('isValid');
+            element.focus();
+            //
+            // console.log(cardNumberString);
+            // console.log(cardLengthMin);
+            // console.log(cardLengthMax);
+        }
+
+
+    }
 
 
 
-
-    var _formatDisplayNumber = function(cardNumberString,format) {
+    var _formatDisplayNumber = function(cardNumberString, format, cardLengthMin, cardLengthMax) {
 
         // if (!cardNumberString) {
         //     return false;
         // }
         // cardNumberString = cardNumberString.replace(" ","");
         cardNumberString = cardNumberString.split(' ').join('');
+        console.log(cardNumberString);
+        console.log(cardNumberString.length);
         var regex = "";
         var newFormat = "";
         var numberFormatTotal = 0;
 
         // console.log('cardNumberString');
         // console.log(cardNumberString);
-var newCardNumber = '';
+        var newCardNumber = '';
         // console.log('format');
         // console.log(format);
         var start = 0;
 
         // var position = target.selectionStart; // Capture initial position
         // position = target.selectionStart; // Capture initial position
-        for (var i = 0; i < format.length; i++) {
+
+        console.log(format);
+        if (format.length > 0) {
+            for (var i = 0; i < format.length; i++) {
 
 
-            // regex = regex + '(.{' + format[i]+ '})?';
-            // regex = regex + '(.{' + format[i]+ '})';
-            // newFormat = newFormat + '$'+(i+1)+ ' ';
-            numberFormatTotal = numberFormatTotal + format[i];
+                // regex = regex + '(.{' + format[i]+ '})?';
+                // regex = regex + '(.{' + format[i]+ '})';
+                // newFormat = newFormat + '$'+(i+1)+ ' ';
+                numberFormatTotal = numberFormatTotal + format[i];
 
-            var end = Math.min(numberFormatTotal, cardNumberString.length);
+                var end = Math.min(numberFormatTotal, cardNumberString.length);
 
-            for(j=start; j<end; j++) {
+                for (j = start; j < end; j++) {
 
-                // if (cardNumberString.length<numberFormatTotal) {
+                    // if (cardNumberString.length<numberFormatTotal) {
                     newCardNumber += cardNumberString.charAt(j);
+                    // }
+                }
+
+                if (cardNumberString.length >= numberFormatTotal) {
+                    newCardNumber += ' ';
+                    //     start = format[i];
+                }
+                start = numberFormatTotal;
+
+                if (cardNumberString.length < numberFormatTotal) {
+                    break;
+                }
+                // console.log(cardNumberString.length);
+                // console.log(numberFormatTotal);
+
+                // if (cardNumberString.length == format[i]) {
+                //     newCardNumber += ' ';
+                //     start = format[i];
                 // }
+
+                // _cardFormatDefinition[propt]["format"][i]
             }
 
-            if (cardNumberString.length >= numberFormatTotal) {
-                newCardNumber += ' ';
-            //     start = format[i];
+            for (j = start; j < cardNumberString.length; j++) {
+
+                if (j < cardLengthMax) {
+                    newCardNumber += cardNumberString.charAt(j);
+                }
             }
-            start = numberFormatTotal;
-
-            if (cardNumberString.length < numberFormatTotal) {
-                break;
-            }
-            // console.log(cardNumberString.length);
-            // console.log(numberFormatTotal);
-
-            // if (cardNumberString.length == format[i]) {
-            //     newCardNumber += ' ';
-            //     start = format[i];
-            // }
-
-            // _cardFormatDefinition[propt]["format"][i]
-        }
-
-        for(j=start; j<cardNumberString.length; j++) {
-
-            // if (cardNumberString.length<numberFormatTotal) {
-            newCardNumber += cardNumberString.charAt(j);
-            // }
+        } else {
+            newCardNumber = cardNumberString;
         }
         // console.log(regex);
         // console.log(newFormat);
