@@ -475,26 +475,40 @@ var HiPay = (function (HiPay) {
      */
 
     var _formatCC = function() {
-
+// console.log("format cc");
 // dump(_cardFormatDefinition);
 //         var range= {};
         var cardNumberString = document.getElementById(_idInputMapper.cardNumber).value;
-        document.getElementById(_idInputMapper.cardType).innerHTML = '';
+        console.log(cardNumberString.length);
+         document.getElementById(_idInputMapper.cardType).innerHTML = '';
+
+        var cardFormatArray = [];
         for(var propt in _cardFormatDefinition){
 
             /* range */
             for (var i = 0; i < _cardFormatDefinition[propt]["ranges"].length; i++) {
                 if (_cardFormatDefinition[propt]["ranges"][i]["variable"] != null) {
+
                     for (var j = 0; j < _cardFormatDefinition[propt]["ranges"][i]["variable"]; j++) {
                         var startNumber = _cardFormatDefinition[propt]["ranges"][i]["first"] + j;
                         if (cardNumberString.indexOf(startNumber) === 0) {
+                            // console.log(cardNumberString.indexOf(startNumber));
                             document.getElementById(_idInputMapper.cardType).innerHTML = propt;
+                            cardFormatArray = _cardFormatDefinition[propt]["format"];
                             break;
+                        } else {
+                            // console.log(cardNumberString.indexOf(startNumber));
                         }
                     }
                 } else {
+                    // if (cardNumberString == "41") {
+                    //     console.log('variable null');
+                    //     console.log(_cardFormatDefinition[propt]["ranges"][i]["first"]);
+                    //     console.log(cardNumberString.indexOf(_cardFormatDefinition[propt]["ranges"][i]["first"]));
+                    // }
                     if (cardNumberString.indexOf(_cardFormatDefinition[propt]["ranges"][i]["first"]) === 0) {
                         document.getElementById(_idInputMapper.cardType).innerHTML = propt;
+                        cardFormatArray = _cardFormatDefinition[propt]["format"];
                         break;
                     }
                 }
@@ -503,8 +517,7 @@ var HiPay = (function (HiPay) {
 
             /* format */
             // cardNumberString.replace(/(.{4}) (.{4}) (.{4})/g, '$1 $2 $3 ').trim();
-            console.log(_formatDisplayNumber(cardNumberString,_cardFormatDefinition[propt]["format"]));
-            // document.getElementById(_idInputMapper.cardNumber).value = cardNumberString;
+
 
 
 
@@ -514,24 +527,54 @@ var HiPay = (function (HiPay) {
         }
 
 
+        // console.log(cardFormatArray);
+        console.log(_formatDisplayNumber(cardNumberString,cardFormatArray));
+        console.log(_formatDisplayNumber(cardNumberString,cardFormatArray).length);
+
+        var start = document.getElementById(_idInputMapper.cardNumber).selectionStart,
+            end = document.getElementById(_idInputMapper.cardNumber).selectionEnd;
+
+        document.getElementById(_idInputMapper.cardNumber).value = _formatDisplayNumber(cardNumberString,cardFormatArray);
+        document.getElementById(_idInputMapper.cardNumber).setSelectionRange(start, end);
+
+
 
     }
 
 
     var _formatDisplayNumber = function(cardNumberString,format) {
-        cardNumberString = cardNumberString.replace(" ","");
+        // cardNumberString = cardNumberString.replace(" ","");
+        cardNumberString = cardNumberString.split(' ').join('');
         var regex = "";
         var newFormat = "";
+        var numberFormatTotal = 0;
+
+        console.log('cardNumberString');
+        console.log(cardNumberString);
+
+        console.log('format');
+        console.log(format);
         for (var i = 0; i < format.length; i++) {
-            regex = regex + '(.{' + format[i]+ '})';
-            newFormat = newFormat + '$'+(i+1)+ ' ';
-            // _cardFormatDefinition[propt]["format"][i]
+            // regex = regex + '(.{' + format[i]+ '})?';
+            // newFormat = newFormat + '$'+(i+1)+ ' ';
+            numberFormatTotal = numberFormatTotal + format[i];
+            // console.log(cardNumberString.length);
+            // console.log(numberFormatTotal);
+            if (cardNumberString.length < numberFormatTotal) {
+                break;
             }
-            console.log(regex);
-            console.log(newFormat);
-            // return cardNumberString.replace(/^(.{1})(.{2})/g, '$1 $2 ');
-            // return cardNumberString.replace(/^regex/g, newFormat);
-            return cardNumberString.replace(/^(.{4})(.{4})(.{4})/g, '$1 $2 $3 ');
+            // _cardFormatDefinition[propt]["format"][i]
+        }
+        // console.log(regex);
+        // console.log(newFormat);
+        // return cardNumberString.replace(/^(.{1})(.{2})/g, '$1 $2 ');
+        // return cardNumberString.replace(/^regex/g, newFormat);
+        var expression = new RegExp(regex, 'g');
+
+        // return cardNumberString.replace(/^(.{4})(.{4})+/g, '$1 $2 $3 ');
+        // return cardNumberString.replace(expression, newFormat);
+        return cardNumberString.replace(expression, newFormat);
+        // return cardNumberString;
     }
 
     HiPay.Form = {};
