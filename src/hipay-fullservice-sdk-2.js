@@ -528,53 +528,112 @@ var HiPay = (function (HiPay) {
 
 
         // console.log(cardFormatArray);
-        console.log(_formatDisplayNumber(cardNumberString,cardFormatArray));
-        console.log(_formatDisplayNumber(cardNumberString,cardFormatArray).length);
+        // console.log(_formatDisplayNumber(cardNumberString,cardFormatArray));
+        // console.log(_formatDisplayNumber(cardNumberString,cardFormatArray).length);
 
         var start = document.getElementById(_idInputMapper.cardNumber).selectionStart,
             end = document.getElementById(_idInputMapper.cardNumber).selectionEnd;
 
+       var beforeFormatLength = document.getElementById(_idInputMapper.cardNumber).value.length;
+
+        console.log(document.getElementById(_idInputMapper.cardNumber).value.length);
         document.getElementById(_idInputMapper.cardNumber).value = _formatDisplayNumber(cardNumberString,cardFormatArray);
+        var afterFormatLength = document.getElementById(_idInputMapper.cardNumber).value.length;
+
+
+
+        start = start + (afterFormatLength - beforeFormatLength);
+        end = end + (afterFormatLength - beforeFormatLength);
+
         document.getElementById(_idInputMapper.cardNumber).setSelectionRange(start, end);
-
-
 
     }
 
 
+
+
+
     var _formatDisplayNumber = function(cardNumberString,format) {
+
+        // if (!cardNumberString) {
+        //     return false;
+        // }
         // cardNumberString = cardNumberString.replace(" ","");
         cardNumberString = cardNumberString.split(' ').join('');
         var regex = "";
         var newFormat = "";
         var numberFormatTotal = 0;
 
-        console.log('cardNumberString');
-        console.log(cardNumberString);
+        // console.log('cardNumberString');
+        // console.log(cardNumberString);
+var newCardNumber = '';
+        // console.log('format');
+        // console.log(format);
+        var start = 0;
 
-        console.log('format');
-        console.log(format);
+        // var position = target.selectionStart; // Capture initial position
+        // position = target.selectionStart; // Capture initial position
         for (var i = 0; i < format.length; i++) {
+
+
             // regex = regex + '(.{' + format[i]+ '})?';
+            // regex = regex + '(.{' + format[i]+ '})';
             // newFormat = newFormat + '$'+(i+1)+ ' ';
             numberFormatTotal = numberFormatTotal + format[i];
-            // console.log(cardNumberString.length);
-            // console.log(numberFormatTotal);
+
+            var end = Math.min(numberFormatTotal, cardNumberString.length);
+
+            for(j=start; j<end; j++) {
+
+                // if (cardNumberString.length<numberFormatTotal) {
+                    newCardNumber += cardNumberString.charAt(j);
+                // }
+            }
+
+            if (cardNumberString.length >= numberFormatTotal) {
+                newCardNumber += ' ';
+            //     start = format[i];
+            }
+            start = numberFormatTotal;
+
             if (cardNumberString.length < numberFormatTotal) {
                 break;
             }
+            // console.log(cardNumberString.length);
+            // console.log(numberFormatTotal);
+
+            // if (cardNumberString.length == format[i]) {
+            //     newCardNumber += ' ';
+            //     start = format[i];
+            // }
+
             // _cardFormatDefinition[propt]["format"][i]
+        }
+
+        for(j=start; j<cardNumberString.length; j++) {
+
+            // if (cardNumberString.length<numberFormatTotal) {
+            newCardNumber += cardNumberString.charAt(j);
+            // }
         }
         // console.log(regex);
         // console.log(newFormat);
         // return cardNumberString.replace(/^(.{1})(.{2})/g, '$1 $2 ');
         // return cardNumberString.replace(/^regex/g, newFormat);
-        var expression = new RegExp(regex, 'g');
+        // var expression = new RegExp(regex, 'g');
+
+// console.log(regex);
+//         var v = cardNumberString.replace(/[^\dA-Z]/g, ''),
+//             // reg = new RegExp(".{" + after + "}", "g");
+//             reg = new RegExp(regex, "g");
+//         return v.replace(reg, function(a) {
+//             return a + ' ';
+//         });
 
         // return cardNumberString.replace(/^(.{4})(.{4})+/g, '$1 $2 $3 ');
         // return cardNumberString.replace(expression, newFormat);
-        return cardNumberString.replace(expression, newFormat);
-        // return cardNumberString;
+        // return cardNumberString.replace(expression, newFormat);
+        return newCardNumber;
     }
 
     HiPay.Form = {};
