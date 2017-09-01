@@ -9,6 +9,10 @@ html body {
     text-align: justify;
 }
 
+span#card-type {
+    padding: 2px; !important
+}
+
 #main {
     background-color: #fff;
     /*height: 400px;*/

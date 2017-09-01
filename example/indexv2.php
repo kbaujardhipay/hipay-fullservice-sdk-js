@@ -235,11 +235,12 @@ require_once('credentials.php');
 
             var params = {
                 card_number: $('#input-card')[0].value,
-                cvc: $('#input-cvv')[0].value,
                 card_expiry_month: $('#input-month')[0].value,
                 card_expiry_year: $('#input-year')[0].value,
                 card_holder: $('#input-name')[0].value,
-                multi_use: '0'
+                cvv: $('#input-cvv')[0].value,
+                multi_use: '0',
+                generate_request_id: '0'
             };
 
 
@@ -272,17 +273,20 @@ require_once('credentials.php');
 //                }
 //            );
 
-            HiPay.tokenize(params)
+//            HiPay.tokenize(params)
+
+
+            HiPay.Form.tokenizePaymentFormData()
                 .then(function(cardToken) {
-                    token = cardToken.token;
-                    $("#pay-button").text("Tokenize");
-                    $("#order").text("The token has been created using the JavaScript SDK (client side).");
+                token = cardToken.token;
+                $("#pay-button").text("Tokenize");
+                $("#order").text("The token has been created using the JavaScript SDK (client side).");
 
-                    $('#code').text(JSON.stringify(cardToken, null, 4));
-                    $('#link-area').text('');
+                $('#code').text(JSON.stringify(cardToken, null, 4));
+                $('#link-area').text('');
 
-                    $("#charge-button").show();
-                })
+                $("#charge-button").show();
+            })
                 .catch(function(error){
                     if (error.code === HiPay.ErrorReason.APIIncorrectCredentials) { // égal à 1012003
                         console.log("Invalid crédentials");
@@ -309,6 +313,45 @@ require_once('credentials.php');
                     }
 
                 });
+
+
+//            HiPay.tokenize(params['card_number'], params['card_expiry_month'], params['card_expiry_year'], params['card_holder'], params['cvv'], params['multi_use'], params['generate_request_id'] )
+//                .then(function(cardToken) {
+//                    token = cardToken.token;
+//                    $("#pay-button").text("Tokenize");
+//                    $("#order").text("The token has been created using the JavaScript SDK (client side).");
+//
+//                    $('#code').text(JSON.stringify(cardToken, null, 4));
+//                    $('#link-area').text('');
+//
+//                    $("#charge-button").show();
+//                })
+//                .catch(function(error){
+//                    if (error.code === HiPay.ErrorReason.APIIncorrectCredentials) { // égal à 1012003
+//                        console.log("Invalid crédentials");
+//                    }
+//
+//                    if (error.code === HiPay.ErrorReason.InvalidCardToken) { // égal à 1012003
+//                        console.log("Token passé invalide…");
+//                    }
+//
+//
+//                    $("#pay-button").text("Tokenize");
+//                    $("#form :input").prop("disabled", false);
+//                    $("#form :button").prop("disabled", false);
+//
+//
+//
+//
+//
+//                    if (error.errorCollection != undefined && error.errorCollection.length > 0) {
+//                        for (var i = 0; i < error.errorCollection.length; i++) {
+//                            var errorParameters = error.errorCollection[i];
+//                            $("#error").append(errorParameters.message);
+//                        }
+//                    }
+//
+//                });
 
 
             return false;
