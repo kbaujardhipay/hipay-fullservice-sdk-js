@@ -262,6 +262,9 @@ var HiPay = (function (HiPay) {
 
             var cardLengthMin = 0;
             var cardLengthMax = null;
+            var cardFormatArray = [];
+
+
             for (var propt in _cardFormatDefinition) {
 
                 /* range */
@@ -273,7 +276,10 @@ var HiPay = (function (HiPay) {
                             var startNumber = _cardFormatDefinition[propt]["ranges"][i]["first"] + j;
                             if (cardNumberString.indexOf(startNumber) === 0) {
                                 // console.log(cardNumberString.indexOf(startNumber));
-                                document.getElementById(_idInputMapper.cardType).innerHTML = propt;
+                                // document.getElementById(_idInputMapper.cardType).innerHTML = propt;
+
+
+                                document.getElementById(_idInputMapper.cardType).innerHTML = '<img width="28px" src="./assets/type/' + _cardImg[propt] + '">';
                                 cardFormatArray = _cardFormatDefinition[propt]["format"];
                                 /* length */
                                 cardLengthMin = cardLengthMax = _cardFormatDefinition[propt]["lengths"]["length"];
@@ -294,7 +300,11 @@ var HiPay = (function (HiPay) {
                         //     console.log(cardNumberString.indexOf(_cardFormatDefinition[propt]["ranges"][i]["first"]));
                         // }
                         if (cardNumberString.indexOf(_cardFormatDefinition[propt]["ranges"][i]["first"]) === 0) {
-                            document.getElementById(_idInputMapper.cardType).innerHTML = propt;
+                            // document.getElementById(_idInputMapper.cardType).innerHTML = propt;
+                            document.getElementById(_idInputMapper.cardType).innerHTML = '<img width="28px" src="./assets/type/' + _cardImg[propt] + '">';
+
+
+
                             cardFormatArray = _cardFormatDefinition[propt]["format"];
                             /* length */
                             cardLengthMin = _cardFormatDefinition[propt]["lengths"]["length"];
@@ -448,6 +458,14 @@ var HiPay = (function (HiPay) {
         cvv: 'input-cvv'
     }
 
+
+    var _cardImg = {
+        card_visa_info: "ic_credit_card_visa.png",
+        card_mastercard_info: "ic_credit_card_mastercard.png",
+        card_diners_info: "ic_credit_card_diners.png",
+    card_american_express_info: "ic_credit_card_amex.png",
+        card_maestro_info: "ic_credit_card_maestro.png"
+    }
 
     var _cardFormatDefinition = {
         card_visa_info:
@@ -641,12 +659,6 @@ var HiPay = (function (HiPay) {
                 }
             }
             /* ./ range */
-
-            console.log("cardLengthMin");
-            console.log(cardLengthMin);
-            console.log("cardLengthMax");
-            console.log(cardLengthMax);
-
 
 
 
@@ -894,6 +906,7 @@ var HiPay = (function (HiPay) {
             errors.message = message;
         }
 
+       // @todo changer le nom HiPay.ValidationError
         var validatorCC = new _validatorCC(errorCollection);
         if ( ! validatorCC.isValid(params['card_number']) ) {
 
@@ -979,104 +992,104 @@ var HiPay = (function (HiPay) {
         APIInvalidParameterLength: 1010202,
         APIInvalidParameterNonAlpha: 1010203,
         APIInvalidParameterNonNum: 1010204,
-        //     APIInvalidParameterNonDecimal (1010205),
-        //     APIInvalidDate (1010206),
-        //     APIInvalidTime (1010207),
-        //     APIInvalidIPAddress (1010208),
-        //     APIInvalidEmailAddress (1010209),
-        //     APIInvalidSoftDescriptorCodeMessage (1010301),
-        //     APINoRouteToAcquirer (1020001),
-        //     APIUnsupportedECIDescription (1020002),
-        //     APIUnsupported (1020003),
-        //
-        //     // Validation errors
-        //     APIUnknownOrder (3000001),
-        //     APIUnknownTransaction (3000002),
-        //     APIUnknownMerchant (3000003),
-        //     APIUnsupportedOperation (3000101),
-        //     APIUnknownIPAddress (3000102),
-        //     APISuspicionOfFraud (3000201),
-        //     APIFraudSuspicion (3040001),
-        //     APIUnknownToken (3030001),
-        //     APILuhnCheckFailed (409),
-        //
-        //     // Error codes relating to the Checkout Process
-        //     APIUnsupportedCurrency (3010001),
-        //     APIAmountLimitExceeded (3010002),
-        //     APIMaxAttemptsExceeded (3010003),
-        //     APIDuplicateOrder (3010004),
-        //     APICheckoutSessionExpired (3010005),
-        //     APIOrderCompleted (3010006),
-        //     APIOrderExpired (3010007),
-        //     APIOrderVoided (3010008),
-        //
-        //     // Error codes relating to Maintenance Operations
-        //     APIAuthorizationExpired (3020001),
-        //     APIAllowableAmountLimitExceeded (3020002),
-        //     APINotEnabled (3020101),
-        //     APINotAllowedCapture (3020102),
-        //     APINotAllowedPartialCapture (3020103),
-        //     APIPermissionDenied (3020104),
-        //     APICurrencyMismatch (3020105),
-        //     APIAuthorizationCompleted (3020106),
-        //     APINoMore (3020107),
-        //     APIInvalidAmount (3020108),
-        //     APIAmountLimitExceededCapture (3020109),
-        //     APIAmountLimitExceededPartialCapture (3020110),
-        //     APIOperationNotPermittedClosed (3020111),
-        //     APIOperationNotPermittedFraud (3020112),
-        //     APIRefundNotEnabled (3020201),
-        //     APIRefundNotAllowed (3020202),
-        //     APIPartialRefundNotAllowed (3020203),
-        //     APIRefundPermissionDenied (3020204),
-        //     APIRefundCurrencyMismatch (3020205),
-        //     APIAlreadyRefunded (3020206),
-        //     APIRefundNoMore (3020207),
-        //     APIRefundInvalidAmount (3020208),
-        //     APIRefundAmountLimitExceeded (3020209),
-        //     APIRefundAmountLimitExceededPartial (3020210),
-        //     APIOperationNotPermitted (3020211),
-        //     APITooLate (3020212),
-        //     APIReauthorizationNotEnabled (3020301),
-        //     APIReauthorizationNotAllowed (3020302),
-        //     APICannotReauthorize (3020303),
-        //     APIMaxLimitExceeded (3020304),
-        //     APIVoidNotAllowed (3020401),
-        //     APICannotVoid (3020402),
-        //     APIAuthorizationVoided (3020403),
-        //
-        //     // Acquirer Reason Codes
-        //     APIDeclinedAcquirer (4000001),
-        //     APIDeclinedFinancialInstituion (4000002),
-        //     APIInsufficientFundsAccount (4000003),
-        //     APITechnicalProblem (4000004),
-        //     APICommunicationFailure (4000005),
-        //     APIAcquirerUnavailable (4000006),
-        //     APIDuplicateTransaction (4000007),
-        //     APIPaymentCancelledByTheCustomer (4000008),
-        //     APIInvalidTransaction (4000009),
-        //     APIPleaseCallTheAcquirerSupportCallNumber (4000010),
-        //     APIAuthenticationFailedPleaseRetryOrCancel (4000011),
-        //     APINoUIDConfiguredForThisOperation (4000012),
-        //     APIRefusalNoExplicitReason (4010101),
-        //     APIIssuerNotAvailable (4010102),
-        //     APIInsufficientFundsCredit (4010103),
-        //     APITransactionNotPermitted (4010201),
-        //     APIInvalidCardNumber (4010202),
-        //     APIUnsupportedCard (4010203),
-        //     APICardExpired (4010204),
-        //     APIExpiryDateIncorrect (4010205),
-        //     APICVCRequired (4010206),
-        //     APICVCError (4010207),
-        //     APIAVSFailed (4010301),
-        //     APIRetainCard (4010302),
-        //     APILostOrStolenCard (4010303),
-        // APIRestrictedCard (4010304),
-        // APICardLimitExceeded (4010305),
-        // APICardBlacklisted (4010306),
-        // APIUnauthorisedIPAddressCountry (4010307),
-        // APICardnotInAuthorisersDatabase (4010309);
-    }
+        APIInvalidParameterNonDecimal: 1010205,
+        APIInvalidDate: 1010206,
+        APIInvalidTime: 1010207,
+        APIInvalidIPAddress: 1010208,
+        APIInvalidEmailAddress: 1010209,
+        APIInvalidSoftDescriptorCodeMessage: 1010301,
+        APINoRouteToAcquirer: 1020001,
+        APIUnsupportedECIDescription: 1020002,
+        APIUnsupported: 1020003,
+
+        // Validation errors
+        APIUnknownOrder: 3000001,
+        APIUnknownTransaction: 3000002,
+        APIUnknownMerchant: 3000003,
+        APIUnsupportedOperation: 3000101,
+        APIUnknownIPAddress: 3000102,
+        APISuspicionOfFraud: 3000201,
+        APIFraudSuspicion: 3040001,
+        APIUnknownToken: 3030001,
+        APILuhnCheckFailed: 409,
+
+        // Error codes relating to the Checkout Process
+        APIUnsupportedCurrency: 3010001,
+        APIAmountLimitExceeded: 3010002,
+        APIMaxAttemptsExceeded: 3010003,
+        APIDuplicateOrder: 3010004,
+        APICheckoutSessionExpired: 3010005,
+        APIOrderCompleted: 3010006,
+        APIOrderExpired: 3010007,
+        APIOrderVoided: 3010008,
+
+        // Error codes relating to Maintenance Operations
+        APIAuthorizationExpired: 3020001,
+        APIAllowableAmountLimitExceeded: 3020002,
+        APINotEnabled: 3020101,
+        APINotAllowedCapture: 3020102,
+        APINotAllowedPartialCapture: 3020103,
+        APIPermissionDenied: 3020104,
+        APICurrencyMismatch: 3020105,
+        APIAuthorizationCompleted: 3020106,
+        APINoMore: 3020107,
+        APIInvalidAmount: 3020108,
+        APIAmountLimitExceededCapture: 3020109,
+        APIAmountLimitExceededPartialCapture: 3020110,
+        APIOperationNotPermittedClosed: 3020111,
+        APIOperationNotPermittedFraud: 3020112,
+        APIRefundNotEnabled: 3020201,
+        APIRefundNotAllowed: 3020202,
+        APIPartialRefundNotAllowed: 3020203,
+        APIRefundPermissionDenied: 3020204,
+        APIRefundCurrencyMismatch: 3020205,
+        APIAlreadyRefunded: 3020206,
+        APIRefundNoMore: 3020207,
+        APIRefundInvalidAmount: 3020208,
+        APIRefundAmountLimitExceeded: 3020209,
+        APIRefundAmountLimitExceededPartial: 3020210,
+        APIOperationNotPermitted: 3020211,
+        APITooLate: 3020212,
+        APIReauthorizationNotEnabled: 3020301,
+        APIReauthorizationNotAllowed: 3020302,
+        APICannotReauthorize: 3020303,
+        APIMaxLimitExceeded: 3020304,
+        APIVoidNotAllowed: 3020401,
+        APICannotVoid: 3020402,
+        APIAuthorizationVoided: 3020403,
+
+        // Acquirer Reason Codes
+        APIDeclinedAcquirer: 4000001,
+        APIDeclinedFinancialInstituion: 4000002,
+        APIInsufficientFundsAccount: 4000003,
+        APITechnicalProblem: 4000004,
+        APICommunicationFailure: 4000005,
+        APIAcquirerUnavailable: 4000006,
+        APIDuplicateTransaction: 4000007,
+        APIPaymentCancelledByTheCustomer: 4000008,
+        APIInvalidTransaction: 4000009,
+        APIPleaseCallTheAcquirerSupportCallNumber: 4000010,
+        APIAuthenticationFailedPleaseRetryOrCancel: 4000011,
+        APINoUIDConfiguredForThisOperation: 4000012,
+        APIRefusalNoExplicitReason: 4010101,
+        APIIssuerNotAvailable: 4010102,
+        APIInsufficientFundsCredit: 4010103,
+        APITransactionNotPermitted: 4010201,
+        APIInvalidCardNumber: 4010202,
+        APIUnsupportedCard: 4010203,
+        APICardExpired: 4010204,
+        APIExpiryDateIncorrect: 4010205,
+        APICVCRequired: 4010206,
+        APICVCError: 4010207,
+        APIAVSFailed: 4010301,
+        APIRetainCard: 4010302,
+        APILostOrStolenCard: 4010303,
+        APIRestrictedCard: 4010304,
+        APICardLimitExceeded: 4010305,
+        APICardBlacklisted: 4010306,
+        APIUnauthorisedIPAddressCountry: 4010307,
+        APICardnotInAuthorisersDatabase: 4010309
+}
 
     HiPay.Token = function (responseJSON) {
 
@@ -1158,6 +1171,8 @@ var HiPay = (function (HiPay) {
     // API Calls
     var _performAPICall = function (endpoint, requestParams, returnPromise, checkKey) {
 
+
+        console.log(requestParams);
         if ((typeof checkKey === 'undefined' || checkKey) && (typeof HiPay.publicKey === 'undefined' || typeof HiPay.username === 'undefined')) {
             throw new _Error('missing_public_key', 'You have to provide a HiPay username and public key in order to perform API calls.');
 
@@ -1620,7 +1635,20 @@ var HiPay = (function (HiPay) {
         server_response: {name: 'serverResponse'}
     });
 
-    HiPay.tokenize = function(params) {
+    // HiPay.tokenize = function(params) {
+    HiPay.tokenize = function(cardNumber, expiryMonth, expiryYear, cardHolder, cvv, multiUse, generateRequestId) {
+
+
+        var params = {
+            card_expiry_month: expiryMonth,
+            card_expiry_year: expiryYear,
+            card_number: cardNumber,
+            card_holder: cardHolder,
+            cvc: cvv,
+            multi_use: multiUse,
+            generate_request_id: generateRequestId
+        }
+
 
         var returnPromise = Promise;
         if(!_isBrowser()) {
@@ -1630,8 +1658,8 @@ var HiPay = (function (HiPay) {
         if(params['card_expiry_month'].length < 2) {
             params['card_expiry_month'] = '0' + params['card_expiry_month'];
         }
-        if(params['card_expiry_year'].length == 2) {
-            params['card_expiry_year'] = '20' + params['card_expiry_year'];
+        if( params['card_expiry_year'].length == 2) {
+            params['card_expiry_year']  = '20' +  params['card_expiry_year'];
         }
         var errorCollection = _isValidCCForm(params);
 
@@ -1650,15 +1678,19 @@ var HiPay = (function (HiPay) {
                 endpoint = 'http://localhost:8080/example/dev-api-token.php';
             }
 
-
-            if (!("generate_request_id" in params)) {
+            if (!params['generate_request_id']) {
                 params['generate_request_id'] = 0;
             }
 
+            if (!params['multi_use']) {
+                params['multi_use'] = 0;
+            }
 
             var config = {
                 headers: {'Authorization': 'Basic ' + window.btoa(HiPay.username + ':' + HiPay.publicKey)}
             };
+
+
 
 
             return _performAPICall(endpoint, params, returnPromise);
@@ -1666,6 +1698,27 @@ var HiPay = (function (HiPay) {
 
 
     };
+
+
+
+    HiPay.Form.tokenizePaymentFormData = function() {
+
+        if (!HiPay.Form.paymentFormDataIsValid()) {
+            return false;
+        }
+        var params = {
+            card_number: $('#input-card')[0].value,
+            card_expiry_month: $('#input-month')[0].value,
+            card_expiry_year: $('#input-year')[0].value,
+            card_holder: $('#input-name')[0].value,
+            cvv: $('#input-cvv')[0].value,
+            multi_use: '0',
+            generate_request_id: '0'
+        };
+        return HiPay.tokenize(params['card_number'], params['card_expiry_month'], params['card_expiry_year'], params['card_holder'], params['cvv'], params['multi_use'], params['generate_request_id'] )
+//
+
+    }
 
     return HiPay;
 
