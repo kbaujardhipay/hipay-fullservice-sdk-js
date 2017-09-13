@@ -726,7 +726,7 @@ var deltaPosFormatBefore = splitSubString.length - 1;
                 // }
                 // tempStringAfter += 0;
             }
-            alert("positionBefore" + realCursorPositionInNumberBefore + "positionAfter" + realCursorPositionInNumberAfter + "positionAfter" + tempStringAfter);
+            // alert("positionBefore" + realCursorPositionInNumberBefore + "positionAfter" + realCursorPositionInNumberAfter + "positionAfter" + tempStringAfter);
 
 
             // for (var nbBefore = 0; nbBefore <= serviceCC.cardNumberStringFormatBefore.length;nbBefore++ ) {
@@ -752,7 +752,7 @@ var deltaPosFormatBefore = splitSubString.length - 1;
 
             // alert("tempStringAfter " + tempStringAfter);
             // var tempStringAfter = serviceCC.cardNumberStringBefore + serviceCC.cardNumberStringAfter.charAt(j);
-            alert(serviceCC.cardLengthMax);
+            // alert(serviceCC.cardLengthMax);
 
             if (serviceCC.cardLengthMax == null || tempStringAfter.length <= serviceCC.cardLengthMax) {
                 serviceCC.cardNumberStringAfter = tempStringAfter;
