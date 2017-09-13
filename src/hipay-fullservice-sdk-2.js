@@ -650,6 +650,26 @@ var HiPay = (function (HiPay) {
         }
     }
 
+    var _getSelection = function (target) {
+        var s = {start: 0, end:0};
+        if (typeof target.selectionStart == "number"
+            && typeof target.selectionEnd == "number") {
+            // Firefox (and others)
+            s.start = target.selectionStart;
+            s.end = target.selectionEnd;
+        } else if (document.selection) {
+            // IE
+            var bookmark = document.selection.createRange().getBookmark();
+            var sel = target.createTextRange();
+            var bfr = sel.duplicate();
+            sel.moveToBookmark(bookmark);
+            bfr.setEndPoint("EndToStart", sel);
+            s.start = bfr.text.length;
+            s.end = s.start + sel.text.length;
+        }
+        return s;
+    }
+
 
 
 
@@ -692,6 +712,13 @@ var HiPay = (function (HiPay) {
             var cursorPositionFormatBefore = _doGetCaretPosition(document.getElementById(_idInputMapper.cardNumber));
 
 
+            var getStartEndCursor = _getSelection(document.getElementById(_idInputMapper.cardNumber));
+
+            var cursorPositionEndFormatBefore = getSelection.end;
+            alert(cursorPositionFormatBefore + " " + getSelection.start + " " + getSelection.end);
+
+
+
             var subString =  valueBefore.substr(0, cursorPositionFormatBefore);
             var splitSubString = subString.split(' ');
 // alert(splitSubString.length);
@@ -701,6 +728,13 @@ var deltaPosFormatBefore = splitSubString.length - 1;
             var realCursorPositionInNumberBefore =  cursorPositionFormatBefore - deltaPosFormatBefore;
 
 
+// gestion selection end @todo
+            var subStringEnd =  valueBefore.substr(cursorPositionEndFormatBefore, valueBefore.length);
+            var splitSubStringEnd = subStringEnd.split(' ');
+            var deltaPosEndFormatBefore = splitSubStringEnd.length - 1;
+            var realCursorEndPositionInNumberBefore =  cursorPositionEndFormatBefore - deltaPosEndFormatBefore;
+
+
 
             // serviceCC.cardNumberStringFormatAfter = serviceCC.cardNumberStringBefore + serviceCC.lastCharString;
             serviceCC.cardNumberStringFormatAfter = "";
@@ -708,12 +742,29 @@ var deltaPosFormatBefore = splitSubString.length - 1;
             var tempStringAfter = '';
 
             var realCursorPositionInNumberAfter = realCursorPositionInNumberBefore;
+            var realCursorEndPositionInNumberAfter = realCursorEndPositionInNumberBefore;
             for (var nbBefore = 0; nbBefore <= serviceCC.cardNumberStringBefore.length;nbBefore++ ) {
+
                 if (nbBefore == realCursorPositionInNumberBefore) {
                     // alert("start " + start);
                     // alert(start);
-                    tempStringAfter += serviceCC.lastCharString;
-                    realCursorPositionInNumberAfter = realCursorPositionInNumberBefore + 1;
+
+                    if (charCode == 8) {
+                        if (realCursorPositionInNumberBefore > 0) {
+
+                            tempStringAfter = tempStringAfter.substring(0,realCursorPositionInNumberAfter - 1) + tempStringAfter.substring(realCursorPositionInNumberAfter, tempStringAfter.length)
+                            realCursorPositionInNumberAfter = realCursorPositionInNumberBefore - 1;
+
+
+
+
+
+
+                        }
+                    } else {
+                        tempStringAfter += serviceCC.lastCharString;
+                        realCursorPositionInNumberAfter = realCursorPositionInNumberBefore + 1;
+                    }
 
 
                 }
@@ -754,12 +805,6 @@ var deltaPosFormatBefore = splitSubString.length - 1;
             // var tempStringAfter = serviceCC.cardNumberStringBefore + serviceCC.cardNumberStringAfter.charAt(j);
             // alert(serviceCC.cardLengthMax);
 
-            if (serviceCC.cardLengthMax == null || tempStringAfter.length <= serviceCC.cardLengthMax) {
-                serviceCC.cardNumberStringAfter = tempStringAfter;
-            } else {
-                serviceCC.cardNumberStringAfter = serviceCC.cardNumberStringBefore;
-                realCursorPositionInNumberAfter = realCursorPositionInNumberBefore;
-            }
 
             serviceCC.cardLengthMin = 0;
             serviceCC.cardLengthMax = null;
@@ -776,7 +821,7 @@ var deltaPosFormatBefore = splitSubString.length - 1;
 
                         for (var j = 0; j < _cardFormatDefinition[propt]["ranges"][i]["variable"]; j++) {
                             var startNumber = _cardFormatDefinition[propt]["ranges"][i]["first"] + j;
-                            if (serviceCC.cardNumberStringAfter.indexOf(startNumber) === 0) {
+                            if (tempStringAfter.indexOf(startNumber) === 0) {
                                 // console.log(cardNumberString.indexOf(startNumber));
                                 // document.getElementById(_idInputMapper.cardType).innerHTML = propt;
 
@@ -801,7 +846,7 @@ var deltaPosFormatBefore = splitSubString.length - 1;
                         //     console.log(_cardFormatDefinition[propt]["ranges"][i]["first"]);
                         //     console.log(cardNumberString.indexOf(_cardFormatDefinition[propt]["ranges"][i]["first"]));
                         // }
-                        if (serviceCC.cardNumberStringAfter.indexOf(_cardFormatDefinition[propt]["ranges"][i]["first"]) === 0) {
+                        if (tempStringAfter.indexOf(_cardFormatDefinition[propt]["ranges"][i]["first"]) === 0) {
                             // document.getElementById(_idInputMapper.cardType).innerHTML = propt;
                             document.getElementById(_idInputMapper.cardType).innerHTML = '<img width="28px" src="./assets/type/' + _cardImg[propt] + '">';
 
@@ -820,6 +865,14 @@ var deltaPosFormatBefore = splitSubString.length - 1;
                     }
                 }
                 /* ./ range */
+            }
+            alert(tempStringAfter +  serviceCC.cardNumberStringAfter + serviceCC.cardNumberStringBefore + serviceCC.cardLengthMax);
+
+            if (serviceCC.cardLengthMax == null || tempStringAfter.length <= serviceCC.cardLengthMax) {
+                serviceCC.cardNumberStringAfter = tempStringAfter;
+            } else {
+                serviceCC.cardNumberStringAfter = serviceCC.cardNumberStringBefore;
+                realCursorPositionInNumberAfter = realCursorPositionInNumberBefore;
             }
 
 
@@ -1217,6 +1270,7 @@ var valueFormatAfter = serviceCC.cardNumberStringFormatAfter;
                     var charCode = evt.keyCode || evt.which;
                     if (charCode == 8 || charCode == 46) {
                         var serviceCC = new _serviceCC(charCode);
+                        evt.preventDefault();
                     } else {
                         // evt.preventDefault();
                     }
