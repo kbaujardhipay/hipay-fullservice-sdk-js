@@ -387,11 +387,13 @@ var HiPay = (function (HiPay) {
 
 
 
-    var _validatorCC = function (errorCollection) {
+    var _validatorCC = function (errorCollection,serviceCC) {
         var validatorCC = {};
 
         var _cardLengthMin = '';
         var _cardLengthMax = '';
+
+
 
 
 
@@ -480,80 +482,10 @@ var HiPay = (function (HiPay) {
         // }
 
 
-        var _isLengthValid = function (value) {
-
-            // console.log("test length start");
-            // console.log(value);
-            // console.log('_cardLengthMax');
-            // console.log("value.length");
-            // console.log(value);
-            // console.log(value.length);
-            // console.log("_cardLengthMin");
-            // console.log(_cardLengthMin);
-            // console.log("_cardLengthMax");
-            // console.log(_cardLengthMax);
-            // console.log(value.length > _cardLengthMax);
-            // console.log("test length end");
-
-            if (value.length < _cardLengthMin || (_cardLengthMax != null && value.length > _cardLengthMax) ) {
-                return false;
-            }
-            return true;
-
-
-        }
-
-
-        var _isCardNumberValid = function (value) {
-
-
-            // console.log("_isCardNumberValid");
-            // console.log("_isLengthValid(value)");
-            // console.log(_isLengthValid(value));
-
-            value = value.split(' ').join('');
-
-
-            // _init(value);
 
 
 
 
-            if (/[^0-9-\s]+/.test(value)) return false;
-
-
-
-            if (_isLengthValid(value) === false) {
-                // console.log("false length");
-                return false;
-            }
-
-            return _isLuhnValid(value);
-        }
-
-
-        var _isLuhnValid = function (value) {
-            // The Luhn Algorithm. It's so pretty.
-            var nCheck = 0, nDigit = 0, bEven = false;
-            value = value.replace(/\D/g, "");
-
-            for (var n = value.length - 1; n >= 0; n--) {
-                var cDigit = value.charAt(n),
-                    nDigit = parseInt(cDigit, 10);
-
-                if (bEven) {
-                    if ((nDigit *= 2) > 9) nDigit -= 9;
-                }
-
-                nCheck += nDigit;
-                bEven = !bEven;
-            }
-            if (!(nCheck % 10) == 0) {
-                validatorCC.errorCollection.push(new _InvalidParametersError(409, 'Luhn invalid'));
-            }
-            return (nCheck % 10) == 0;
-
-        };
 
 
         /* @todo valid card type */
@@ -671,11 +603,114 @@ var HiPay = (function (HiPay) {
     }
 
 
+var _validatorCCNumber = function(errorArray,serviceCC) {
+    var validatorCCNumber = {};
+        validatorCCNumber.isCardNumberValid = function (value) {
 
+
+        // console.log("_isCardNumberValid");
+        // console.log("_isLengthValid(value)");
+        // console.log(_isLengthValid(value));
+
+        value = value.split(' ').join('');
+
+
+        // _init(value);
+
+
+
+
+        if (/[^0-9-\s]+/.test(value)) return false;
+
+
+
+        if (_isLengthValid(value) === false) {
+            // console.log("false length");
+            return false;
+        }
+
+        return _isLuhnValid(value);
+    }
+
+
+    var _isLengthValid = function (value) {
+
+        // console.log("test length start");
+        // console.log(value);
+        // console.log('_cardLengthMax');
+        // console.log("value.length");
+        // console.log(value);
+        // console.log(value.length);
+        // console.log("_cardLengthMin");
+        // console.log(_cardLengthMin);
+        // console.log("_cardLengthMax");
+        // console.log(_cardLengthMax);
+        // console.log(value.length > _cardLengthMax);
+        // console.log("test length end");
+
+        if (value.length < serviceCC.cardLengthMin || (serviceCC.cardLengthMax != null && value.length > serviceCC.cardLengthMax) ) {
+            return false;
+        }
+        return true;
+
+
+    }
+
+    var _isLuhnValid = function (value) {
+        // The Luhn Algorithm. It's so pretty.
+        var nCheck = 0, nDigit = 0, bEven = false;
+        value = value.replace(/\D/g, "");
+
+        for (var n = value.length - 1; n >= 0; n--) {
+            var cDigit = value.charAt(n),
+                nDigit = parseInt(cDigit, 10);
+
+            if (bEven) {
+                if ((nDigit *= 2) > 9) nDigit -= 9;
+            }
+
+            nCheck += nDigit;
+            bEven = !bEven;
+        }
+        if (!(nCheck % 10) == 0) {
+            validatorCC.errorCollection.push(new _InvalidParametersError(409, 'Luhn invalid'));
+        }
+        return (nCheck % 10) == 0;
+
+    };
+        return validatorCCNumber;
+};
 
     var _serviceCC = function(charCode) {
 
         var serviceCC = {};
+
+
+        // var _inputCCFinish = function(element, cardNumberString, cardLengthMin, cardLengthMax) {
+        var _inputCCNumberFinish = function(element, serviceCC) {
+
+
+            var validatorCCNumber = new _validatorCCNumber([],serviceCC);
+
+
+            // alert(serviceCC.cardNumberStringFormatAfter);
+
+
+            if ( serviceCC.cardNumberStringFormatAfter != '' && validatorCCNumber.isCardNumberValid(serviceCC.cardNumberStringFormatAfter) ) {
+
+                // console.log(element);
+                // console.log('isValid');
+                element.focus();
+                //
+                // console.log(cardNumberString);
+                // console.log(cardLengthMin);
+                // console.log(cardLengthMax);
+            }
+
+
+        };
+
+
 
 
         // var _init = function(value) {
@@ -759,8 +794,8 @@ var splitFormatBeforetemp = serviceCC.cardNumberStringFormatBefore;
 
                     var tempStringAfterDebut = newTempStringAfter.substring(0, (parseInt(startB) - 1));
                     var tempStringAfterFin = newTempStringAfter.substring((parseInt(startB)), newTempStringAfter.length);
-                    console.log(tempStringAfterDebut);
-                    console.log(tempStringAfterFin);
+                    // console.log(tempStringAfterDebut);
+                    // console.log(tempStringAfterFin);
                     newTempStringAfter = tempStringAfterDebut + "" + tempStringAfterFin;
 
                     startA = startA - 1;
@@ -921,8 +956,8 @@ var startAtemp = startA;
 
 
 
-            console.log("tempStringAfter");
-            console.log(tempStringAfter);
+            // console.log("tempStringAfter");
+            // console.log(tempStringAfter);
             // alert(tempStringAfter);
 
 // formatage du numero
@@ -993,7 +1028,7 @@ var startAtemp = startA;
                 serviceCC.cardNumberStringAfter = tempStringAfter;
             }
             else {
-                serviceCC.cardNumberStringAfter = serviceCC.cardNumberStringBefore;
+                serviceCC.cardNumberStringAfter = serviceCC.cardNumberStringUnformatedBefore;
                 // realCursorPositionInNumberAfter = realCursorPositionInNumberBefore;
                 startA = startB;
             }
@@ -1093,7 +1128,7 @@ var tempForStringAfter = "";
 
             // var deltaCursorAfterFormat = 0;
             var numberSpaceBeforeStartFormated= 0;
-            for (var nb=0;nb<serviceCC.cardNumberStringAfter.length;nb++) {
+            for (var nb=0; nb< serviceCC.cardNumberStringAfter.length;nb++) {
             //
             //
                 if (positionSpaceArray != undefined && positionSpaceArray[nb]===1) {
@@ -1178,6 +1213,15 @@ var tempForStringAfter = "";
             // alert(newCursorPosition);
             // _setCaretPosition(document.getElementById(_idInputMapper.cardNumber), realCursorPositionInNumberFormatAfter);
             _setCaretPosition(document.getElementById(_idInputMapper.cardNumber), startAFormat);
+
+
+
+            // focus next input
+
+            _inputCCNumberFinish( document.getElementById(_idInputMapper.cardHolder), serviceCC);
+
+
+
             // document.getElementById(_idInputMapper.cardNumber).setSelectionRange(start, end);
 
 
@@ -1261,25 +1305,7 @@ var tempForStringAfter = "";
 //
 //     }
 
-    var _inputCCFinish = function(element, cardNumberString, cardLengthMin, cardLengthMax) {
 
-
-        var validatorCC = new _validatorCC([]);
-
-
-        if ( cardNumberString != '' && validatorCC.isValid(cardNumberString) ) {
-
-            // console.log(element);
-            // console.log('isValid');
-            element.focus();
-            //
-            // console.log(cardNumberString);
-            // console.log(cardLengthMin);
-            // console.log(cardLengthMax);
-        }
-
-
-    }
 
 
 
