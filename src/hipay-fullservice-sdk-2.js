@@ -714,8 +714,8 @@ var HiPay = (function (HiPay) {
 
             var getStartEndCursor = _getSelection(document.getElementById(_idInputMapper.cardNumber));
 
-            var cursorPositionEndFormatBefore = getSelection.end;
-            alert(cursorPositionFormatBefore + " " + getSelection.start + " " + getSelection.end);
+            var cursorPositionEndFormatBefore = getStartEndCursor.end;
+            // alert(cursorPositionFormatBefore + " " + getSelection.start + " " + getSelection.end);
 
 
 
@@ -733,7 +733,7 @@ var deltaPosFormatBefore = splitSubString.length - 1;
             var splitSubStringEnd = subStringEnd.split(' ');
             var deltaPosEndFormatBefore = splitSubStringEnd.length - 1;
             var realCursorEndPositionInNumberBefore =  cursorPositionEndFormatBefore - deltaPosEndFormatBefore;
-
+// alert(cursorPositionEndFormatBefore + " " + deltaPosEndFormatBefore);
 
 
             // serviceCC.cardNumberStringFormatAfter = serviceCC.cardNumberStringBefore + serviceCC.lastCharString;
@@ -743,28 +743,44 @@ var deltaPosFormatBefore = splitSubString.length - 1;
 
             var realCursorPositionInNumberAfter = realCursorPositionInNumberBefore;
             var realCursorEndPositionInNumberAfter = realCursorEndPositionInNumberBefore;
-            for (var nbBefore = 0; nbBefore <= serviceCC.cardNumberStringBefore.length;nbBefore++ ) {
+
+
+            var cleanCardNumberStringBefore = serviceCC.cardNumberStringBefore;
+            // alert("pos" + realCursorPositionInNumberAfter + " " + realCursorEndPositionInNumberAfter);
+            if (realCursorPositionInNumberAfter >= 0 && realCursorEndPositionInNumberAfter > 0) {
+
+                cleanCardNumberStringBefore = cleanCardNumberStringBefore.substring(0,realCursorPositionInNumberAfter) + cleanCardNumberStringBefore.substring(realCursorEndPositionInNumberAfter, cleanCardNumberStringBefore.length)
+                realCursorPositionInNumberAfter = realCursorPositionInNumberBefore;
+                // alert("cleanCardNumberStringBefore" + cleanCardNumberStringBefore);
+            }
+
+            for (var nbBefore = 0; nbBefore <= cleanCardNumberStringBefore;nbBefore++ ) {
 
                 if (nbBefore == realCursorPositionInNumberBefore) {
                     // alert("start " + start);
                     // alert(start);
 
-                    if (charCode == 8) {
-                        if (realCursorPositionInNumberBefore > 0) {
-
-                            tempStringAfter = tempStringAfter.substring(0,realCursorPositionInNumberAfter - 1) + tempStringAfter.substring(realCursorPositionInNumberAfter, tempStringAfter.length)
-                            realCursorPositionInNumberAfter = realCursorPositionInNumberBefore - 1;
-
-
-
-
-
-
-                        }
-                    } else {
+                    // if (charCode == 8) {
+                    //     if (realCursorPositionInNumberBefore > 0) {
+                    //         if (realCursorPositionInNumberAfter > 0 && cursorPositionEndFormatBefore > 0) {
+                    //             alert(realCursorPositionInNumberAfter + " " + cursorPositionEndFormatBefore);
+                    //             tempStringAfter = tempStringAfter.substring(0,realCursorPositionInNumberAfter) + tempStringAfter.substring(cursorPositionEndFormatBefore, tempStringAfter.length)
+                    //             realCursorPositionInNumberAfter = realCursorPositionInNumberBefore;
+                    //         } else {
+                    //             // alert(realCursorPositionInNumberAfter + " " + cursorPositionEndFormatBefore);
+                    //             tempStringAfter = tempStringAfter.substring(0, realCursorPositionInNumberAfter - 1) + tempStringAfter.substring(realCursorPositionInNumberAfter, tempStringAfter.length)
+                    //             realCursorPositionInNumberAfter = realCursorPositionInNumberBefore - 1;
+                    //         }
+                    //
+                    //
+                    //
+                    //
+                    //
+                    //     }
+                    // } else {
                         tempStringAfter += serviceCC.lastCharString;
                         realCursorPositionInNumberAfter = realCursorPositionInNumberBefore + 1;
-                    }
+                    // }
 
 
                 }
@@ -772,7 +788,7 @@ var deltaPosFormatBefore = splitSubString.length - 1;
                 //
                 // } else {
                 if (serviceCC.cardNumberStringBefore.charAt(nbBefore) != ' ') {
-                    tempStringAfter += serviceCC.cardNumberStringBefore.charAt(nbBefore);
+                    tempStringAfter += cleanCardNumberStringBefore.charAt(nbBefore);
                 }
                 // }
                 // tempStringAfter += 0;
@@ -866,7 +882,7 @@ var deltaPosFormatBefore = splitSubString.length - 1;
                 }
                 /* ./ range */
             }
-            alert(tempStringAfter +  serviceCC.cardNumberStringAfter + serviceCC.cardNumberStringBefore + serviceCC.cardLengthMax);
+            // alert(tempStringAfter +  serviceCC.cardNumberStringAfter + serviceCC.cardNumberStringBefore + serviceCC.cardLengthMax);
 
             if (serviceCC.cardLengthMax == null || tempStringAfter.length <= serviceCC.cardLengthMax) {
                 serviceCC.cardNumberStringAfter = tempStringAfter;
