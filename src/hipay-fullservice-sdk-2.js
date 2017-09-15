@@ -595,14 +595,22 @@ var HiPay = (function (HiPay) {
             console.log('before finish 2');
             var validatorCreditCardNumber = serviceCreditCard.validatorCreditCardNumber([]);
             // alert(validatorCreditCardNumber.isCardNumberValid());
-            console.log(serviceCreditCard.cardLengthMax + " " + serviceCreditCard.cardNumberStringFormatAfter + " " + validatorCreditCardNumber.isCardNumberValid());
+
+            document.getElementById(_idInputMapper.cardNumber).setAttribute('style', 'color:#005a94 !important');
+
             if ( serviceCreditCard.cardNumberStringFormatAfter != '' && validatorCreditCardNumber.isCardNumberValid() ) {
 
                 element.focus();
             } else {
-                // console.log(serviceCreditCard.cardLengthMax + " " + serviceCreditCard.cardNumberStringFormatAfter);
-                if (serviceCreditCard.cardLengthMax == serviceCreditCard.cardNumberStringFormatAfter && !validatorCreditCardNumber.isCardNumberValid(serviceCC)) {
-alert('error');
+               console.log(serviceCreditCard.cardLengthMax + " " + serviceCreditCard.cardNumberStringAfter.length + " " + validatorCreditCardNumber.isCardNumberValid());
+
+               // console.log(serviceCreditCard.cardLengthMax + " " + serviceCreditCard.cardNumberStringFormatAfter);
+                if (serviceCreditCard.cardLengthMax == serviceCreditCard.cardNumberStringAfter.length && !validatorCreditCardNumber.isCardNumberValid()) {
+// alert('error');
+                    document.bgColor = "#ff0000";
+                    // document.getElementById(_idInputMapper.cardNumber).value = 'toto';
+                    document.getElementById(_idInputMapper.cardNumber).setAttribute('style', 'color:#ff0000 !important');
+                    // document.getElementById(_idInputMapper.cardHolder).style.color = "#ff0000";
                 }
             }
         };
@@ -800,8 +808,8 @@ alert('error');
 
                     var tempStringAfterDebut = newTempStringAfter.substring(0, (parseInt(startB) - 1));
                     var tempStringAfterFin = newTempStringAfter.substring((parseInt(startB)), newTempStringAfter.length);
-                    // console.log(tempStringAfterDebut);
-                    // console.log(tempStringAfterFin);
+                    // dump(tempStringAfterDebut);
+                    // dump(tempStringAfterFin);
                     newTempStringAfter = tempStringAfterDebut + "" + tempStringAfterFin;
 
                     startA = startA - 1;
@@ -1143,7 +1151,7 @@ alert('error');
 
         // @todo changer le nom HiPay.ValidationError
         // var validatorCreditCardNumber = new _validatorCreditCardNumber(errorCollection);
-      
+
         var validatorCreditCardNumber = _instanceServiceCredirCard.validatorCreditCardNumber(errorCollection);
         if ( ! validatorCreditCardNumber.isCardNumberValid(params['card_number']) ) {
 
