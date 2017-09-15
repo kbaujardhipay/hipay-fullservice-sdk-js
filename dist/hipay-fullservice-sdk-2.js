@@ -8763,21 +8763,40 @@ var HiPay = (function (HiPay) {
     var _instanceServiceCredirCard = null;
 
 
+    // var _changeColorInput(element, color) {
+    //
+    //     // element.setAttribute('style', 'color:#ff0000 !important');
+    //     //
+    //     // element.className += " formInvalid";
+    //
+    // }
+
     var _serviceCreditCard = function(charCode) {
 
         var serviceCreditCard = {};
 
-        var toto = "titi";
+
         // var _inputCCFinish = function(element, cardNumberString, cardLengthMin, cardLengthMax) {
         var _inputCCNumberFinish = function(element) {
             console.log('before finish 2');
+            console.log("serviceCreditCard.idType");
+            console.log(serviceCreditCard.idType);
             var validatorCreditCardNumber = serviceCreditCard.validatorCreditCardNumber([]);
             // alert(validatorCreditCardNumber.isCardNumberValid());
 
             document.getElementById(_idInputMapper.cardNumber).setAttribute('style', 'color:#005a94 !important');
-
+            document.getElementById(_idInputMapper.cvv).setAttribute('style', 'color:#005a94 !important');
+            document.getElementById(_idInputMapper.cvv).disabled = false;
             if ( serviceCreditCard.cardNumberStringFormatAfter != '' && validatorCreditCardNumber.isCardNumberValid() ) {
 
+                // if maestro cvc disabled
+
+                if (serviceCreditCard.idType == 'card_maestro_info') {
+                    document.getElementById(_idInputMapper.cvv).value = "";
+                    document.getElementById(_idInputMapper.cvv).setAttribute('style', 'color:#333333 !important');
+                    document.getElementById(_idInputMapper.cvv).disabled = true;
+
+                }
                 element.focus();
             } else {
                console.log(serviceCreditCard.cardLengthMax + " " + serviceCreditCard.cardNumberStringAfter.length + " " + validatorCreditCardNumber.isCardNumberValid());
@@ -9036,7 +9055,7 @@ var HiPay = (function (HiPay) {
             serviceCreditCard.cardLengthMin = 0;
             serviceCreditCard.cardLengthMax = null;
             serviceCreditCard.cardFormatArray = [];
-
+            serviceCreditCard.idType = null;
 
 
             for (var propt in _cardFormatDefinition) {
@@ -9052,7 +9071,7 @@ var HiPay = (function (HiPay) {
                                 // console.log(cardNumberString.indexOf(startNumber));
                                 // document.getElementById(_idInputMapper.cardType).innerHTML = propt;
 
-
+                                serviceCreditCard.idType = propt;
                                 document.getElementById(_idInputMapper.cardType).innerHTML = '<img width="28px" src="./assets/type/' + _cardImg[propt] + '">';
                                 serviceCreditCard.cardFormatArray = _cardFormatDefinition[propt]["format"];
                                 /* length */
@@ -9075,6 +9094,7 @@ var HiPay = (function (HiPay) {
                         // }
                         if (tempStringAfter.indexOf(_cardFormatDefinition[propt]["ranges"][i]["first"]) === 0) {
                             // document.getElementById(_idInputMapper.cardType).innerHTML = propt;
+                            serviceCreditCard.idType = propt;
                             document.getElementById(_idInputMapper.cardType).innerHTML = '<img width="28px" src="./assets/type/' + _cardImg[propt] + '">';
 
 
