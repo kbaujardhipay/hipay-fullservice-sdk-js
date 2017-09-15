@@ -8529,37 +8529,7 @@ var HiPay = (function (HiPay) {
     };
 
 
-    /**
-     *
-     * @param errorCollection
-     * @returns {{}}
-     * @constructor
-     */
-//     var ValidatorExpiryDate = function (errorCollection) {
-//
-//         var validatorExpiryDate = {};
-//         validatorExpiryDate.errorCollection = errorCollection;
-//
-//         validatorExpiryDate.isValid = function(month,year) {
-//
-//             // Return today's date and time
-//             var currentTime = new Date()
-//
-// // returns the month (from 0 to 11)
-//             var currentMonth = currentTime.getMonth() + 1
-//
-// // returns the year (four digits)
-//             var currentYear = currentTime.getFullYear()
-//
-//             if(year == currentYear && month < currentMonth || year < currentYear) {
-//                 validatorExpiryDate.errorCollection.push(new _InvalidParametersError(50, 'expiry card invalid'));
-//             }
-//         }
-//
-//         return validatorExpiryDate;
-//
-//
-//     };
+
 
         // HiPay.ValidationError
 
@@ -8588,14 +8558,14 @@ var HiPay = (function (HiPay) {
             validatorCC.errorCollection = errorCollection || [];
 
 
-            validatorCC.isValid = function(serviceCC) {
-                var validatorCCNumber = new _validatorCCNumber([],serviceCC);
-                validatorCCNumber.isCardNumberValid
-
-
-
-                return _isCardNumberValid(value);
-            }
+            // validatorCC.isValid = function(serviceCC) {
+            //     var validatorCCNumber = new _validatorCCNumber([],serviceCC);
+            //     validatorCCNumber.isCardNumberValid
+            //
+            //
+            //
+            //     return _isCardNumberValid(value);
+            // }
 
 
             // var _init = function(value) {
@@ -8790,128 +8760,183 @@ var HiPay = (function (HiPay) {
     }
 
 
-    var _validatorCCNumber = function(errorArray,serviceCC) {
-        var validatorCCNumber = {};
-        validatorCCNumber.isCardNumberValid = function (serviceCC) {
-
-            var value = serviceCC.cardNumberStringFormatAfter;
-            // console.log("_isCardNumberValid");
-            // console.log("_isLengthValid(value)");
-            // console.log(_isLengthValid(value));
-
-            value = value.split(' ').join('');
+    var _instanceServiceCredirCard = null;
 
 
-            // _init(value);
+    var _serviceCreditCard = function(charCode) {
 
-            if (_isTypeValid(serviceCC) === false) {
-                return false;
-                alert('ok');
+        var serviceCreditCard = {};
+
+        var toto = "titi";
+        // var _inputCCFinish = function(element, cardNumberString, cardLengthMin, cardLengthMax) {
+        var _inputCCNumberFinish = function(element) {
+            console.log('before finish 2');
+            var validatorCreditCardNumber = serviceCreditCard.validatorCreditCardNumber([]);
+            // alert(validatorCreditCardNumber.isCardNumberValid());
+            console.log(serviceCreditCard.cardLengthMax + " " + serviceCreditCard.cardNumberStringFormatAfter + " " + validatorCreditCardNumber.isCardNumberValid());
+            if ( serviceCreditCard.cardNumberStringFormatAfter != '' && validatorCreditCardNumber.isCardNumberValid() ) {
+
+                element.focus();
+            } else {
+                // console.log(serviceCreditCard.cardLengthMax + " " + serviceCreditCard.cardNumberStringFormatAfter);
+                if (serviceCreditCard.cardLengthMax == serviceCreditCard.cardNumberStringFormatAfter && !validatorCreditCardNumber.isCardNumberValid(serviceCC)) {
+alert('error');
+                }
             }
+        };
 
 
-            if (/[^0-9-\s]+/.test(value)) return false;
+        serviceCreditCard.validatorCreditCardNumber = function(errorArray) {
+            var validatorCreditCardNumber = {};
+            validatorCreditCardNumber.errorCollection = errorArray || [];
+            validatorCreditCardNumber.isCardNumberValid = function () {
+
+                // var value = serviceCreditCard.cardNumberStringFormatAfter;
+                // console.log("_isCardNumberValid");
+                // console.log("_isLengthValid(value)");
+                // console.log(_isLengthValid(value));
+
+                var creditCardNumberUnformated = serviceCreditCard.cardNumberStringAfter.split(' ').join('');
+
+                // value = value.split(' ').join('');
 
 
+                // _init(value);
 
-            if (_isLengthValid(value) === false) {
-                // console.log("false length");
-                return false;
-            }
-
-            return _isLuhnValid(value);
-        }
-
-
-        var _isTypeValid =function(serviceCC) {
-            if (serviceCC.cardFormatArray == undefined || serviceCC.cardFormatArray == "") {
-                return false;
-            }
-        }
-
-        var _isLengthValid = function (value) {
-
-            // console.log("test length start");
-            // console.log(value);
-            // console.log('_cardLengthMax');
-            // console.log("value.length");
-            // console.log(value);
-            // console.log(value.length);
-            // console.log("_cardLengthMin");
-            // console.log(_cardLengthMin);
-            // console.log("_cardLengthMax");
-            // console.log(_cardLengthMax);
-            // console.log(value.length > _cardLengthMax);
-            // console.log("test length end");
-
-            if (value.length < serviceCC.cardLengthMin || (serviceCC.cardLengthMax != null && value.length > serviceCC.cardLengthMax) ) {
-                return false;
-            }
-            return true;
-
-
-        }
-
-        var _isLuhnValid = function (value) {
-            // The Luhn Algorithm. It's so pretty.
-            var nCheck = 0, nDigit = 0, bEven = false;
-            value = value.replace(/\D/g, "");
-
-            for (var n = value.length - 1; n >= 0; n--) {
-                var cDigit = value.charAt(n),
-                    nDigit = parseInt(cDigit, 10);
-
-                if (bEven) {
-                    if ((nDigit *= 2) > 9) nDigit -= 9;
+                if (_isTypeValid(serviceCreditCard.cardFormatArray) === false) {
+                    return false;
+                    // alert('ok');
+                    console.log("false type");
                 }
 
-                nCheck += nDigit;
-                bEven = !bEven;
-            }
-            if (!(nCheck % 10) == 0) {
-                validatorCC.errorCollection.push(new _InvalidParametersError(409, 'Luhn invalid'));
-            }
-            return (nCheck % 10) == 0;
 
+                if (/[^0-9-\s]+/.test(creditCardNumberUnformated)) return false;
+
+
+
+                if (_isLengthValid(creditCardNumberUnformated) === false) {
+                    console.log("false length");
+                    return false;
+                }
+
+                if (_isLuhnValid(creditCardNumberUnformated) === false) {
+                    console.log("false luhn");
+                    return false;
+                }
+
+                return true;
+            }
+
+
+            var _isTypeValid =function(cardFormatArray) {
+                if (cardFormatArray == undefined || cardFormatArray == "") {
+                    return false;
+                }
+            }
+
+            var _isLengthValid = function (value) {
+
+                // console.log("test length start");
+                // console.log(value);
+                // console.log('_cardLengthMax');
+                // console.log("value.length");
+                // console.log(value);
+                // console.log(value.length);
+                // console.log("_cardLengthMin");
+                // console.log(_cardLengthMin);
+                // console.log("_cardLengthMax");
+                // console.log(_cardLengthMax);
+                // console.log(value.length > _cardLengthMax);
+                // console.log("test length end");
+
+                if (value.length < serviceCreditCard.cardLengthMin || (serviceCreditCard.cardLengthMax != null && value.length > serviceCreditCard.cardLengthMax) ) {
+                    return false;
+                }
+                return true;
+
+
+            }
+
+            var _isLuhnValid = function (value) {
+                // The Luhn Algorithm. It's so pretty.
+                var nCheck = 0, nDigit = 0, bEven = false;
+                value = value.replace(/\D/g, "");
+
+                for (var n = value.length - 1; n >= 0; n--) {
+                    var cDigit = value.charAt(n),
+                        nDigit = parseInt(cDigit, 10);
+
+                    if (bEven) {
+                        if ((nDigit *= 2) > 9) nDigit -= 9;
+                    }
+
+                    nCheck += nDigit;
+                    bEven = !bEven;
+                }
+                if (!(nCheck % 10) == 0) {
+                    validatorCreditCardNumber.errorCollection.push(new _InvalidParametersError(409, 'Luhn invalid'));
+                }
+                return (nCheck % 10) == 0;
+
+            };
+            return validatorCreditCardNumber;
         };
-        return validatorCCNumber;
+
+        /**
+         *
+         * @param errorCollection
+         * @returns {{}}
+         * @constructor
+         */
+        serviceCreditCard.validatorExpiryDate = function (errorCollection) {
+
+            var validatorExpiryDate = {};
+            validatorExpiryDate.errorCollection = errorCollection;
+
+            validatorExpiryDate.isValid = function(month,year) {
+
+                // Return today's date and time
+                var currentTime = new Date()
+
+    // returns the month (from 0 to 11)
+                var currentMonth = currentTime.getMonth() + 1
+
+    // returns the year (four digits)
+                var currentYear = currentTime.getFullYear()
+
+                if(year == currentYear && month < currentMonth || year < currentYear) {
+                    validatorExpiryDate.errorCollection.push(new _InvalidParametersError(50, 'expiry card invalid'));
+                }
+            }
+
+            return validatorExpiryDate;
+
+
     };
 
-    var _serviceCC = function(charCode) {
 
-        var serviceCC = {};
-
-        // var _inputCCFinish = function(element, cardNumberString, cardLengthMin, cardLengthMax) {
-        var _inputCCNumberFinish = function(element, serviceCC) {
-
-            var validatorCCNumber = new _validatorCCNumber([],serviceCC);
-
-            if ( serviceCC.cardNumberStringFormatAfter != '' && validatorCCNumber.isCardNumberValid(serviceCC) ) {
-                element.focus();
-            }
-        };
 
         // var _init = function(value) {
         (function(charCode){
 
-            serviceCC.lastCharCode = charCode;
+            serviceCreditCard.lastCharCode = charCode;
             if (charCode == 8 || charCode == 46) {
-                serviceCC.lastCharString = '';
+                serviceCreditCard.lastCharString = '';
             }
             else {
-                serviceCC.lastCharString = String.fromCharCode(charCode);
+                serviceCreditCard.lastCharString = String.fromCharCode(charCode);
             }
-            // console.log(serviceCC.lastCharString);
-            if (serviceCC.lastCharString === '') {
-                // alert(serviceCC.lastCharString);
+            // console.log(serviceCreditCard.lastCharString);
+            if (serviceCreditCard.lastCharString === '') {
+                // alert(serviceCreditCard.lastCharString);
             }
 
-            serviceCC.cardNumberStringFormatBefore = document.getElementById(_idInputMapper.cardNumber).value;
-            serviceCC.cardNumberStringFormatedBefore = document.getElementById(_idInputMapper.cardNumber).value;
+            serviceCreditCard.cardNumberStringFormatBefore = document.getElementById(_idInputMapper.cardNumber).value;
+            serviceCreditCard.cardNumberStringFormatedBefore = document.getElementById(_idInputMapper.cardNumber).value;
 
             //realposition cursor in number
-            var splitFormatBeforetemp = serviceCC.cardNumberStringFormatBefore;
-            serviceCC.cardNumberStringUnformatedBefore = splitFormatBeforetemp.split(' ').join('');
+            var splitFormatBeforetemp = serviceCreditCard.cardNumberStringFormatBefore;
+            serviceCreditCard.cardNumberStringUnformatedBefore = splitFormatBeforetemp.split(' ').join('');
 
             var getStartEndCursor = _getSelection(document.getElementById(_idInputMapper.cardNumber));
 
@@ -8922,11 +8947,11 @@ var HiPay = (function (HiPay) {
             // calcul des positions de curseur sans formatage :
             // si espace(s) entre debut et position curseur => on soustrait le nb d'espaces
 
-            var subStringStart =  serviceCC.cardNumberStringFormatedBefore.substr(0, startBFormat);
+            var subStringStart =  serviceCreditCard.cardNumberStringFormatedBefore.substr(0, startBFormat);
             var splitSubStringStart = subStringStart.split(' ');
             var nbSpaceStart = splitSubStringStart.length - 1;
 
-            var subStringEnd =  serviceCC.cardNumberStringFormatedBefore.substr(0, endBFormat);
+            var subStringEnd =  serviceCreditCard.cardNumberStringFormatedBefore.substr(0, endBFormat);
             var splitSubStringEnd = subStringEnd.split(' ');
             var nbSpaceEnd = splitSubStringEnd.length - 1;
 
@@ -8939,7 +8964,7 @@ var HiPay = (function (HiPay) {
 
             // string after
 
-            var newTempStringAfter = serviceCC.cardNumberStringUnformatedBefore;
+            var newTempStringAfter = serviceCreditCard.cardNumberStringUnformatedBefore;
 
             if (startB >= 0 && endB > 0 && startB < endB) {
 
@@ -8968,7 +8993,7 @@ var HiPay = (function (HiPay) {
                 endA = startA;
             }
 
-            
+
             var tempStringAfter = "";
 // alert(newTempStringAfter);
 
@@ -8981,24 +9006,9 @@ var HiPay = (function (HiPay) {
                     // alert(start);
 
                     if (charCode == 8) {
-                        // if (realCursorPositionInNumberBefore > 0) {
-                        //         if (realCursorPositionInNumberAfter > 0 && cursorPositionEndFormatBefore > 0) {
-                        //             alert(realCursorPositionInNumberAfter + " " + cursorPositionEndFormatBefore);
-                        //             tempStringAfter = tempStringAfter.substring(0,realCursorPositionInNumberAfter) + tempStringAfter.substring(cursorPositionEndFormatBefore, tempStringAfter.length)
-                        //             realCursorPositionInNumberAfter = realCursorPositionInNumberBefore;
-                        //         } else {
-                        //             // alert(realCursorPositionInNumberAfter + " " + cursorPositionEndFormatBefore);
-                        //             tempStringAfter = tempStringAfter.substring(0, realCursorPositionInNumberAfter - 1) + tempStringAfter.substring(realCursorPositionInNumberAfter, tempStringAfter.length)
-                        //             realCursorPositionInNumberAfter = realCursorPositionInNumberBefore - 1;
-                        //         }
-                        //
-                        //
-                        //
-                        //
-                        //
-                        //     }
+
                     } else {
-                        tempStringAfter += serviceCC.lastCharString;
+                        tempStringAfter += serviceCreditCard.lastCharString;
                         // realCursorPositionInNumberAfter = realCursorPositionInNumberBefore + 1;
                         startAtemp = startAtemp + 1;
 
@@ -9007,55 +9017,18 @@ var HiPay = (function (HiPay) {
 
 
                 }
-                // if (nbBefore >= start && nbBefore < end) {
-                //
-                // } else {
-                // if (serviceCC.cardNumberStringBefore.charAt(nbBefore) != ' ') {
+
                 tempStringAfter += newTempStringAfter.charAt(nbBefore);
-                // }
-                // }
-                // tempStringAfter += 0;
+
             }
             startA = startAtemp;
-            // alert("positionBefore" + realCursorPositionInNumberBefore + "positionAfter" + realCursorPositionInNumberAfter + "positionAfter" + tempStringAfter);
 
-
-            // for (var nbBefore = 0; nbBefore <= serviceCC.cardNumberStringFormatBefore.length;nbBefore++ ) {
-            //     if (nbBefore == cursorPosition) {
-            //         // alert("start " + start);
-            //         // alert(start);
-            //         tempStringAfter += serviceCC.lastCharString;
-            //         var newCursorPosition = cursorPosition + 1;
-            //
-            //
-            //     }
-            //     if (nbBefore >= start && nbBefore < end) {
-            //
-            //     } else {
-            //         if (serviceCC.cardNumberStringFormatBefore.charAt(nbBefore) != ' ') {
-            //             tempStringAfter += serviceCC.cardNumberStringFormatBefore.charAt(nbBefore);
-            //         }
-            //     }
-            //     // tempStringAfter += 0;
-            // }
-            // var pos = start + 1;
-
-
-            // alert("tempStringAfter " + tempStringAfter);
-            // var tempStringAfter = serviceCC.cardNumberStringBefore + serviceCC.cardNumberStringAfter.charAt(j);
-            // alert(serviceCC.cardLengthMax);
-
-
-
-            // console.log("tempStringAfter");
-            // console.log(tempStringAfter);
-            // alert(tempStringAfter);
 
 // formatage du numero
 
-            serviceCC.cardLengthMin = 0;
-            serviceCC.cardLengthMax = null;
-            serviceCC.cardFormatArray = [];
+            serviceCreditCard.cardLengthMin = 0;
+            serviceCreditCard.cardLengthMax = null;
+            serviceCreditCard.cardFormatArray = [];
 
 
 // alert(tempStringAfter);
@@ -9074,11 +9047,11 @@ var HiPay = (function (HiPay) {
 
 
                                 document.getElementById(_idInputMapper.cardType).innerHTML = '<img width="28px" src="./assets/type/' + _cardImg[propt] + '">';
-                                serviceCC.cardFormatArray = _cardFormatDefinition[propt]["format"];
+                                serviceCreditCard.cardFormatArray = _cardFormatDefinition[propt]["format"];
                                 /* length */
-                                serviceCC.cardLengthMin = serviceCC.cardLengthMax = _cardFormatDefinition[propt]["lengths"]["length"];
+                                serviceCreditCard.cardLengthMin = serviceCreditCard.cardLengthMax = _cardFormatDefinition[propt]["lengths"]["length"];
                                 if (_cardFormatDefinition[propt]["lengths"]["variable"] != null) {
-                                    serviceCC.cardLengthMax = serviceCC.cardLengthMin + _cardFormatDefinition[propt]["lengths"]["variable"];
+                                    serviceCreditCard.cardLengthMax = serviceCreditCard.cardLengthMin + _cardFormatDefinition[propt]["lengths"]["variable"];
                                 }
                                 /* ./ length */
 
@@ -9099,11 +9072,11 @@ var HiPay = (function (HiPay) {
 
 
 
-                            serviceCC.cardFormatArray = _cardFormatDefinition[propt]["format"];
+                            serviceCreditCard.cardFormatArray = _cardFormatDefinition[propt]["format"];
                             /* length */
-                            serviceCC.cardLengthMin = serviceCC.cardLengthMax = _cardFormatDefinition[propt]["lengths"]["length"];
+                            serviceCreditCard.cardLengthMin = serviceCreditCard.cardLengthMax = _cardFormatDefinition[propt]["lengths"]["length"];
                             if (_cardFormatDefinition[propt]["lengths"]["variable"] != null) {
-                                serviceCC.cardLengthMax = serviceCC.cardLengthMin + _cardFormatDefinition[propt]["lengths"]["variable"];
+                                serviceCreditCard.cardLengthMax = serviceCreditCard.cardLengthMin + _cardFormatDefinition[propt]["lengths"]["variable"];
                             }
 
                             /* ./ length */
@@ -9113,113 +9086,40 @@ var HiPay = (function (HiPay) {
                 }
                 /* ./ range */
             }
-            // alert(tempStringAfter +  serviceCC.cardNumberStringAfter + serviceCC.cardNumberStringBefore + serviceCC.cardLengthMax);
+            // alert(tempStringAfter +  serviceCreditCard.cardNumberStringAfter + serviceCreditCard.cardNumberStringBefore + serviceCreditCard.cardLengthMax);
 
-            if (serviceCC.cardLengthMax == null || tempStringAfter.length <= serviceCC.cardLengthMax) {
-                serviceCC.cardNumberStringAfter = tempStringAfter;
+            if (serviceCreditCard.cardLengthMax == null || tempStringAfter.length <= serviceCreditCard.cardLengthMax) {
+                serviceCreditCard.cardNumberStringAfter = tempStringAfter;
             }
             else {
-                serviceCC.cardNumberStringAfter = serviceCC.cardNumberStringUnformatedBefore;
+                serviceCreditCard.cardNumberStringAfter = serviceCreditCard.cardNumberStringUnformatedBefore;
                 // realCursorPositionInNumberAfter = realCursorPositionInNumberBefore;
                 startA = startB;
             }
-// alert(serviceCC.cardNumberStringAfter);
-
-            /* */
-
-            // alert(_doGetCaretPosition(document.getElementById(_idInputMapper.cardNumber)));
-            // var cursorPosition = _doGetCaretPosition(document.getElementById(_idInputMapper.cardNumber));
-
-            // var start = document.getElementById(_idInputMapper.cardNumber).selectionStart,
-            //     end = document.getElementById(_idInputMapper.cardNumber).selectionEnd;
 
 
-            // if (end > 3) {
-            //     alert(start + " " + end);
-            // }
-            // console.log("start");
-            // console.log(start);
-            // console.log("end");
-            // console.log(end);
-            // alert(cursorPosition);
-
-            // alert(serviceCC.cardLengthMax + serviceCC.cardNumberStringAfter);
-            // var start = 0;
-
-            // console.log("serviceCC.cardNumberStringFormatBefore");
-            // console.log(serviceCC.cardNumberStringFormatBefore);
-
-            // var position = target.selectionStart; // Capture initial position
-            // position = target.selectionStart; // Capture initial position
             var numberFormatTotal = 0;
-// serviceCC.cardNumberStringFormatAfter = '';
+// serviceCreditCard.cardNumberStringFormatAfter = '';
 
             var tempForStringAfter = "";
-            if ( serviceCC.cardFormatArray.length > 0) {
+            if ( serviceCreditCard.cardFormatArray.length > 0) {
                 var positionSpaceArray = [];
                 var startFormat = 0;
-                for (var i = 0; i < serviceCC.cardFormatArray.length; i++) {
+                for (var i = 0; i < serviceCreditCard.cardFormatArray.length; i++) {
 
 
-                    positionSpaceArray[(startFormat + serviceCC.cardFormatArray[i])] = 1;
-                    startFormat += serviceCC.cardFormatArray[i];
-                    // regex = regex + '(.{' + format[i]+ '})?';
-                    // regex = regex + '(.{' + format[i]+ '})';
-                    // newFormat = newFormat + '$'+(i+1)+ ' ';
-                    // numberFormatTotal = numberFormatTotal + serviceCC.cardFormatArray[i];
+                    positionSpaceArray[(startFormat + serviceCreditCard.cardFormatArray[i])] = 1;
+                    startFormat += serviceCreditCard.cardFormatArray[i];
 
-                    // var end = Math.min(numberFormatTotal, serviceCC.cardNumberStringAfter.length);
-
-                    // for (j = start; j < serviceCC.cardFormatArray[i]; j++) {
-                    //
-                    //     // if (cardNumberString.length<numberFormatTotal) {
-                    //     serviceCC.cardNumberStringFormatAfter += serviceCC.cardNumberStringAfter.charAt(j);
-                    //     // }
-                    // }
-
-                    // if (serviceCC.cardNumberStringAfter.length >= numberFormatTotal) {
-                    //     serviceCC.cardNumberStringFormatAfter += ' ';
-                    //     //     start = format[i];
-                    // }
-                    // start = numberFormatTotal;
-
-                    // if (serviceCC.cardNumberStringAfter.length < numberFormatTotal) {
-                    //     break;
-                    // }
-                    // console.log(cardNumberString.length);
-                    // console.log(numberFormatTotal);
-
-                    // if (cardNumberString.length == format[i]) {
-                    //     newCardNumber += ' ';
-                    //     start = format[i];
-                    // }
-
-                    // _cardFormatDefinition[propt]["format"][i]
                 }
 
-                // for (j = start; j < serviceCC.cardNumberStringAfter.le.length; j++) {
-                //
-                //     if (j < cardLengthMax) {
-                //         newCardNumber += cardNumberString.charAt(j);
-                //     }
-                // }
-            } else {
-                // serviceCC.cardNumberStringFormatAfter = serviceCC.cardNumberStringFormatBefore;
-                // serviceCC.cardNumberStringFormatAfter = serviceCC.cardNumberStringAfter;
-                // serviceCC.cardNumberStringFormatAfter = serviceCC.cardNumberStringFormatBefore;
+
             }
-
-            // console.log("positionSpaceArray");
-            // console.log(positionSpaceArray);
-// alert(serviceCC.cardNumberStringAfter);
-//             var deltaPos = 0;
-//             var realPos = 0;
-
 
 
             // var deltaCursorAfterFormat = 0;
             var numberSpaceBeforeStartFormated= 0;
-            for (var nb=0; nb< serviceCC.cardNumberStringAfter.length;nb++) {
+            for (var nb=0; nb< serviceCreditCard.cardNumberStringAfter.length;nb++) {
                 //
                 //
                 if (positionSpaceArray != undefined && positionSpaceArray[nb]===1) {
@@ -9228,110 +9128,29 @@ var HiPay = (function (HiPay) {
                         numberSpaceBeforeStartFormated +=1;
                     }
                     tempForStringAfter += ' ';
-                    //         // if (nb < realCursorPositionInNumberAfter) {
-                    //         //     // deltaCursorAfterFormat +=1;
-                    //         // }
-                    //         serviceCC.cardNumberStringFormatAfter += ' ';
 
-                    //         // deltaPos += 1;
-                    //         // realPos = nb + deltaPos;
-                    //         // alert("curentPos" + cursorPosition + "pos" + newCursorPosition + "nb" + nb + "realpos" + realPos);
-                    //         //
-                    //         // if (newCursorPosition == nb + 1) {
-                    //         //     newCursorPosition = newCursorPosition + 1;
-                    //         // } else {
-                    //         //     if (nb < newCursorPosition)
-                    //         //     deltaPos +=1;
-                    //         // }
-                    //         // pos = pos + 1;
-                    //
+
                 }
-                //
-                //     serviceCC.cardNumberStringFormatAfter += serviceCC.cardNumberStringAfter.charAt(nb);
-                tempForStringAfter += serviceCC.cardNumberStringAfter.charAt(nb);
+               tempForStringAfter += serviceCreditCard.cardNumberStringAfter.charAt(nb);
             }
 
-            serviceCC.cardNumberStringFormatAfter = tempForStringAfter;
+            serviceCreditCard.cardNumberStringFormatAfter = tempForStringAfter;
 
             var startAFormat = startA + numberSpaceBeforeStartFormated;
 
-            // tempForStringAfter
-            // calcul new position cursor after formated
-            // var subStringStart =  tempForStringAfter.substr(0, startBFormat);
-            // var splitSubStringStart = subStringStart.split(' ');
-            // var nbSpaceStart = splitSubStringStart.length - 1;
+            document.getElementById(_idInputMapper.cardNumber).value = serviceCreditCard.cardNumberStringFormatAfter;
+           _setCaretPosition(document.getElementById(_idInputMapper.cardNumber), startAFormat);
 
-
-            //
-            // realCursorPositionInNumberAfter
-
-// var valueFormatAfter = serviceCC.cardNumberStringFormatAfter;
-            // var subStringAfter =  valueFormatAfter.substr(0, realCursorPositionInNumberAfter + deltaCursorAfterFormat);
-            // alert(valueFormatAfter + "subStringAfter" + subStringAfter);
-            // var splitSubStringAfter = subStringAfter.split(' ');
-            // alert(splitSubStringAfter.length);
-
-            // var deltaPosFormatAfter = splitSubStringAfter.length - 1;
-            // var realCursorPositionInNumberFormatAfter = realCursorPositionInNumberAfter + deltaPosFormatAfter;
-            // var realCursorPositionInNumberFormatAfter = realCursorPositionInNumberAfter + deltaCursorAfterFormat;
-            // alert(realCursorPositionInNumberFormatAfter);
-
-            // newCursorPosition += deltaPos;
-
-            // alert(serviceCC.cardNumberStringFormatAfter + " " + tempStringAfter + " " + tempStringAfter.length + " " + serviceCC.cardLengthMin + " " +  serviceCC.cardLengthMax);
-
-
-            // console.log("positionSpaceArray");
-            // console.log(positionSpaceArray);
-            // console.log(serviceCC.cardFormatArray);
-            //
-            // console.log("serviceCC.cardNumberStringAfter");
-            // console.log(serviceCC.cardNumberStringAfter);
-
-            // serviceCC.cardNumberStringFormatAfter
-
-
-// console.log("serviceCC.cardNumberStringFormatAfter okokokokokok");
-//             console.log("serviceCC.cardNumberStringFormatAfter");
-//             console.log(serviceCC.cardNumberStringFormatAfter);
-
-            // var start = document.getElementById(_idInputMapper.cardNumber).selectionStart,
-            //     end = document.getElementById(_idInputMapper.cardNumber).selectionEnd;
-            // document.getElementById(_idInputMapper.cardNumber).value = '';
-            document.getElementById(_idInputMapper.cardNumber).value = serviceCC.cardNumberStringFormatAfter;
-            // document.getElementById(_idInputMapper.cardNumber).value = serviceCC.cardNumberStringFormatAfter;
-            // alert(start);
-            // alert(newCursorPosition);
-            // _setCaretPosition(document.getElementById(_idInputMapper.cardNumber), realCursorPositionInNumberFormatAfter);
-            _setCaretPosition(document.getElementById(_idInputMapper.cardNumber), startAFormat);
+            // focus next input + change color input on error
+            console.log('before finish 1');
+            _inputCCNumberFinish( document.getElementById(_idInputMapper.cardHolder), serviceCreditCard);
 
 
 
-            // focus next input
 
-            _inputCCNumberFinish( document.getElementById(_idInputMapper.cardHolder), serviceCC);
-
-
-
-            // document.getElementById(_idInputMapper.cardNumber).setSelectionRange(start, end);
-
-
-            // _cardLengthMin = cardLengthMin;
-            // _cardLengthMax = cardLengthMax;
         })(charCode);
 
-//         serviceCC.formatCC = function() {
-// // alert(serviceCC.cardNumberStringFormatAfter);
-//             // var start = document.getElementById(_idInputMapper.cardNumber).selectionStart,
-//             //     end = document.getElementById(_idInputMapper.cardNumber).selectionEnd;
-//             // document.getElementById(_idInputMapper.cardNumber).value = serviceCC.cardNumberStringFormatAfter;
-//
-//
-//             // document.getElementById(_idInputMapper.cardNumber).setSelectionRange(start, end);
-//
-//         }
-
-        return serviceCC;
+        return serviceCreditCard;
         // this.validator = new _validatorCC(errorCollection);
     }
 
@@ -9355,7 +9174,7 @@ var HiPay = (function (HiPay) {
 //         // console.log(cardNumberString.length);
 //         document.getElementById(_idInputMapper.cardType).innerHTML = '';
 //
-//         serviceCC = serviceCC || _serviceCC();
+//         serviceCC = serviceCC || _serviceCreditCard();
 //
 //
 //         var start = document.getElementById(_idInputMapper.cardNumber).selectionStart,
@@ -9397,101 +9216,6 @@ var HiPay = (function (HiPay) {
 //     }
 
 
-
-
-
-//     var _formatDisplayNumber = function(cardNumberString, format, cardLengthMin, cardLengthMax) {
-//
-//         // if (!cardNumberString) {
-//         //     return false;
-//         // }
-//         // cardNumberString = cardNumberString.replace(" ","");
-//         cardNumberString = cardNumberString.split(' ').join('');
-//         console.log(cardNumberString);
-//         console.log(cardNumberString.length);
-//         var regex = "";
-//         var newFormat = "";
-//         var numberFormatTotal = 0;
-//
-//         // console.log('cardNumberString');
-//         // console.log(cardNumberString);
-//         var newCardNumber = '';
-//         // console.log('format');
-//         // console.log(format);
-//         var start = 0;
-//
-//         // var position = target.selectionStart; // Capture initial position
-//         // position = target.selectionStart; // Capture initial position
-//
-//         console.log(format);
-//         if (format.length > 0) {
-//             for (var i = 0; i < format.length; i++) {
-//
-//
-//                 // regex = regex + '(.{' + format[i]+ '})?';
-//                 // regex = regex + '(.{' + format[i]+ '})';
-//                 // newFormat = newFormat + '$'+(i+1)+ ' ';
-//                 numberFormatTotal = numberFormatTotal + format[i];
-//
-//                 var end = Math.min(numberFormatTotal, cardNumberString.length);
-//
-//                 for (j = start; j < end; j++) {
-//
-//                     // if (cardNumberString.length<numberFormatTotal) {
-//                     newCardNumber += cardNumberString.charAt(j);
-//                     // }
-//                 }
-//
-//                 if (cardNumberString.length >= numberFormatTotal) {
-//                     newCardNumber += ' ';
-//                     //     start = format[i];
-//                 }
-//                 start = numberFormatTotal;
-//
-//                 if (cardNumberString.length < numberFormatTotal) {
-//                     break;
-//                 }
-//                 // console.log(cardNumberString.length);
-//                 // console.log(numberFormatTotal);
-//
-//                 // if (cardNumberString.length == format[i]) {
-//                 //     newCardNumber += ' ';
-//                 //     start = format[i];
-//                 // }
-//
-//                 // _cardFormatDefinition[propt]["format"][i]
-//             }
-//
-//             for (j = start; j < cardNumberString.length; j++) {
-//
-//                 if (j < cardLengthMax) {
-//                     newCardNumber += cardNumberString.charAt(j);
-//                 }
-//             }
-//         } else {
-//             newCardNumber = cardNumberString;
-//         }
-//         console.log("newCardNumber");
-//         console.log(newCardNumber);
-//         // console.log(newFormat);
-//         // return cardNumberString.replace(/^(.{1})(.{2})/g, '$1 $2 ');
-//         // return cardNumberString.replace(/^regex/g, newFormat);
-//         // var expression = new RegExp(regex, 'g');
-//
-// // console.log(regex);
-// //         var v = cardNumberString.replace(/[^\dA-Z]/g, ''),
-// //             // reg = new RegExp(".{" + after + "}", "g");
-// //             reg = new RegExp(regex, "g");
-// //         return v.replace(reg, function(a) {
-// //             return a + ' ';
-// //         });
-//
-//         // return cardNumberString.replace(/^(.{4})(.{4})+/g, '$1 $2 $3 ');
-//         // return cardNumberString.replace(expression, newFormat);
-//         // return cardNumberString.replace(expression, newFormat);
-//         return newCardNumber;
-//     }
-
     HiPay.Form = {};
 
     var _callbackEventFormChange;
@@ -9502,34 +9226,19 @@ var HiPay = (function (HiPay) {
         _callbackEventFormChange = callback;
     };
 
-
-
-
     /* add listener on all input form */
     window.onload = function() {
 
-
-
         for(var propt in _idInputMapper){
-            // if (propt == 'cardNumber') {
-            //     alert(_idInputMapper[propt]);
-            //     _formatCC();
-            // }
 
             if (propt == 'cardNumber') {
 
-                // document.getElementById(_idInputMapper[propt]).addEventListener('keypress', function(e) {
-                //     // alert('toto');
-                //     document.getElementById(_idInputMapper.cardNumber).value = "";
-                //
-                //     e.preventDefault();
-                // });
                 document.getElementById(_idInputMapper[propt]).addEventListener('keydown', function (e) {
                     evt = e || window.event;
 
                     var charCode = evt.keyCode || evt.which;
                     if (charCode == 8 || charCode == 46) {
-                        var serviceCC = new _serviceCC(charCode);
+                        _instanceServiceCredirCard = new _serviceCreditCard(charCode);
                         evt.preventDefault();
                     } else {
                         // evt.preventDefault();
@@ -9548,19 +9257,9 @@ var HiPay = (function (HiPay) {
                     evt.preventDefault();
                     if (charCode >= 48 && charCode <= 57) {
                         /* is valid add char */
-                        var serviceCC = new _serviceCC(charCode);
+                        _instanceServiceCredirCard = new _serviceCreditCard(charCode);
                     }
 
-// console.log(serviceCC);
-                    // serviceCC.formatCC();
-
-// console.log(charCode);
-                    // console.log(serviceCC);
-
-
-                    // alert(charCode + charStr);
-
-                    // _formatCC(serviceCC);
                     _callbackEventFormChange();
                 });
             } else {
@@ -9581,9 +9280,6 @@ var HiPay = (function (HiPay) {
             card_holder: $('#input-name')[0].value,
             multi_use: '0'
         };
-
-        // console.info('_isValidCCForm(params)');
-        // console.info(_isValidCCForm(params).length);
 
         return _isValidCCForm(params).length === 0;
     }
@@ -9628,15 +9324,17 @@ var HiPay = (function (HiPay) {
         }
 
         // @todo changer le nom HiPay.ValidationError
-        var validatorCC = new _validatorCC(errorCollection);
-        if ( ! validatorCC.isValid(params['card_number']) ) {
+        // var validatorCreditCardNumber = new _validatorCreditCardNumber(errorCollection);
+        alert(_instanceServiceCredirCard);
+        var validatorCreditCardNumber = _instanceServiceCredirCard.validatorCreditCardNumber(errorCollection);
+        if ( ! validatorCreditCardNumber.isCardNumberValid(params['card_number']) ) {
 
-            errorCollection = validatorCC.errorCollection;
+            errorCollection = validatorCreditCardNumber.errorCollection;
             // errors.code = 409;
             // errors.message = 'cardNumber is invalid : luhn check failed';
         }
 
-        var validatorExpiryDate = new ValidatorExpiryDate(errorCollection);
+        var validatorExpiryDate = _instanceServiceCredirCard.validatorExpiryDate(errorCollection);
         if ( ! validatorExpiryDate.isValid(params['card_expiry_month'], params['card_expiry_year']) ) {
 
             errorCollection = validatorExpiryDate.errorCollection;
