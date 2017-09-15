@@ -1009,101 +1009,6 @@ var HiPay = (function (HiPay) {
 //     }
 
 
-
-
-
-//     var _formatDisplayNumber = function(cardNumberString, format, cardLengthMin, cardLengthMax) {
-//
-//         // if (!cardNumberString) {
-//         //     return false;
-//         // }
-//         // cardNumberString = cardNumberString.replace(" ","");
-//         cardNumberString = cardNumberString.split(' ').join('');
-//         console.log(cardNumberString);
-//         console.log(cardNumberString.length);
-//         var regex = "";
-//         var newFormat = "";
-//         var numberFormatTotal = 0;
-//
-//         // console.log('cardNumberString');
-//         // console.log(cardNumberString);
-//         var newCardNumber = '';
-//         // console.log('format');
-//         // console.log(format);
-//         var start = 0;
-//
-//         // var position = target.selectionStart; // Capture initial position
-//         // position = target.selectionStart; // Capture initial position
-//
-//         console.log(format);
-//         if (format.length > 0) {
-//             for (var i = 0; i < format.length; i++) {
-//
-//
-//                 // regex = regex + '(.{' + format[i]+ '})?';
-//                 // regex = regex + '(.{' + format[i]+ '})';
-//                 // newFormat = newFormat + '$'+(i+1)+ ' ';
-//                 numberFormatTotal = numberFormatTotal + format[i];
-//
-//                 var end = Math.min(numberFormatTotal, cardNumberString.length);
-//
-//                 for (j = start; j < end; j++) {
-//
-//                     // if (cardNumberString.length<numberFormatTotal) {
-//                     newCardNumber += cardNumberString.charAt(j);
-//                     // }
-//                 }
-//
-//                 if (cardNumberString.length >= numberFormatTotal) {
-//                     newCardNumber += ' ';
-//                     //     start = format[i];
-//                 }
-//                 start = numberFormatTotal;
-//
-//                 if (cardNumberString.length < numberFormatTotal) {
-//                     break;
-//                 }
-//                 // console.log(cardNumberString.length);
-//                 // console.log(numberFormatTotal);
-//
-//                 // if (cardNumberString.length == format[i]) {
-//                 //     newCardNumber += ' ';
-//                 //     start = format[i];
-//                 // }
-//
-//                 // _cardFormatDefinition[propt]["format"][i]
-//             }
-//
-//             for (j = start; j < cardNumberString.length; j++) {
-//
-//                 if (j < cardLengthMax) {
-//                     newCardNumber += cardNumberString.charAt(j);
-//                 }
-//             }
-//         } else {
-//             newCardNumber = cardNumberString;
-//         }
-//         console.log("newCardNumber");
-//         console.log(newCardNumber);
-//         // console.log(newFormat);
-//         // return cardNumberString.replace(/^(.{1})(.{2})/g, '$1 $2 ');
-//         // return cardNumberString.replace(/^regex/g, newFormat);
-//         // var expression = new RegExp(regex, 'g');
-//
-// // console.log(regex);
-// //         var v = cardNumberString.replace(/[^\dA-Z]/g, ''),
-// //             // reg = new RegExp(".{" + after + "}", "g");
-// //             reg = new RegExp(regex, "g");
-// //         return v.replace(reg, function(a) {
-// //             return a + ' ';
-// //         });
-//
-//         // return cardNumberString.replace(/^(.{4})(.{4})+/g, '$1 $2 $3 ');
-//         // return cardNumberString.replace(expression, newFormat);
-//         // return cardNumberString.replace(expression, newFormat);
-//         return newCardNumber;
-//     }
-
     HiPay.Form = {};
 
     var _callbackEventFormChange;
@@ -1114,28 +1019,13 @@ var HiPay = (function (HiPay) {
         _callbackEventFormChange = callback;
     };
 
-
-
-
     /* add listener on all input form */
     window.onload = function() {
 
-
-
         for(var propt in _idInputMapper){
-            // if (propt == 'cardNumber') {
-            //     alert(_idInputMapper[propt]);
-            //     _formatCC();
-            // }
 
             if (propt == 'cardNumber') {
 
-                // document.getElementById(_idInputMapper[propt]).addEventListener('keypress', function(e) {
-                //     // alert('toto');
-                //     document.getElementById(_idInputMapper.cardNumber).value = "";
-                //
-                //     e.preventDefault();
-                // });
                 document.getElementById(_idInputMapper[propt]).addEventListener('keydown', function (e) {
                     evt = e || window.event;
 
@@ -1163,16 +1053,6 @@ var HiPay = (function (HiPay) {
                         var serviceCC = new _serviceCreditCard(charCode);
                     }
 
-// console.log(serviceCC);
-                    // serviceCC.formatCC();
-
-// console.log(charCode);
-                    // console.log(serviceCC);
-
-
-                    // alert(charCode + charStr);
-
-                    // _formatCC(serviceCC);
                     _callbackEventFormChange();
                 });
             } else {
@@ -1193,9 +1073,6 @@ var HiPay = (function (HiPay) {
             card_holder: $('#input-name')[0].value,
             multi_use: '0'
         };
-
-        // console.info('_isValidCCForm(params)');
-        // console.info(_isValidCCForm(params).length);
 
         return _isValidCCForm(params).length === 0;
     }
