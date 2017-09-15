@@ -710,8 +710,14 @@ var HiPay = (function (HiPay) {
 
             if ( serviceCC.cardNumberStringFormatAfter != '' && validatorCCNumber.isCardNumberValid(serviceCC) ) {
                 element.focus();
+            } else {
+                if (serviceCC.cardLengthMax == serviceCC.cardNumberStringFormatAfter && !validatorCCNumber.isCardNumberValid(serviceCC)) {
+alert('error');
+                }
             }
         };
+
+
 
         // var _init = function(value) {
         (function(charCode){
@@ -940,6 +946,9 @@ var HiPay = (function (HiPay) {
 
             // focus next input
             _inputCCNumberFinish( document.getElementById(_idInputMapper.cardHolder), serviceCC);
+
+            // change color input on error
+            _changeFormatOnError(document.getElementById(_idInputMapper.cardHolder), serviceCC);
 
         })(charCode);
 
