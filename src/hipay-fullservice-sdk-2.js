@@ -357,38 +357,43 @@ var HiPay = (function (HiPay) {
      * @returns {{}}
      * @constructor
      */
-    var ValidatorExpiryDate = function (errorCollection) {
-
-        var validatorExpiryDate = {};
-        validatorExpiryDate.errorCollection = errorCollection;
-
-        validatorExpiryDate.isValid = function(month,year) {
-
-            // Return today's date and time
-            var currentTime = new Date()
-
-// returns the month (from 0 to 11)
-            var currentMonth = currentTime.getMonth() + 1
-
-// returns the year (four digits)
-            var currentYear = currentTime.getFullYear()
-
-            if(year == currentYear && month < currentMonth || year < currentYear) {
-                validatorExpiryDate.errorCollection.push(new _InvalidParametersError(50, 'expiry card invalid'));
-            }
-        }
-
-        return validatorExpiryDate;
-
-
-    };
+//     var ValidatorExpiryDate = function (errorCollection) {
+//
+//         var validatorExpiryDate = {};
+//         validatorExpiryDate.errorCollection = errorCollection;
+//
+//         validatorExpiryDate.isValid = function(month,year) {
+//
+//             // Return today's date and time
+//             var currentTime = new Date()
+//
+// // returns the month (from 0 to 11)
+//             var currentMonth = currentTime.getMonth() + 1
+//
+// // returns the year (four digits)
+//             var currentYear = currentTime.getFullYear()
+//
+//             if(year == currentYear && month < currentMonth || year < currentYear) {
+//                 validatorExpiryDate.errorCollection.push(new _InvalidParametersError(50, 'expiry card invalid'));
+//             }
+//         }
+//
+//         return validatorExpiryDate;
+//
+//
+//     };
 
     // HiPay.ValidationError
 
 
 
     var _validatorCC = function (errorCollection,serviceCC) {
-        var validatorCC = {};
+
+
+
+
+
+            var validatorCC = {};
 
         var _cardLengthMin = '';
         var _cardLengthMax = '';
@@ -405,9 +410,13 @@ var HiPay = (function (HiPay) {
         validatorCC.errorCollection = errorCollection || [];
 
 
-        validatorCC.isValid = function(value) {
+        validatorCC.isValid = function(serviceCC) {
+            var validatorCCNumber = new _validatorCCNumber([],serviceCC);
+            validatorCCNumber.isCardNumberValid
 
-            return _isCardNumberValid(value);
+
+
+                return _isCardNumberValid(value);
         }
 
 
@@ -605,9 +614,9 @@ var HiPay = (function (HiPay) {
 
 var _validatorCCNumber = function(errorArray,serviceCC) {
     var validatorCCNumber = {};
-        validatorCCNumber.isCardNumberValid = function (value) {
+        validatorCCNumber.isCardNumberValid = function (serviceCC) {
 
-
+        var value = serviceCC.cardNumberStringFormatAfter;
         // console.log("_isCardNumberValid");
         // console.log("_isLengthValid(value)");
         // console.log(_isLengthValid(value));
@@ -617,7 +626,10 @@ var _validatorCCNumber = function(errorArray,serviceCC) {
 
         // _init(value);
 
-
+           if (_isTypeValid(serviceCC) === false) {
+               return false;
+               alert('ok');
+           }
 
 
         if (/[^0-9-\s]+/.test(value)) return false;
@@ -632,6 +644,12 @@ var _validatorCCNumber = function(errorArray,serviceCC) {
         return _isLuhnValid(value);
     }
 
+
+    var _isTypeValid =function(serviceCC) {
+        if (serviceCC.cardFormatArray == undefined || serviceCC.cardFormatArray == "") {
+            return false;
+        }
+    }
 
     var _isLengthValid = function (value) {
 
@@ -685,34 +703,16 @@ var _validatorCCNumber = function(errorArray,serviceCC) {
 
         var serviceCC = {};
 
-
         // var _inputCCFinish = function(element, cardNumberString, cardLengthMin, cardLengthMax) {
         var _inputCCNumberFinish = function(element, serviceCC) {
 
-
             var validatorCCNumber = new _validatorCCNumber([],serviceCC);
 
-
-            // alert(serviceCC.cardNumberStringFormatAfter);
-
-
-            if ( serviceCC.cardNumberStringFormatAfter != '' && validatorCCNumber.isCardNumberValid(serviceCC.cardNumberStringFormatAfter) ) {
-
-                // console.log(element);
-                // console.log('isValid');
+            if ( serviceCC.cardNumberStringFormatAfter != '' && validatorCCNumber.isCardNumberValid(serviceCC) ) {
                 element.focus();
-                //
-                // console.log(cardNumberString);
-                // console.log(cardLengthMin);
-                // console.log(cardLengthMax);
             }
-
-
         };
-
-
-
-
+        
         // var _init = function(value) {
         (function(charCode){
 
