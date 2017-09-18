@@ -77,14 +77,14 @@ input , input[placeholder], [placeholder] {
 }
 
 .form-control::-moz-placeholder {
-    color: #005a94 !important;
+    color: #5da3d0 !important;
     opacity: 1;
 }
 .form-control:-ms-input-placeholder {
-    color: #005a94 !important;
+    color: #5da3d0 !important;
 }
 .form-control::-webkit-input-placeholder {
-    color: #005a94 !important;
+    color: #5da3d0 !important;
 }
 
 input:disabled , input[placeholder]:disabled, [placeholder]:disabled {
@@ -105,6 +105,12 @@ input:disabled.form-control::-webkit-input-placeholder {
 .form-control::-ms-expand {
     background-color: transparent;
     border: 0;
+}
+
+/* message input container */
+.inputMessageContainer {
+    color: #ff0000 !important;
+    padding-left:38px;
 }
 
 

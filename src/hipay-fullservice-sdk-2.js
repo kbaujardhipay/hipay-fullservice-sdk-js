@@ -594,18 +594,26 @@ var HiPay = (function (HiPay) {
     // }
 
     var _serviceCreditCard = function(charCode) {
-console.log(charCode);
+        console.log(charCode);
         var serviceCreditCard = {};
 
+        serviceCreditCard.creditCardHolderLengthMax = 3;
 
+        serviceCreditCard.getCreditCardInput = function() {
+            return document.getElementById(_idInputMapper.cardHolder);
+        };
         // var _inputCCFinish = function(element, cardNumberString, cardLengthMin, cardLengthMax) {
         var _inputCCNumberFinish = function(element) {
             // console.log('before finish 2');
             // console.log("serviceCreditCard.idType");
             // console.log(serviceCreditCard.idType);
             var validatorCreditCardNumber = serviceCreditCard.validatorCreditCardNumber([]);
+
+
+
             // alert(validatorCreditCardNumber.isCardNumberValid());
 
+            document.getElementById("creditCardNumberMessageContainer").innerHTML="";
             document.getElementById(_idInputMapper.cardNumber).setAttribute('style', 'color:#005a94 !important');
             // document.getElementById(_idInputMapper.cvv).setAttribute('style', 'color:#005a94 !important');
             document.getElementById(_idInputMapper.cvv).disabled = false;
@@ -642,6 +650,8 @@ console.log(charCode);
                 // console.log(serviceCreditCard.cardLengthMax + " " + serviceCreditCard.cardNumberStringFormatAfter);
                 if (serviceCreditCard.cardLengthMax == serviceCreditCard.cardNumberStringAfter.length && !validatorCreditCardNumber.isValid(document.getElementById(_idInputMapper.cardNumber).value)) {
 // alert('error');
+
+                    document.getElementById("creditCardNumberMessageContainer").innerHTML="Le format de la carte n'est pas valide";
                     document.bgColor = "#ff0000";
                     // document.getElementById(_idInputMapper.cardNumber).value = 'toto';
                     document.getElementById(_idInputMapper.cardNumber).setAttribute('style', 'color:#ff0000 !important');
@@ -754,7 +764,25 @@ console.log(charCode);
             return validatorCreditCardNumber;
         };
 
+        serviceCreditCard.validatorCreditCardHolder = function(errorArray) {
+            var validatorCreditCardHolder = {};
 
+
+            validatorCreditCardHolder.errorCollection = errorArray || [];
+
+            validatorCreditCardHolder.isValid = function (creditCardHolderString) {
+                if (creditCardHolderString == "" || creditCardHolderString == undefined || creditCardHolderString == null) {
+                    return false;
+                }
+
+                if (creditCardHolderString.length > serviceCreditCard.creditCardHolderLengthMax ) {
+                    return false;
+                }
+                return true;
+            }
+            return validatorCreditCardHolder;
+
+        };
 
         /**
          *
@@ -805,6 +833,14 @@ console.log(charCode);
                 if (!validatorCreditCardNumber.isValid(params['card_number'])) {
                     return false;
                 }
+                var validatorCreditCardHolder = serviceCreditCard.validatorCreditCardHolder(validatorCreditCard.errorCollection);
+
+
+                if (!validatorCreditCardHolder.isValid(params['card_holder'])) {
+                    return false;
+                }
+
+
                 return true;
             };
 
@@ -825,7 +861,8 @@ console.log(charCode);
 
 
         // var _init = function(value) {
-        (function(charCode){
+        // (function(charCode){
+        serviceCreditCard.initCreditCardNumber = function(charCode){
 
             serviceCreditCard.lastCharCode = charCode;
             if (charCode == 8 || charCode == 46) {
@@ -1053,7 +1090,8 @@ console.log(charCode);
 
 
 
-        })(charCode);
+            // })(charCode);
+        };
 
         return serviceCreditCard;
         // this.validator = new _validatorCC(errorCollection);
@@ -1128,7 +1166,10 @@ console.log(charCode);
     // _callbackEventFormChange();
 
     HiPay.Form.change = function(callback) {
-        _callbackEventFormChange = callback;
+        $("input").on('change keydown paste input', function() {
+            _callbackEventFormChange = callback;
+            _callbackEventFormChange();
+        });
     };
 
     /* add listener on all input form */
@@ -1143,11 +1184,15 @@ console.log(charCode);
 
                     var charCode = evt.keyCode || evt.which;
                     if (charCode == 8 || charCode == 46) {
-                        _instanceServiceCreditCard = new _serviceCreditCard(charCode);
+                        // _instanceServiceCreditCard = new _serviceCreditCard(charCode);
+                        _instanceServiceCreditCard = new _serviceCreditCard();
+                        _instanceServiceCreditCard.initCreditCardNumber(charCode);
                         evt.preventDefault();
+                        // _callbackEventFormChange();
                     } else {
                         // evt.preventDefault();
                     }
+
 
                 });
 
@@ -1162,33 +1207,80 @@ console.log(charCode);
                     evt.preventDefault();
                     if (charCode >= 48 && charCode <= 57) {
                         /* is valid add char */
-                        _instanceServiceCreditCard = new _serviceCreditCard(charCode);
+                        // _instanceServiceCreditCard = new _serviceCreditCard(charCode);
+                        _instanceServiceCreditCard = new _serviceCreditCard();
+                        _instanceServiceCreditCard.initCreditCardNumber(charCode);
                     }
 
-                    _callbackEventFormChange();
+                    // _callbackEventFormChange();
                 });
-            } else {
+            }
+            else if (propt == 'cardHolder') {
+
+                document.getElementById(_idInputMapper[propt]).addEventListener('keydown', function (e) {
+                    evt = e || window.event;
+
+                    var charCode = evt.keyCode || evt.which;
+                    if (charCode == 8 || charCode == 46) {
+                        // _instanceServiceCreditCard = new _serviceCreditCard(charCode);
+
+                        // _instanceServiceCreditCard.initCreditCardNumber(charCode);
+                        // evt.preventDefault();
+                        // _callbackEventFormChange();
+                    } else {
+/* @todo */
+                        _instanceServiceCreditCard = new _serviceCreditCard();
+                        if (_instanceServiceCreditCard.getCreditCardInput().length >= _instanceServiceCreditCard.creditCardHolderLengthMax) {
+alert('error');
+                            evt.preventDefault();
+
+                        } else {
+                            alert('ok');
+                        }
+                        // alert( _instanceServiceCreditCard.creditCardHolderLengthMax);
+                        // evt.preventDefault();
+                    }
+
+
+                });
+
+            }
+
+
+
+
+            else {
                 document.getElementById(_idInputMapper[propt]).addEventListener('keypress', function (e) {
-                    _callbackEventFormChange();
+                    if (charCode == 8 || charCode == 46) {
+
+                    } else {
+                        // evt.preventDefault();
+                    }
                 });
             }
 
         }
+
+
     };
 
     HiPay.Form.paymentFormDataIsValid = function() {
         var params = {
             card_number: $('#input-card')[0].value,
+            card_holder: $('#input-name')[0].value,
             cvc: $('#input-cvv')[0].value,
             card_expiry_month: $('#input-month')[0].value,
             card_expiry_year: $('#input-year')[0].value,
-            card_holder: $('#input-name')[0].value,
+
             multi_use: '0'
         };
 
-
+// alert('change');
+//         $("input").on('change keydown paste input', function(){
         var validatorCreditCard = _instanceServiceCreditCard.validatorCreditCard();
         return validatorCreditCard.isValid(params);
+        // });
+
 
         // return _isValidCCForm(params).length === 0;
     }
@@ -1200,106 +1292,106 @@ console.log(charCode);
      * @returns {Array}
      * @private
      */
-    // var _isValidCCForm = function (params) {
-    //     var errorCollection = [];
-    //
-    //
-    //     var errors = {'code':0, 'message':''};
-    //     var unallowedParams = [];
-    //     for (key in params) {
-    //         if (HiPay.allowedParameters[key] != true) {
-    //             unallowedParams.push(key);
-    //         }
-    //     }
-    //
-    //     if (unallowedParams.length > 0) {
-    //
-    //         errors.code = 408;
-    //         var message = 'unallowed parameters: {'
-    //         for (key in unallowedParams) {
-    //
-    //             message += unallowedParams[key] + ' ';
-    //         }
-    //         message += '}';
-    //         message += ' allowed parameters are: {';
-    //
-    //         for (key in HiPay.allowedParameters) {
-    //             message += key;
-    //             message += ' ';
-    //         }
-    //         message += '}';
-    //
-    //         errors.message = message;
-    //     }
-    //
-    //     // @todo changer le nom HiPay.ValidationError
-    //     // var validatorCreditCardNumber = new _validatorCreditCardNumber(errorCollection);
-    //
-    //     var validatorCreditCardNumber = _instanceServiceCreditCard.validatorCreditCardNumber(errorCollection);
-    //     if ( ! validatorCreditCardNumber.isCardNumberValid(params['card_number']) ) {
-    //
-    //         errorCollection = validatorCreditCardNumber.errorCollection;
-    //         // errors.code = 409;
-    //         // errors.message = 'cardNumber is invalid : luhn check failed';
-    //     }
-    //
-    //     var validatorExpiryDate = _instanceServiceCreditCard.validatorExpiryDate(errorCollection);
-    //     if ( ! validatorExpiryDate.isValid(params['card_expiry_month'], params['card_expiry_year']) ) {
-    //
-    //         errorCollection = validatorExpiryDate.errorCollection;
-    //         // errors.code = 409;
-    //         // errors.message = 'cardNumber is invalid : luhn check failed';
-    //     }
-    //
-    //     return errorCollection;
-    // };
+        // var _isValidCCForm = function (params) {
+        //     var errorCollection = [];
+        //
+        //
+        //     var errors = {'code':0, 'message':''};
+        //     var unallowedParams = [];
+        //     for (key in params) {
+        //         if (HiPay.allowedParameters[key] != true) {
+        //             unallowedParams.push(key);
+        //         }
+        //     }
+        //
+        //     if (unallowedParams.length > 0) {
+        //
+        //         errors.code = 408;
+        //         var message = 'unallowed parameters: {'
+        //         for (key in unallowedParams) {
+        //
+        //             message += unallowedParams[key] + ' ';
+        //         }
+        //         message += '}';
+        //         message += ' allowed parameters are: {';
+        //
+        //         for (key in HiPay.allowedParameters) {
+        //             message += key;
+        //             message += ' ';
+        //         }
+        //         message += '}';
+        //
+        //         errors.message = message;
+        //     }
+        //
+        //     // @todo changer le nom HiPay.ValidationError
+        //     // var validatorCreditCardNumber = new _validatorCreditCardNumber(errorCollection);
+        //
+        //     var validatorCreditCardNumber = _instanceServiceCreditCard.validatorCreditCardNumber(errorCollection);
+        //     if ( ! validatorCreditCardNumber.isCardNumberValid(params['card_number']) ) {
+        //
+        //         errorCollection = validatorCreditCardNumber.errorCollection;
+        //         // errors.code = 409;
+        //         // errors.message = 'cardNumber is invalid : luhn check failed';
+        //     }
+        //
+        //     var validatorExpiryDate = _instanceServiceCreditCard.validatorExpiryDate(errorCollection);
+        //     if ( ! validatorExpiryDate.isValid(params['card_expiry_month'], params['card_expiry_year']) ) {
+        //
+        //         errorCollection = validatorExpiryDate.errorCollection;
+        //         // errors.code = 409;
+        //         // errors.message = 'cardNumber is invalid : luhn check failed';
+        //     }
+        //
+        //     return errorCollection;
+        // };
 
     var _processObjectPayload = function (instance, payload, specialValueCallback) {
-        var propertyConfig = [];
+            var propertyConfig = [];
 
-        for (var key in payload || {}) {
+            for (var key in payload || {}) {
 
-            // console.log("key");
-            // console.log(key);
-            //
-            // console.log("instance._mapping");
-            // console.log(instance._mapping);
-            // $.each(payload || {}, function (key, val) {
-            if (typeof instance._mapping === 'object') {
+                // console.log("key");
+                // console.log(key);
+                //
+                // console.log("instance._mapping");
+                // console.log(instance._mapping);
+                // $.each(payload || {}, function (key, val) {
+                if (typeof instance._mapping === 'object') {
 
 
-                var mapping = instance._mapping[key];
+                    var mapping = instance._mapping[key];
 
-                if (typeof mapping === 'object') {
-                    value = typeof specialValueCallback !== 'undefined' ? (specialValueCallback(key, payload[key]) || payload[key]) : payload[key];
+                    if (typeof mapping === 'object') {
+                        value = typeof specialValueCallback !== 'undefined' ? (specialValueCallback(key, payload[key]) || payload[key]) : payload[key];
 
-                    // Property is writable, value can directly be set
-                    if (!_canDefineProperty || mapping.propertyDescriptors.writable) {
-                        instance[mapping.name] = value;
-                    }
+                        // Property is writable, value can directly be set
+                        if (!_canDefineProperty || mapping.propertyDescriptors.writable) {
+                            instance[mapping.name] = value;
+                        }
 
-                    // Property not writable, should be redefined
-                    else {
+                        // Property not writable, should be redefined
+                        else {
 
-                        // propertyConfig[mapping.name] = $.extend({}, mapping.propertyDescriptors, {
-                        // propertyConfig[mapping.name] =Object.assign({}, mapping.propertyDescriptors, {
-                        propertyConfig[mapping.name] =_extend({}, mapping.propertyDescriptors, {
-                            value: value,
-                            configurable: true // Values might be refreshed later
-                        });
+                            // propertyConfig[mapping.name] = $.extend({}, mapping.propertyDescriptors, {
+                            // propertyConfig[mapping.name] =Object.assign({}, mapping.propertyDescriptors, {
+                            propertyConfig[mapping.name] =_extend({}, mapping.propertyDescriptors, {
+                                value: value,
+                                configurable: true // Values might be refreshed later
+                            });
 
+                        }
                     }
                 }
+
+                // console.log(instance[key]);
+                // });
             }
 
-            // console.log(instance[key]);
-            // });
-        }
-
-        if (_canDefineProperty) {
-            Object.defineProperties(instance, propertyConfig);
-        }
-    };
+            if (_canDefineProperty) {
+                Object.defineProperties(instance, propertyConfig);
+            }
+        };
 
     HiPay.ErrorReason = {
         APIIncorrectCredentials: 1000001,
