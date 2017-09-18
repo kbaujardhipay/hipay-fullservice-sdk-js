@@ -69,6 +69,7 @@ require_once('credentials.php');
                                 <input type="tel" class="form-control" id="input-card"  placeholder="Ex : 5136 0000 0000 0000" autocomplete="off" pattern="\d*" name="cardNumber" value="">
                                 <span id="card-type" class="input-group-addon"></span>
                             </div>
+                            <div id="creditCardNumberMessageContainer" class="inputMessageContainer"></div>
                         </div>
                     </div>
                 </div>
@@ -77,11 +78,11 @@ require_once('credentials.php');
                 <div class="row">
                     <div class="col-lg-12">
                         <div class="form-group">
-                            <label class="sr-only" for="input-name">Cardholder</label>
+                            <label class="sr-only" for="input-name">Prénom Nom</label>
                             <div class="input-group">
                                 <div class="input-group-addon-icon input-group-addon"><span class="glyphicon glyphicon-user" aria-hidden="true"></span></div>
 
-                                <input type="text" class="form-control" id="input-name" placeholder="Cardholder" value="">
+                                <input type="text" class="form-control" id="input-name" placeholder="Prénom Nom" value="">
                             </div>
                         </div>
                     </div>
@@ -218,11 +219,13 @@ require_once('credentials.php');
 
         $(function() {
             HiPay.Form.change(function() {
-
+//alert('toto');
                 console.info(HiPay.Form.paymentFormDataIsValid());
             $("#pay-button").prop('disabled', !HiPay.Form.paymentFormDataIsValid());
 //                alert('toto');
             });
+
+
         })
 
 
