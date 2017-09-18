@@ -13,11 +13,13 @@ require_once('credentials.php');
 
     <link href="./assets/basic-client.css" media="screen" rel="stylesheet" type="text/css">
     <link href="./assets/payment-methods.css" media="screen" rel="stylesheet" type="text/css">
-    <link href="./assets/basicv3.css" media="screen" rel="stylesheet" type="text/css">
+
     
 
     <link rel="stylesheet" href="../node_modules/bootstrap/dist/css/bootstrap.css">
     <link rel="stylesheet" href="../node_modules/bootstrap/dist/css/bootstrap-theme.css">
+
+    <link href="./assets/basicv3.css" media="screen" rel="stylesheet" type="text/css">
     <script type="text/javascript" src="../node_modules/jquery/dist/jquery.js"></script>
     <script type="text/javascript" src="../node_modules/bootstrap/dist/js/bootstrap.js"></script>
 
