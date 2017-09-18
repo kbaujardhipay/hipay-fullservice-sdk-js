@@ -69,18 +69,66 @@ span#card-type {
     font-weight: bold;
     margin-bottom: 15px;
 }
-input[placeholder]:disabled, [placeholder] {
-    color: #ccc !important;
-}
 
-input, input[placeholder], [placeholder] {
+
+input , input[placeholder], [placeholder] {
     color: #005a94 !important;
     font-weight: bold;
 }
 
-::-webkit-input-placeholder { /* WebKit browsers */
-    color: #75a6c5 !important;
+.form-control::-moz-placeholder {
+    color: #005a94 !important;
+    opacity: 1;
 }
+.form-control:-ms-input-placeholder {
+    color: #005a94 !important;
+}
+.form-control::-webkit-input-placeholder {
+    color: #005a94 !important;
+}
+
+input:disabled , input[placeholder]:disabled, [placeholder]:disabled {
+    /*color: #005a94 !important;*/
+    color: #ccc !important;
+    font-weight: bold;
+}
+input:disabled.form-control::-moz-placeholder {
+    color: #ccc !important;
+    opacity: 1;
+}
+input:disabled.form-control:-ms-input-placeholder {
+    color: #ccc !important;
+}
+input:disabled.form-control::-webkit-input-placeholder {
+    color: #ccc !important;
+}
+.form-control::-ms-expand {
+    background-color: transparent;
+    border: 0;
+}
+
+
+/*.form-control {*/
+    /*!*color: #005a94 !important;*!*/
+    /*color: red !important;*/
+    /*font-weight: bold;*/
+/*}*/
+
+/*input[type="text"][disabled][placeholder] {*/
+    /*color: pink !important;*/
+/*}*/
+
+
+
+/*::-webkit-input-placeholder { !* WebKit browsers *!*/
+    /*color: #005a94 !important;*/
+/*}*/
+
+/*.inputdisable::-webkit-input-placeholder {*/
+    /*color: #333333;*/
+/*}*/
+
+
 
 .input-group-addon-icon {
     color: #005a94 !important;
