@@ -89,17 +89,31 @@ require_once('credentials.php');
                 </div>
 
 
+<!--                <div class="row">-->
+<!--                    <div class="col-lg-12">-->
+<!--                        <div class="form-group">-->
+<!--                            <label class="sr-only" for="input-name">Expiry (Month/Year)</label>-->
+<!--                            <div class="input-group">-->
+<!--                                <div class="input-group-addon-icon input-group-addon"><span class="glyphicon glyphicon-calendar" aria-hidden="true"></span></div>-->
+<!--                                <input id="input-month" type="number"  class="form-control" placeholder="Month" maxlength="2" value="">-->
+<!--                                <span class="input-group-btn" style="width:0px;"></span>-->
+<!--                                <input id="input-year" type="number"  class="form-control" placeholder="Year" maxlength="4" value="">-->
+<!---->
+<!--                            </div>-->
+<!--                        </div>-->
+<!--                    </div>-->
+<!--                </div>-->
                 <div class="row">
                     <div class="col-lg-12">
                         <div class="form-group">
-                            <label class="sr-only" for="input-name">Expiry (Month/Year)</label>
+                            <label class="sr-only" for="input-name">MM / YY</label>
                             <div class="input-group">
                                 <div class="input-group-addon-icon input-group-addon"><span class="glyphicon glyphicon-calendar" aria-hidden="true"></span></div>
-                                <input id="input-month" type="number"  class="form-control" placeholder="Month" maxlength="2" value="">
-                                <span class="input-group-btn" style="width:0px;"></span>
-                                <input id="input-year" type="number"  class="form-control" placeholder="Year" maxlength="4" value="">
 
+                                <input type="text" class="form-control" id="input-expiry-date" placeholder="MM / YY" value="">
                             </div>
+                            <div id="creditCardExpiryDateMessageContainer" class="inputMessageContainer"></div>
+
                         </div>
                     </div>
                 </div>
@@ -240,8 +254,9 @@ require_once('credentials.php');
 
             var params = {
                 card_number: $('#input-card')[0].value,
-                card_expiry_month: $('#input-month')[0].value,
-                card_expiry_year: $('#input-year')[0].value,
+//                card_expiry_month: $('#input-month')[0].value,
+//                card_expiry_year: $('#input-year')[0].value,
+                card_expiry_date: $('#input-expiry-date')[0].value,
                 card_holder: $('#input-name')[0].value,
                 cvv: $('#input-cvv')[0].value,
                 multi_use: '0',
