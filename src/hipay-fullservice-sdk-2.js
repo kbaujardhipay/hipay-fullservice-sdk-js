@@ -8,8 +8,9 @@ var HiPay = (function (HiPay) {
         cardNumber: 'input-card',
         cardType: 'card-type',
         cardHolder: 'input-name',
-        expiryMonth: 'input-month',
-        expiryYear: 'input-year',
+        cardExpiryDate: 'input-expiry-date',
+        // expiryMonth: 'input-month',
+        // expiryYear: 'input-year',
         cvv: 'input-cvv'
     }
 
@@ -616,6 +617,34 @@ return cardNumberStringFormatted.split(' ').join('');
             }
         };
 
+        var _inputCardExpiryDateFinish = function(element) {
+
+            var validatorCreditCardExpiryDate = serviceCreditCard.validatorCreditCardExpiryDate([]);
+
+
+
+            // alert(validatorCreditCardNumber.isCardNumberValid());
+
+            document.getElementById("creditCardExpiryDateMessageContainer").innerHTML="";
+            document.getElementById(_idInputMapper.cardExpiryDate).setAttribute('style', 'color:#005a94 !important');
+
+            if ( serviceCreditCard.cardExpiryDateStringAfter != '' && validatorCreditCardExpiryDate.isValid( document.getElementById(_idInputMapper.cardExpiryDate).value) ) {
+
+
+                element.focus();
+            } else {
+               if (5 == serviceCreditCard.cardExpiryDateStringAfter.length && !validatorCreditCardExpiryDate.isValid(document.getElementById(_idInputMapper.cardExpiryDate).value)) {
+
+
+                    document.getElementById("creditCardExpiryDateMessageContainer").innerHTML="Le format de la carte n'est pas valide";
+                    document.bgColor = "#ff0000";
+                    // document.getElementById(_idInputMapper.cardNumber).value = 'toto';
+                    document.getElementById(_idInputMapper.cardExpiryDate).setAttribute('style', 'color:#ff0000 !important');
+                    // document.getElementById(_idInputMapper.cardHolder).style.color = "#ff0000";
+                }
+            }
+        };
+
 
         serviceCreditCard.validatorCreditCardNumber = function(errorArray) {
             var validatorCreditCardNumber = {};
@@ -634,11 +663,11 @@ return cardNumberStringFormatted.split(' ').join('');
                 }
 
 
-                console.log(creditCardNumberUnformatted);
-                console.log(serviceCreditCard.cardFormatArray);
-                console.log("isTypeValid");
-                console.log(serviceCreditCard.getCardTypeId());
-                console.log(_isTypeValid(serviceCreditCard.cardFormatArray));
+                // console.log(creditCardNumberUnformatted);
+                // console.log(serviceCreditCard.cardFormatArray);
+                // console.log("isTypeValid");
+                // console.log(serviceCreditCard.getCardTypeId());
+                // console.log(_isTypeValid(serviceCreditCard.cardFormatArray));
                 // value = value.split(' ').join('');
 
 
@@ -742,7 +771,7 @@ return cardNumberStringFormatted.split(' ').join('');
          * @returns {{}}
          * @constructor
          */
-        serviceCreditCard.validatorExpiryDate = function (errorCollection) {
+        serviceCreditCard.validatorCreditCardExpiryDate = function (errorCollection) {
 
             var validatorExpiryDate = {};
             validatorExpiryDate.errorCollection = errorCollection;
@@ -775,12 +804,12 @@ return cardNumberStringFormatted.split(' ').join('');
 
 
             validatorCreditCard.isValid = function(params) {
-console.log(params);
+// console.log(params);
                 var validatorCreditCardNumber = serviceCreditCard.validatorCreditCardNumber(validatorCreditCard.errorCollection);
 
-                console.log("number");
-                console.log(validatorCreditCardNumber.isValid(serviceCreditCard.unformatCreditCardNumber(params['card_number'])));
-console.log(params['card_number']);
+                // console.log("number");
+                // console.log(validatorCreditCardNumber.isValid(serviceCreditCard.unformatCreditCardNumber(params['card_number'])));
+// console.log(params['card_number']);
 
                 if (!validatorCreditCardNumber.isValid(serviceCreditCard.unformatCreditCardNumber(params['card_number']))) {
                     return false;
@@ -1168,41 +1197,83 @@ console.log(params['card_number']);
 
         serviceCreditCard.initCreditCardExpiryDate = function(charCode){
 
-            serviceCreditCard.lastCharCodeCreditCardHolder = charCode;
+            serviceCreditCard.lastCharCodeCreditCardExpiryDate = charCode;
             if (charCode == 8 || charCode == 46) {
-                serviceCreditCard.lastCharStringCreditCardHolder = '';
+                serviceCreditCard.lastCharStringCreditCardExpiryDate = '';
             }
             else {
-                serviceCreditCard.lastCharStringCreditCardHolder = String.fromCharCode(charCode);
+                serviceCreditCard.lastCharStringCreditCardExpiryDate = String.fromCharCode(charCode);
             }
 
-            serviceCreditCard.cardHolderStringFormatedBefore = document.getElementById(_idInputMapper.cardHolder).value;
+            serviceCreditCard.creditCardExpiryDateFormattedBefore = document.getElementById(_idInputMapper.cardExpiryDate).value;
 
-            var getStartEndCursor = _getSelection(document.getElementById(_idInputMapper.cardHolder));
+
+
+
+
+
+
+            //realposition cursor in number
+            var splitFormatBeforetemp = serviceCreditCard.creditCardExpiryDateFormattedBefore;
+            serviceCreditCard.creditCardExpiryDateUnformattedBefore = splitFormatBeforetemp.split('/').join('');
+
+
+
+
+            var getStartEndCursor = _getSelection(document.getElementById(_idInputMapper.cardExpiryDate));
 
             // position avant action avec formatage.
             var startBFormat = getStartEndCursor.start;
             var endBFormat = getStartEndCursor.end;
 
+
+
+
             // calcul des positions de curseur sans formatage :
             // si espace(s) entre debut et position curseur => on soustrait le nb d'espaces
 
-            var subStringStart =  serviceCreditCard.cardHolderStringFormatedBefore.substr(0, startBFormat);
+            var subStringStart =  serviceCreditCard.creditCardExpiryDateFormattedBefore.substr(0, startBFormat);
+
+            var splitSubStringStart = subStringStart.split('/');
+            var nbSpaceStart = splitSubStringStart.length - 1;
+
+            var subStringEnd =  serviceCreditCard.creditCardExpiryDateFormattedBefore.substr(0, endBFormat);
 
 
-            var subStringEnd =  serviceCreditCard.cardHolderStringFormatedBefore.substr(0, endBFormat);
+            var splitSubStringEnd = subStringEnd.split('/');
+            var nbSpaceEnd = splitSubStringEnd.length - 1;
 
+            var startB = parseInt(startBFormat) - parseInt(nbSpaceStart);
+            var endB = parseInt(endBFormat) - parseInt(nbSpaceEnd);
 
-            var startB = parseInt(startBFormat);
-            var endB = parseInt(endBFormat);
+            // var startB = parseInt(startBFormat);
+            // var endB = parseInt(endBFormat);
 
 
             var startA = startB;
             var endA = endB;
+console.log("startA first");
+console.log(startA);
 
             // string after
 
-            var newTempStringAfter = serviceCreditCard.cardHolderStringFormatedBefore;
+            var newTempStringAfter = serviceCreditCard.creditCardExpiryDateUnformattedBefore;
+
+
+console.log("newTempStringAfter");
+console.log(newTempStringAfter);
+
+
+
+
+
+
+
+
+
+
+
+
 
             if (startB >= 0 && endB > 0 && startB < endB) {
 
@@ -1233,22 +1304,29 @@ console.log(params['card_number']);
 
 
 
-            var startA = startBFormat;
+            // var startA = startBFormat;
 
             var tempStringAfter = "";
 
 
+
+
             var startAtemp = startA;
+
+            console.log("startA before");
+            console.log(startA);
             for (var nbBefore = 0; nbBefore <= newTempStringAfter.length;nbBefore++ ) {
 
                 // if (nbBefore == realCursorPositionInNumberBefore) {
                 if (nbBefore == startA) {
 
+                    console.log("nbbefore == startA");
+
 
                     if (charCode == 8) {
 
                     } else {
-                        tempStringAfter += serviceCreditCard.lastCharStringCreditCardHolder;
+                        tempStringAfter += serviceCreditCard.lastCharStringCreditCardExpiryDate;
                         // realCursorPositionInNumberAfter = realCursorPositionInNumberBefore + 1;
                         startAtemp = startAtemp + 1;
 
@@ -1258,24 +1336,51 @@ console.log(params['card_number']);
 
                 }
 
+
+
+
                 tempStringAfter += newTempStringAfter.charAt(nbBefore);
 
             }
             startA = startAtemp;
 
 
-
-            if (serviceCreditCard.creditCardHolderLengthMax == null || tempStringAfter.length <= serviceCreditCard.creditCardHolderLengthMax) {
-                serviceCreditCard.cardHolderStringAfter = tempStringAfter;
+console.log("tempStringAfter");
+console.log(tempStringAfter);
+            if (tempStringAfter.length <= 4) {
+                serviceCreditCard.cardExpiryDateStringAfter = tempStringAfter;
             }
             else {
-                serviceCreditCard.cardHolderStringAfter = serviceCreditCard.cardHolderStringFormatedBefore;
+                serviceCreditCard.cardExpiryDateStringAfter = serviceCreditCard.creditCardExpiryDateFormattedBefore;
                 startA = startBFormat;
             }
 
+console.log("serviceCreditCard.cardExpiryDateStringAfter");
+console.log(serviceCreditCard.cardExpiryDateStringAfter);
+            serviceCreditCard.cardExpiryDateStringFormattedAfter =  serviceCreditCard.cardExpiryDateStringAfter;
+            if ( serviceCreditCard.cardExpiryDateStringFormattedAfter.length === 1) {
+                if (serviceCreditCard.cardExpiryDateStringFormattedAfter.charAt(0) > 1) {
+                    serviceCreditCard.cardExpiryDateStringFormattedAfter = "0"+serviceCreditCard.cardExpiryDateStringFormattedAfter;
+                    startA = startA + 1;
+                }
+            }
 
-            document.getElementById(_idInputMapper.cardHolder).value = serviceCreditCard.cardHolderStringAfter;
-            _setCaretPosition(document.getElementById(_idInputMapper.cardHolder), startA);
+            if ( serviceCreditCard.cardExpiryDateStringFormattedAfter.length > 2) {
+
+                if (serviceCreditCard.cardExpiryDateStringFormattedAfter.split('/').length < 2) {
+                    serviceCreditCard.cardExpiryDateStringFormattedAfter = serviceCreditCard.cardExpiryDateStringFormattedAfter.substring(0, 2) + "/" + serviceCreditCard.cardExpiryDateStringFormattedAfter.substring(2, serviceCreditCard.cardExpiryDateStringFormattedAfter.length);
+                    startA = startA + 1;
+                }
+            }
+
+
+
+
+
+
+            document.getElementById(_idInputMapper.cardExpiryDate).value = serviceCreditCard.cardExpiryDateStringFormattedAfter;
+            _setCaretPosition(document.getElementById(_idInputMapper.cardExpiryDate), startA);
+            _inputCardExpiryDateFinish( document.getElementById(_idInputMapper.cardExpiryDate), serviceCreditCard);
 
 
 
@@ -1320,7 +1425,7 @@ console.log(params['card_number']);
             if (propt == 'cardNumber') {
 
                 document.getElementById(_idInputMapper[propt]).addEventListener('keydown', function (e) {
-                    console.log("first");
+                    // console.log("first");
                     evt = e || window.event;
 
                     var charCode = evt.keyCode || evt.which;
@@ -1415,21 +1520,76 @@ console.log(params['card_number']);
                 });
 
             }
+            else if (propt == 'cardExpiryDate') {
+
+                document.getElementById(_idInputMapper[propt]).addEventListener('keydown', function (e) {
+
+
+                    evt = e || window.event;
+
+                    var charCode = evt.keyCode || evt.which;
+                    if (charCode == 8 || charCode == 46) {
+                        _instanceServiceCreditCard = new _serviceCreditCard();
+                        _instanceServiceCreditCard.initCreditCardExpiryDate(charCode);
+                        evt.preventDefault();
+                        // _instanceServiceCreditCard = new _serviceCreditCard(charCode);
+
+                        // _instanceServiceCreditCard.initCreditCardNumber(charCode);
+                        // evt.preventDefault();
+                        // _callbackEventFormChange();
+                    } else {
+
+
+                        // // alert(_instanceServiceCreditCard.getCreditCardHolderInput().value.length);
+                        // if (_instanceServiceCreditCard.getCreditCardHolderInput().value.length > _instanceServiceCreditCard.creditCardHolderLengthMax - 1) {
+                        //
+                        //     evt.preventDefault();
+                        //
+                        // } else {
+                        //     // evt.preventDefault();
+                        //
+                        // }
+                        // // alert( _instanceServiceCreditCard.creditCardHolderLengthMax);
+                        // // evt.preventDefault();
+                    }
+                    _callbackEventFormChange();
 
 
 
+                });
 
-            else {
                 document.getElementById(_idInputMapper[propt]).addEventListener('keypress', function (e) {
+
+                    evt = e || window.event;
+
+                    var charCode = evt.keyCode || evt.which;
+
                     if (charCode == 8 || charCode == 46) {
 
                     } else {
 
-                        // _instanceServiceCreditCard = new _serviceCreditCard();
-                        // _instanceServiceCreditCard.initCreditCardHolder(charCode);
-                        // evt.preventDefault();
+                        _instanceServiceCreditCard = new _serviceCreditCard();
+                        _instanceServiceCreditCard.initCreditCardExpiryDate(charCode);
+                        evt.preventDefault();
                     }
+                    _callbackEventFormChange();
                 });
+
+            }
+
+
+
+            else {
+                // document.getElementById(_idInputMapper[propt]).addEventListener('keypress', function (e) {
+                //     if (charCode == 8 || charCode == 46) {
+                //
+                //     } else {
+                //
+                //         // _instanceServiceCreditCard = new _serviceCreditCard();
+                //         // _instanceServiceCreditCard.initCreditCardHolder(charCode);
+                //         // evt.preventDefault();
+                //     }
+                // });
             }
 
         }
@@ -1439,7 +1599,7 @@ console.log(params['card_number']);
 
     HiPay.Form.change = function(callback) {
         // $("input").on('change keydown paste input', function() {
-            console.log("second");
+        //     console.log("second");
         //     _instanceServiceCreditCard = new _serviceCreditCard();
             _callbackEventFormChange = callback;
             // _callbackEventFormChange();
@@ -1448,14 +1608,14 @@ console.log(params['card_number']);
 
     HiPay.Form.paymentFormDataIsValid = function() {
 
-        console.log(_instanceServiceCreditCard);
+        // console.log(_instanceServiceCreditCard);
         var params = {
             card_number: $('#input-card')[0].value,
             card_holder: $('#input-name')[0].value,
             cvc: $('#input-cvv')[0].value,
             // card_expiry_month: $('#input-month')[0].value,
             // card_expiry_year: $('#input-year')[0].value,
-            card_expiry_date: $('#input-card-expiry-date')[0].value,
+            card_expiry_date: $('#input-expiry-date')[0].value,
 
             multi_use: '0'
         };
@@ -1463,8 +1623,8 @@ console.log(params['card_number']);
 
 //         $("input").on('change keydown paste input', function(){
         var validatorCreditCard = _instanceServiceCreditCard.validatorCreditCard();
-        console.log('isValidParams');
-        console.log(validatorCreditCard.isValid(params));
+        // console.log('isValidParams');
+        // console.log(validatorCreditCard.isValid(params));
         return validatorCreditCard.isValid(params);
         // });
 
