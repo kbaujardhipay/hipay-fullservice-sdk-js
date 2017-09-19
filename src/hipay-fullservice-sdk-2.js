@@ -1215,7 +1215,7 @@ return cardNumberStringFormatted.split(' ').join('');
 
             //realposition cursor in number
             var splitFormatBeforetemp = serviceCreditCard.creditCardExpiryDateFormattedBefore;
-            serviceCreditCard.creditCardExpiryDateUnformattedBefore = splitFormatBeforetemp.split('/').join('');
+            serviceCreditCard.creditCardExpiryDateUnformattedBefore = splitFormatBeforetemp.split(' / ').join('');
 
 
 
@@ -1234,13 +1234,13 @@ return cardNumberStringFormatted.split(' ').join('');
 
             var subStringStart =  serviceCreditCard.creditCardExpiryDateFormattedBefore.substr(0, startBFormat);
 
-            var splitSubStringStart = subStringStart.split('/');
+            var splitSubStringStart = subStringStart.split(' / ');
             var nbSpaceStart = splitSubStringStart.length - 1;
 
             var subStringEnd =  serviceCreditCard.creditCardExpiryDateFormattedBefore.substr(0, endBFormat);
 
 
-            var splitSubStringEnd = subStringEnd.split('/');
+            var splitSubStringEnd = subStringEnd.split(' / ');
             var nbSpaceEnd = splitSubStringEnd.length - 1;
 
             var startB = parseInt(startBFormat) - parseInt(nbSpaceStart);
@@ -1315,6 +1315,8 @@ console.log(newTempStringAfter);
 
             console.log("startA before");
             console.log(startA);
+            console.log("newTempStringAfter");
+            console.log(newTempStringAfter);
             for (var nbBefore = 0; nbBefore <= newTempStringAfter.length;nbBefore++ ) {
 
                 // if (nbBefore == realCursorPositionInNumberBefore) {
@@ -1365,11 +1367,11 @@ console.log(serviceCreditCard.cardExpiryDateStringAfter);
                 }
             }
 
-            if ( serviceCreditCard.cardExpiryDateStringFormattedAfter.length > 2) {
+            if ( serviceCreditCard.cardExpiryDateStringFormattedAfter.length >= 2) {
 
-                if (serviceCreditCard.cardExpiryDateStringFormattedAfter.split('/').length < 2) {
-                    serviceCreditCard.cardExpiryDateStringFormattedAfter = serviceCreditCard.cardExpiryDateStringFormattedAfter.substring(0, 2) + "/" + serviceCreditCard.cardExpiryDateStringFormattedAfter.substring(2, serviceCreditCard.cardExpiryDateStringFormattedAfter.length);
-                    startA = startA + 1;
+                if (serviceCreditCard.cardExpiryDateStringFormattedAfter.split(' / ').length < 2) {
+                    serviceCreditCard.cardExpiryDateStringFormattedAfter = serviceCreditCard.cardExpiryDateStringFormattedAfter.substring(0, 2) + " / " + serviceCreditCard.cardExpiryDateStringFormattedAfter.substring(2, serviceCreditCard.cardExpiryDateStringFormattedAfter.length);
+                    startA = startA + 3;
                 }
             }
 
@@ -1563,10 +1565,7 @@ console.log(serviceCreditCard.cardExpiryDateStringAfter);
                     evt = e || window.event;
 
                     var charCode = evt.keyCode || evt.which;
-
-                    if (charCode == 8 || charCode == 46) {
-
-                    } else {
+                    if (charCode >= 48 && charCode <= 57) {
 
                         _instanceServiceCreditCard = new _serviceCreditCard();
                         _instanceServiceCreditCard.initCreditCardExpiryDate(charCode);
