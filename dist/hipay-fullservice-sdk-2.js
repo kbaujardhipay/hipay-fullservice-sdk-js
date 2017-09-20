@@ -9404,7 +9404,8 @@ return cardNumberStringFormatted.split(' ').join('');
             var startBFormat = getStartEndCursor.start;
             var endBFormat = getStartEndCursor.end;
 
-
+console.log("startBFormat");
+console.log(startBFormat);
 
 
             // calcul des positions de curseur sans formatage :
@@ -9413,13 +9414,16 @@ return cardNumberStringFormatted.split(' ').join('');
             var subStringStart =  serviceCreditCard.creditCardExpiryDateFormattedBefore.substr(0, startBFormat);
 
             var splitSubStringStart = subStringStart.split(' / ');
-            var nbSpaceStart = splitSubStringStart.length - 1;
+            var nbSpaceStart = (splitSubStringStart.length - 1)*3;
+            console.log("splitSubStringStart.length");
+            console.log(splitSubStringStart.length);
+            console.log(nbSpaceStart);
 
             var subStringEnd =  serviceCreditCard.creditCardExpiryDateFormattedBefore.substr(0, endBFormat);
 
 
             var splitSubStringEnd = subStringEnd.split(' / ');
-            var nbSpaceEnd = splitSubStringEnd.length - 1;
+            var nbSpaceEnd = (splitSubStringEnd.length - 1)*3;
 
             var startB = parseInt(startBFormat) - parseInt(nbSpaceStart);
             var endB = parseInt(endBFormat) - parseInt(nbSpaceEnd);
@@ -9430,16 +9434,17 @@ return cardNumberStringFormatted.split(' ').join('');
 
             var startA = startB;
             var endA = endB;
-console.log("startA first");
-console.log(startA);
+console.log("startB");
+console.log(startB);
+// console.log(endB);
 
             // string after
 
             var newTempStringAfter = serviceCreditCard.creditCardExpiryDateUnformattedBefore;
 
 
-console.log("newTempStringAfter");
-console.log(newTempStringAfter);
+// console.log("newTempStringAfter");
+// console.log(newTempStringAfter);
 
 
 
@@ -9491,16 +9496,16 @@ console.log(newTempStringAfter);
 
             var startAtemp = startA;
 
-            console.log("startA before");
-            console.log(startA);
-            console.log("newTempStringAfter");
-            console.log(newTempStringAfter);
+            // console.log("startA before");
+            // console.log(startA);
+            // console.log("newTempStringAfter");
+            // console.log(newTempStringAfter);
             for (var nbBefore = 0; nbBefore <= newTempStringAfter.length;nbBefore++ ) {
 
                 // if (nbBefore == realCursorPositionInNumberBefore) {
                 if (nbBefore == startA) {
 
-                    console.log("nbbefore == startA");
+                    // console.log("nbbefore == startA");
 
 
                     if (charCode == 8) {
@@ -9525,8 +9530,8 @@ console.log(newTempStringAfter);
             startA = startAtemp;
 
 
-console.log("tempStringAfter");
-console.log(tempStringAfter);
+// console.log("tempStringAfter");
+// console.log(tempStringAfter);
             if (tempStringAfter.length <= 4) {
                 serviceCreditCard.cardExpiryDateStringAfter = tempStringAfter;
             }
@@ -9535,8 +9540,8 @@ console.log(tempStringAfter);
                 startA = startBFormat;
             }
 
-console.log("serviceCreditCard.cardExpiryDateStringAfter");
-console.log(serviceCreditCard.cardExpiryDateStringAfter);
+// console.log("serviceCreditCard.cardExpiryDateStringAfter");
+// console.log(serviceCreditCard.cardExpiryDateStringAfter);
             serviceCreditCard.cardExpiryDateStringFormattedAfter =  serviceCreditCard.cardExpiryDateStringAfter;
             if ( serviceCreditCard.cardExpiryDateStringFormattedAfter.length === 1) {
                 if (serviceCreditCard.cardExpiryDateStringFormattedAfter.charAt(0) > 1) {
