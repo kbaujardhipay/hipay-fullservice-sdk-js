@@ -122,10 +122,10 @@ require_once('credentials.php');
                     <div class="col-lg-12">
 
                         <div class="form-group">
-                            <label class="sr-only" for="input-cvv">CVV</label>
+                            <label class="sr-only" for="input-cvv">123</label>
                             <div id="container-cvv" class="input-group">
                                 <div class="input-group-addon-icon input-group-addon"><span class="glyphicon glyphicon-lock" aria-hidden="true"></span></div>
-                                <input type="number" class="form-control" id="input-cvv" placeholder="CVV" maxlength="3" value="">
+                                <input type="number" class="form-control" id="input-cvv" placeholder="123" maxlength="3" value="">
                                 <span id="cvv-button" class="input-group-addon"><button type="button" data-toggle="modal" data-target="#cvv-modal">?</button></span>
                             </div>
 
