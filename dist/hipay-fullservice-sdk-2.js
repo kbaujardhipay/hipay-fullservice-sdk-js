@@ -9100,7 +9100,8 @@ var HiPay = (function (HiPay) {
         serviceCreditCard.initCreditCardNumber = function(charCode){
 
             serviceCreditCard.lastCharCode = charCode;
-            if (charCode == 8 || charCode == 46) {
+           
+            if (charCode == undefined || charCode == '' || charCode == 8 || charCode == 46) {
                 serviceCreditCard.lastCharString = '';
             }
             else {
@@ -9826,9 +9827,11 @@ console.log(serviceCreditCard.cardCVVStringAfter);
 
         for(var propt in _idInputMapper){
 
+
+            console.log(propt);
             if (propt == 'cardNumber') {
 
-                document.getElementById(_idInputMapper[propt]).addEventListener('keydown', function (e) {
+                document.getElementById(_idInputMapper['cardNumber']).addEventListener('keydown', function (e) {
                     // console.log("first");
                     evt = e || window.event;
 
@@ -9849,11 +9852,11 @@ console.log(serviceCreditCard.cardCVVStringAfter);
                 });
 
 
-                document.getElementById(_idInputMapper[propt]).addEventListener('keypress', function (e) {
+                document.getElementById(_idInputMapper['cardNumber']).addEventListener('keypress', function (e) {
                     // return false;
                     evt = e || window.event;
 
-
+                    console.log(document.getElementById(_idInputMapper['cardNumber']));
                     var charCode = evt.keyCode || evt.which;
 
                     evt.preventDefault();
@@ -9865,7 +9868,24 @@ console.log(serviceCreditCard.cardCVVStringAfter);
                     }
 
                     _callbackEventFormChange();
+
                     // _callbackEventFormChange();
+                });
+
+                document.getElementById(_idInputMapper[propt]).addEventListener('keyup', function (e) {
+
+                    console.log(document.getElementById(_idInputMapper['cardNumber']));
+                    console.log(_idInputMapper['cardNumber']);
+
+                    _instanceServiceCreditCard = new _serviceCreditCard();
+                    _instanceServiceCreditCard.initCreditCardNumber();
+                //     // console.log("first");
+                //     // evt = e || window.event;
+                //     // _instanceServiceCreditCard = new _serviceCreditCard();
+                //     // var validatorCreditCardNumber = serviceCreditCard.validatorCreditCardNumber([]);
+                //     // validatorCreditCardNumber.initInfoCardWithCardNumber();
+                //     // // _instanceServiceCreditCard.
+                //     alert(document.getElementById(_idInputMapper[propt]).value);
                 });
             }
             else if (propt == 'cardHolder') {
@@ -10032,6 +10052,8 @@ console.log(serviceCreditCard.cardCVVStringAfter);
 
 
 
+
+
                 // document.getElementById(_idInputMapper[propt]).addEventListener('keydown', function (e) {
                 //
                 //
@@ -10094,6 +10116,8 @@ console.log(serviceCreditCard.cardCVVStringAfter);
 
 
             else {
+
+
                 // document.getElementById(_idInputMapper[propt]).addEventListener('keypress', function (e) {
                 //     if (charCode == 8 || charCode == 46) {
                 //
