@@ -8188,6 +8188,26 @@ var HiPay = (function (HiPay) {
         'default': '#005a94',
         'error': '#ff0000',
     };
+
+
+    var _messagesHelpCVC = {
+
+
+
+        '3': {
+            'fr_FR' : "Pour des raisons de sécurité, vous devez indiquer le code de sécurité (CVC). Ce code correspond aux 3 chiffres visibles au verso de votre carte VISA®, MASTERCARD® and MAESTRO®.",
+            'en_EN' : "For security reasons, you have to enter your card security code (CVC). It's the 3-digits number on the back of your card for VISA®, MASTERCARD® and MAESTRO®.",
+
+        },
+        '4': {
+            'fr_FR' : "Pour des raisons de sécurité, vous devez indiquer le code de sécurité (CVC). Le code de securité AMERICAN EXPRESS est un nombre à 4 chiffres au recto de votre carte.",
+            'en_EN' : "For security reasons, you have to enter your card security code (CVC). The AMERICAN EXPRESS security code is the 4-digits number on the front of your card.",
+
+        },
+    }
+
+    var _cvvContainerId = "container-cvv-help-message";
+
     var _idInputMapper = {
         cardNumber: 'input-card',
         cardType: 'card-type',
@@ -8675,8 +8695,8 @@ var HiPay = (function (HiPay) {
 
         };
 
-        serviceCreditCard.getCreditCardCVVLengthMax = function() {
-            if (serviceCreditCard.creditCardCVVLengthMax == undefined) {
+        serviceCreditCard.getCreditCardCVVLengthMax = function(forceReload) {
+            if (serviceCreditCard.creditCardCVVLengthMax == undefined || forceReload == undefined || forceReload == true) {
 
 
                 var arrayFormatCVV = ['34', '35', '36', '37'];
@@ -10098,7 +10118,7 @@ console.log(serviceCreditCard.cardCVVStringAfter);
 
 
                 document.getElementById(_idInputMapper['cardCVV']).addEventListener('blur', function (e) {
-
+console.log(HiPay.Form.CVCHelpText());
                     console.log(document.getElementById(_idInputMapper['cardCVV']));
                     console.log(_idInputMapper['cardCVV']);
 
@@ -11084,7 +11104,19 @@ console.log(serviceCreditCard.cardCVVStringAfter);
 
     };
 
+    HiPay.Form.locale = "fr_FR";
 
+
+    HiPay.Form.CVCHelpText = function() {
+
+        var serviceCreditCard = new _serviceCreditCard();
+        var CVVLength = serviceCreditCard.getCreditCardCVVLengthMax();
+        if (CVVLength == undefined) {
+            CVVLength = 3;
+        }
+        document.getElementById(_cvvContainerId).innerHTML = _messagesHelpCVC[CVVLength][HiPay.Form.locale];
+        // return _messagesHelpCVC[CVVLength][HiPay.Form.locale];
+    };
 
     HiPay.Form.tokenizePaymentFormData = function() {
 

@@ -172,9 +172,10 @@ require_once('credentials.php');
                 </div>
             </div>
             <div class="modal-body">
-                <p>For security reasons, you have to enter your card security code (CVC).
-                    It's the 3-digits number on the back of your card for <span class="modal-bold">VISA®</span>, <span class="modal-bold">MASTERCARD®</span> and <span class="modal-bold">MAESTRO®</span></p>
-                <p>The <span class="modal-bold">AMERICAN EXPRESS</span> security code is the 4-digits number on the front of your card.</p>
+                <p id="container-cvv-help-message"></p>
+<!--                <p>For security reasons, you have to enter your card security code (CVC).-->
+<!--                    It's the 3-digits number on the back of your card for <span class="modal-bold">VISA®</span>, <span class="modal-bold">MASTERCARD®</span> and <span class="modal-bold">MAESTRO®</span></p>-->
+<!--                <p>The <span class="modal-bold">AMERICAN EXPRESS</span> security code is the 4-digits number on the front of your card.</p>-->
                 <div id="cvv-img">
                     <img src="./assets/card.png">
                 </div>
