@@ -12,17 +12,36 @@ var HiPay = (function (HiPay) {
     var _translationJSON = {
         "en_EN" : {
             "FORM_CVV_3_HELP_MESSAGE": "For security reasons, you have to enter your card security code (CVC). It's the 3-digits number on the back of your card for VISA®, MASTERCARD® and MAESTRO®.",
-            "FORM_CVV_4_HELP_MESSAGE": "For security reasons, you have to enter your card security code (CVC). The AMERICAN EXPRESS security code is the 4-digits number on the front of your card."
+            "FORM_CVV_4_HELP_MESSAGE": "For security reasons, you have to enter your card security code (CVC). The AMERICAN EXPRESS security code is the 4-digits number on the front of your card.",
+
+            // error message
+            "FORM_ERROR_INVALID_CARD_NUMBER": "Invalid card number.",
+            "FORM_ERROR_INVALID_EXPIRY_DATE_PAST": "The expiration date is already past.",
+            "FORM_ERROR_INVALID_MONTH_EXPIRY_DATE": "The month field must be between 1 and 12.",
+            "FORM_ERROR_INVALID_CVV": "The CVV field must contain %NUMBER% digits.",
+            "FORM_ERROR_DEFAULT": "An error occured.",
+
+
         },
         "fr_FR" : {
             "FORM_CVV_3_HELP_MESSAGE" : "Pour des raisons de sécurité, vous devez indiquer le code de sécurité (CVC). Ce code correspond aux 3 chiffres visibles au verso de votre carte VISA®, MASTERCARD® and MAESTRO®.",
-            "FORM_CVV_4_HELP_MESSAGE" : "Pour des raisons de sécurité, vous devez indiquer le code de sécurité (CVC). Le code de securité AMERICAN EXPRESS est un nombre à 4 chiffres au recto de votre carte."
+            "FORM_CVV_4_HELP_MESSAGE" : "Pour des raisons de sécurité, vous devez indiquer le code de sécurité (CVC). Le code de securité AMERICAN EXPRESS est un nombre à 4 chiffres au recto de votre carte.",
+            // error message
+            "FORM_ERROR_INVALID_CARD_NUMBER": "Numéro de carte invalide.",
+            "FORM_ERROR_INVALID_EXPIRY_DATE_PAST": "La date est inférieure à la date actuelle.",
+            "FORM_ERROR_INVALID_MONTH_EXPIRY_DATE": "Le mois doit être compris entre 1 et 12.",
+            "FORM_ERROR_INVALID_CVV": "Le champ CVV doit contenir %NUMBER% caractères.",
+            "FORM_ERROR_DEFAULT": "Une erreur est survenue.",
         },
 
 
-    }
+    };
 
 
+
+    var _getLocaleTranslationWithId = function(id) {
+       return _translationJSON[HiPay.Form.locale][id];
+    };
 
 
 
@@ -659,11 +678,13 @@ var HiPay = (function (HiPay) {
                 if (serviceCreditCard.cardLengthMax == serviceCreditCard.cardNumberStringAfter.length && !validatorCreditCardNumber.isValid(document.getElementById(_idInputMapper.cardNumber).value)) {
 
 
-                    document.getElementById("creditCardNumberMessageContainer").innerHTML="Le format de la carte n'est pas valide";
-                    document.bgColor = _colorInput["error"];
-                    // document.getElementById(_idInputMapper.cardNumber).value = 'toto';
-                    document.getElementById(_idInputMapper.cardNumber).setAttribute('style', 'color:'+ _colorInput["error"] + ' !important');
-                    // document.getElementById(_idInputMapper.cardHolder).style.color = "#ff0000";
+
+                    validatorCreditCardNumber.displayErrorMessage()
+
+                   //  document.getElementById("creditCardNumberMessageContainer").innerHTML="Le format de la carte n'est pas valide";
+                   //  document.bgColor = _colorInput["error"];
+                   // document.getElementById(_idInputMapper.cardNumber).setAttribute('style', 'color:'+ _colorInput["error"] + ' !important');
+
                 }
             }
         };
@@ -734,28 +755,49 @@ var HiPay = (function (HiPay) {
 
                 // if (_isTypeValid(serviceCreditCard.cardFormatArray) === false) {
                 if (_isTypeValid(serviceCreditCard.getCardTypeId()) === false) {
+                    validatorCreditCardNumber.errorCollection.push(new _InvalidParametersError(50,  _getLocaleTranslationWithId('FORM_ERROR_INVALID_CARD_NUMBER')));
                     return false;
-
-
                 }
 
 
-                if (/[^0-9-\s]+/.test(creditCardNumberUnformatted)) return false;
+                if (/[^0-9-\s]+/.test(creditCardNumberUnformatted)) {
+                    validatorCreditCardNumber.errorCollection.push(new _InvalidParametersError(50,  _getLocaleTranslationWithId('FORM_ERROR_INVALID_CARD_NUMBER')));
+                    return false;
+                }
 
 
 
                 if (_isLengthValid(creditCardNumberUnformatted) === false) {
-
+                    validatorCreditCardNumber.errorCollection.push(new _InvalidParametersError(50,  _getLocaleTranslationWithId('FORM_ERROR_INVALID_CARD_NUMBER')));
                     return false;
                 }
 
                 if (_isLuhnValid(creditCardNumberUnformatted) === false) {
-
+                    validatorCreditCardNumber.errorCollection.push(new _InvalidParametersError(50,  _getLocaleTranslationWithId('FORM_ERROR_INVALID_CARD_NUMBER')));
                     return false;
                 }
 
                 return true;
-            }
+            };
+
+            validatorCreditCardNumber.displayErrorMessage = function(errorCollection) {
+
+                if (errorCollection == undefined) {
+                    errorCollection = validatorCreditCardNumber.errorCollection;
+                }
+                if (errorCollection.length > 0) {
+                    document.getElementById("creditCardNumberMessageContainer").innerHTML=errorCollection[0]['message'];
+                    document.bgColor = _colorInput["error"];
+                    document.getElementById(_idInputMapper.cardNumber).setAttribute('style', 'color:'+ _colorInput["error"] + ' !important');
+
+                }
+
+            };
+
+            validatorCreditCardNumber.clearDisplayErrorMessage = function() {
+                document.getElementById("creditCardNumberMessageContainer").innerHTML="";
+                document.getElementById(_idInputMapper.cardNumber).setAttribute('style', 'color:'+ _colorInput["default"] + ' !important');
+            };
 
 
             // var _isTypeValid =function(cardFormatArray) {
@@ -795,9 +837,9 @@ var HiPay = (function (HiPay) {
                     nCheck += nDigit;
                     bEven = !bEven;
                 }
-                if (!(nCheck % 10) == 0) {
-                    validatorCreditCardNumber.errorCollection.push(new _InvalidParametersError(409, 'Luhn invalid'));
-                }
+                // if (!(nCheck % 10) == 0) {
+                    // validatorCreditCardNumber.errorCollection.push(new _InvalidParametersError(409, 'Luhn invalid'));
+                // }
                 return (nCheck % 10) == 0;
 
             };
@@ -867,15 +909,18 @@ var HiPay = (function (HiPay) {
                 console.log(year);
                 console.log(currentYear);
                 if(month > 12) {
-                    validatorExpiryDate.errorCollection.push(new _InvalidParametersError(50, 'Le mois doit être compris en 1 et 12'));
+                    // validatorExpiryDate.errorCollection.push(new _InvalidParametersError(50, 'Le mois doit être compris en 1 et 12'));
+                    validatorExpiryDate.errorCollection.push(new _InvalidParametersError(50, _getLocaleTranslationWithId("FORM_ERROR_INVALID_MONTH_EXPIRY_DATE")));
                     return false;
                 } else if(year < currentYear) {
-                    validatorExpiryDate.errorCollection.push(new _InvalidParametersError(50, "L'année est inférieure à l'année en cours"));
+                    // validatorExpiryDate.errorCollection.push(new _InvalidParametersError(50, "L'année est inférieure à l'année en cours"));
+                    validatorExpiryDate.errorCollection.push(new _InvalidParametersError(50, _getLocaleTranslationWithId("FORM_ERROR_INVALID_EXPIRY_DATE_PAST")));
                     return false;
                 }
                 else if(year == currentYear && month < currentMonth || year < currentYear) {
                     // validatorExpiryDate.errorCollection.push(new _InvalidParametersError(50, 'expiry card invalid'));
-                    validatorExpiryDate.errorCollection.push(new _InvalidParametersError(50, 'carte expirée'));
+                    // validatorExpiryDate.errorCollection.push(new _InvalidParametersError(50, 'carte expirée'));
+                    validatorExpiryDate.errorCollection.push(new _InvalidParametersError(50, _getLocaleTranslationWithId("FORM_ERROR_INVALID_EXPIRY_DATE_PAST")));
                     return false;
                 }
                 return true;
@@ -914,7 +959,13 @@ var HiPay = (function (HiPay) {
 
 
                 if (creditCardCVVString.length > serviceCreditCard.creditCardCVVLengthMax ) {
-                    validatorCreditCardCVV.errorCollection.push(new _InvalidParametersError(50, 'Le champ CVC doit contenir '+serviceCreditCard.creditCardCVVLengthMax+' digits'));
+                    // validatorCreditCardCVV.errorCollection.push(new _InvalidParametersError(50, 'Le champ CVC doit contenir '+serviceCreditCard.creditCardCVVLengthMax+' digits'));
+
+
+
+
+
+                    validatorCreditCardCVV.errorCollection.push(new _InvalidParametersError(50, _getLocaleTranslationWithId("FORM_ERROR_INVALID_CVV").replace("%NUMBER%", serviceCreditCard.creditCardCVVLengthMax)));
                     return false;
                 }
 
@@ -929,7 +980,9 @@ var HiPay = (function (HiPay) {
                 // alert((validateAll == undefined || validateAll == true) && creditCardCVVString.length < serviceCreditCard.creditCardCVVLengthMax );
 
                 if ((validateAll == undefined || validateAll == true) && creditCardCVVString.length < serviceCreditCard.creditCardCVVLengthMax ) {
-                    validatorCreditCardCVV.errorCollection.push(new _InvalidParametersError(50, 'Le champ CVC doit contenir '+serviceCreditCard.creditCardCVVLengthMax+' digits'));
+                    // validatorCreditCardCVV.errorCollection.push(new _InvalidParametersError(50, 'Le champ CVC doit contenir '+serviceCreditCard.creditCardCVVLengthMax+' digits'));
+                    validatorCreditCardCVV.errorCollection.push(new _InvalidParametersError(50, _getLocaleTranslationWithId("FORM_ERROR_INVALID_CVV").replace("%NUMBER%", serviceCreditCard.creditCardCVVLengthMax)));
+
                     return false;
                 }
 
@@ -946,7 +999,7 @@ var HiPay = (function (HiPay) {
 
                 }
                 // document.bgColor = _colorInput['error'];
-               };
+            };
 
             validatorCreditCardCVV.clearDisplayErrorMessage = function() {
                 document.getElementById("creditCardCVVMessageContainer").innerHTML="";
