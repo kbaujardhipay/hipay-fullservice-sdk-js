@@ -128,6 +128,7 @@ require_once('credentials.php');
                                 <input class="form-control" id="input-cvv" placeholder="123" maxlength="3" value="">
                                 <span id="cvv-button" class="input-group-addon"><button type="button" data-toggle="modal" data-target="#cvv-modal">?</button></span>
                             </div>
+                            <div id="creditCardCVVMessageContainer" class="inputMessageContainer"></div>
 
 
                         </div>
