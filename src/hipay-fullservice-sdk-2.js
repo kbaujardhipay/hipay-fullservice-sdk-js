@@ -1086,6 +1086,44 @@ var yearYYYY = "20" + year;
 
             validatorCreditCardCVV.errorCollection = errorArray || [];
 
+
+
+
+
+            validatorCreditCardCVV.isPotentiallyValid = function (creditCardCVVString,creditCardNumber) {
+
+                console.log("creditCardCVVString");
+                console.log(creditCardCVVString);
+                var isPotentiallyValid = false;
+
+                var arrayFormatCVV = ['34', '35', '36', '37'];
+                for (var indexFormatCVV = 0; indexFormatCVV <= arrayFormatCVV.length;indexFormatCVV++ ) {
+
+                    if (document.getElementById(_idInputMapper.cardNumber).value != "" && creditCardNumber.indexOf(arrayFormatCVV[indexFormatCVV]) === 0) {
+                        serviceCreditCard.creditCardCVVLengthMax = 4;
+                    }
+                }
+
+
+
+                if (creditCardCVVString != "" && creditCardCVVString.length <= serviceCreditCard.creditCardCVVLengthMax ) {
+                    isPotentiallyValid = true;
+                }
+
+
+
+
+                if (isPotentiallyValid == false) {
+                    validatorCreditCardCVV.isValid(creditCardCVVString);
+                }
+                console.log("isPotentiallyValid expiry date");
+                console.log(isPotentiallyValid);
+                console.log( validatorCreditCardCVV.isValid(creditCardCVVString));
+
+                return isPotentiallyValid;
+            };
+
+
             validatorCreditCardCVV.isValid = function (creditCardCVVString) {
                 if (creditCardCVVString == "" || creditCardCVVString == undefined || creditCardCVVString == null) {
 
@@ -2334,7 +2372,11 @@ var yearYYYY = "20" + year;
         console.log("creditCardNumberUnformatted");
         console.log(creditCardNumberUnformatted);
         if (creditCardNumberUnformatted != "") {
-            if (!validatorCreditCardNumber.isPotentiallyValid(creditCardNumberUnformatted)) {
+            console.log(document.getElementById(_idInputMapper.cardNumber));
+            console.log(document.activeElement);
+            if (!validatorCreditCardNumber.isPotentiallyValid(creditCardNumberUnformatted) ||
+                (!validatorCreditCardNumber.isValid(creditCardNumberUnformatted) && document.getElementById(_idInputMapper.cardNumber) !== document.activeElement )
+            ) {
                 // validatorCreditCard.errorCollection['creditCardNumber'] = validatorCreditCardNumber.errorCollection;
                 errorCollection['creditCardNumber'] = validatorCreditCardNumber.errorCollection[0]['message'];
                 // console.log("display errors");
@@ -2351,7 +2393,8 @@ var yearYYYY = "20" + year;
         console.log("creditCardHolderString");
         console.log(creditCardHolderString);
         if (creditCardHolderString != "") {
-            if (!validatorCreditCardHolder.isPotentiallyValid(creditCardHolderString)) {
+            if (!validatorCreditCardHolder.isPotentiallyValid(creditCardHolderString) ||
+                (!validatorCreditCardHolder.isValid(creditCardHolderString) && document.getElementById(_idInputMapper.cardHolder) !== document.activeElement ) {
                 errorCollection['creditCardHolder'] = validatorCreditCardHolder.errorCollection[0]['message'];
             }
         }
@@ -2376,14 +2419,16 @@ var yearYYYY = "20" + year;
 
 
 
+// Credit card security code
+        var validatorCreditCardCVV = _instanceServiceCreditCard.validatorCreditCardCVV();
+        var creditCardCVVString = params['cvv'];
+        if (creditCardCVVString != "") {
+            if (!validatorCreditCardCVV.isPotentiallyValid(creditCardCVVString,creditCardNumberUnformatted)) {
+                errorCollection['creditCardCVV'] = validatorCreditCardCVV.errorCollection[0]['message'];
+            }
+        }
 
-        //
-        //
-        // var validatorCreditCardCVV = serviceCreditCard.validatorCreditCardCVV(validatorCreditCard.errorCollection);
-        // if (!validatorCreditCardCVV.isValid(params['cvc'])) {
-        //     hasError = true;
-        //     // return false;
-        // }
+
         //
         // if (hasError) {
         //     return false;
