@@ -2394,7 +2394,8 @@ var yearYYYY = "20" + year;
         console.log(creditCardHolderString);
         if (creditCardHolderString != "") {
             if (!validatorCreditCardHolder.isPotentiallyValid(creditCardHolderString) ||
-                (!validatorCreditCardHolder.isValid(creditCardHolderString) && document.getElementById(_idInputMapper.cardHolder) !== document.activeElement ) {
+                (!validatorCreditCardHolder.isValid(creditCardHolderString) && document.getElementById(_idInputMapper.cardHolder) !== document.activeElement )
+            ) {
                 errorCollection['creditCardHolder'] = validatorCreditCardHolder.errorCollection[0]['message'];
             }
         }
