@@ -249,7 +249,19 @@ require_once('credentials.php');
             });
 
 
+        var focusHandler = function(event) {
+            var type = event.target.nodeName.toLowerCase();
+            if(type == 'input' || type == 'textarea') {
+                //Do something
+            }
+        };
 
+        function focusHandler(){
+
+            console.log("test");
+        }
+        document.body.addEventListener('focus', focusHandler, true); //Non-IE
+        document.body.onfocusin = focusHandler; //IE
 
         $("#pay-button").click(function() {
 
