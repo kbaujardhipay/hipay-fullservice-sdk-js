@@ -186,9 +186,7 @@ require_once('credentials.php');
 
 <script type="text/javascript">
     $(document).ready(function(){
-
         var token = null;
-//        console.log(HiPay);
 
         $('#link').click(function() {
             $('#input-card').prop('value', '4111111111111111');
@@ -233,16 +231,23 @@ require_once('credentials.php');
 
         });
 
-        $(function() {
+
+
+//            HiPay.Form.functionTwo(1, 2, function (x) { alert(x); }, function (x) { alert(x); });
+
+
             HiPay.Form.change(function() {
 //alert('toto');
-                console.info(HiPay.Form.paymentFormDataIsValid());
+//                console.info(HiPay.Form.paymentFormDataIsValid());
             $("#pay-button").prop('disabled', !HiPay.Form.paymentFormDataIsValid());
-//                alert('toto');
+//            alert('titi');
+
+            var errorCollection = HiPay.Form.paymentFormDataGetErrors();
+            console.log("errorCollection from client");
+            console.log(errorCollection);
+
             });
 
-
-        })
 
 
 
