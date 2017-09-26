@@ -1982,6 +1982,33 @@ var yearYYYY = "20" + year;
     var _callbackEventFormChange;
     var _callbackEventFormChangeTest;
 
+    var _initErrorHandler = function(){
+        console.log('titi');
+        var errors = HiPay.Form.paymentFormDataGetErrors();
+    };
+    var _addListenerMulti = function (idElement, s, fn, e) {
+        var eventList = s.split(' ');
+
+
+        for(eventName in eventList) {
+alert('toto');
+            document.getElementById(idElement).addEventListener(eventName, function (e) {
+                _initErrorHandler();
+            });
+
+
+        }
+    };
+
+
+
+
+    var _initListenEvent = function(idElement){
+
+        _addListenerMulti(idElement, 'keydown focus blur', _initErrorHandler());
+    };
+
+
     // _callbackEventFormChange();
 
 
@@ -2013,6 +2040,8 @@ var yearYYYY = "20" + year;
                     }
 
                     _callbackEventFormChange();
+                    // alert('toto');
+                    // HiPay.Form.paymentFormDataGetErrors();
 
                 });
 
@@ -2047,6 +2076,13 @@ var yearYYYY = "20" + year;
                     _instanceServiceCreditCard.initCreditCardNumber();
 
                 });
+
+                // document.getElementById(_idInputMapper['cardNumber']).addEventListener('blur', function (e) {
+                //     _initErrorHandler();
+                // });
+
+                _initListenEvent(_idInputMapper['cardNumber']);
+
             }
             else if (propt == 'cardHolder') {
 
@@ -2081,6 +2117,7 @@ var yearYYYY = "20" + year;
                         // // evt.preventDefault();
                     }
                     _callbackEventFormChange();
+
 
 
 
@@ -2439,7 +2476,7 @@ var yearYYYY = "20" + year;
 
 
 // console.log("display errors");
-//         console.log(errorCollection);
+        console.log(errorCollection);
         return errorCollection;
 
 
