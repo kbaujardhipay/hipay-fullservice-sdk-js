@@ -200,11 +200,23 @@ input:disabled.form-control::-webkit-input-placeholder {
     transition: all 0.1s ease 0s;
 }
 
+
+
+/* sdk css */
 #error {
     padding-bottom: 13px;
     font-weight: bold;
     color: #d26a6a;
     font-size: 14px;
+}
+
+#card-type {
+    position:absolute;
+    z-index:50;
+    bottom:3px;
+    right:10px;
+    width:28px;
+    height:28px;
 }
 
 
