@@ -408,38 +408,38 @@ var HiPay = (function (HiPay) {
 
 
 
-    var _validatorCC = function (errorCollection,serviceCC) {
-
-
-
-
-
-        var validatorCC = {};
-
-        var _cardLengthMin = '';
-        var _cardLengthMax = '';
-
-
-
-
-
-
-
-
-
-
-        validatorCC.errorCollection = errorCollection || [];
-
-
-
-
-
-
-
-
-
-        return validatorCC;
-    };
+    // var _validatorCC = function (errorCollection,serviceCC) {
+    //
+    //
+    //
+    //
+    //
+    //     var validatorCC = {};
+    //
+    //     var _cardLengthMin = '';
+    //     var _cardLengthMax = '';
+    //
+    //
+    //
+    //
+    //
+    //
+    //
+    //
+    //
+    //
+    //     validatorCC.errorCollection = errorCollection || [];
+    //
+    //
+    //
+    //
+    //
+    //
+    //
+    //
+    //
+    //     return validatorCC;
+    // };
 
 
     // var _fireEvent = function(element,event){
@@ -722,7 +722,7 @@ var HiPay = (function (HiPay) {
 
                     // console.log(validatorCreditCardExpiryDate.errorCollection[0]['message']);
                     // document.getElementById("creditCardExpiryDateMessageContainer").innerHTML="Le format de la carte n'est pas valide";
-                    document.getElementById("creditCardExpiryDateMessageContainer").innerHTML=validatorCreditCardExpiryDate.errorCollection[0]['message'];
+                    // document.getElementById("creditCardExpiryDateMessageContainer").innerHTML=validatorCreditCardExpiryDate.errorCollection[0]['message'];
 
 
 
@@ -740,10 +740,6 @@ var HiPay = (function (HiPay) {
 
 
             validatorCreditCardNumber.errorCollection = errorArray || [];
-
-            validatorCreditCardNumber.isInValid = function (creditCardNumberUnformatted) {
-
-            }
 
 
             validatorCreditCardNumber.isPotentiallyValid = function(creditCardNumber) {
@@ -776,7 +772,7 @@ var HiPay = (function (HiPay) {
                 var startNumber;
                 var startNumberToCompare;
 
-                console.log(startNumberArray);
+
                 var cardNumberMaxLength = 23;
 
                 var propt;
@@ -799,9 +795,17 @@ console.log(cardNumberMaxLength);
                         if(creditCardNumber.length < cardNumberMaxLength) {
                             isPotentiallyValid = true;
                             break;
+                        } else if(creditCardNumber.length == cardNumberMaxLength) {
+                            if (_isLuhnValid(creditCardNumber) === true) {
+                                isPotentiallyValid = true;
+                                break;
+                            }
                         }
                     }
                 }
+
+                console.log("isPotentiallyValid");
+                console.log(isPotentiallyValid);
 
                 if (isPotentiallyValid == false) {
                     validatorCreditCardNumber.isValid(creditCardNumber);
@@ -2498,6 +2502,11 @@ console.log(cardNumberMaxLength);
             if (!validatorCreditCardNumber.isPotentiallyValid(creditCardNumberUnformatted) ||
                 (!validatorCreditCardNumber.isValid(creditCardNumberUnformatted) && document.getElementById(_idInputMapper.cardNumber) !== document.activeElement )
             ) {
+
+                console.log("error card number");
+                console.log(validatorCreditCardNumber.isPotentiallyValid(creditCardNumberUnformatted));
+                console.log("error card number is valid");
+                console.log(validatorCreditCardNumber.isValid(creditCardNumberUnformatted));
                 // validatorCreditCard.errorCollection['creditCardNumber'] = validatorCreditCardNumber.errorCollection;
                 errorCollection['cardNumber'] = validatorCreditCardNumber.errorCollection[0]['message'];
                 // console.log("display errors");
@@ -2891,20 +2900,20 @@ console.log(cardNumberMaxLength);
         HiPay.publicKey = publicKey;
     };
 
-    HiPay.getFormCC = function(containerId) {
-
-        var containerHtml = document.getElementById(containerId);
-
-
-        if (!containerHtml) {
-            return false;
-        }
-
-        containerHtml.innerHTML += '<div style="margin-top: 50px">'
-            + '<div id="my-card-1" class="card-js" data-capture-name="true" data-icon-colour="#158CBA"></div>'
-            + '</div>';
-
-    }
+    // HiPay.getFormCC = function(containerId) {
+    //
+    //     var containerHtml = document.getElementById(containerId);
+    //
+    //
+    //     if (!containerHtml) {
+    //         return false;
+    //     }
+    //
+    //     containerHtml.innerHTML += '<div style="margin-top: 50px">'
+    //         + '<div id="my-card-1" class="card-js" data-capture-name="true" data-icon-colour="#158CBA"></div>'
+    //         + '</div>';
+    //
+    // }
 
 
 
@@ -3472,7 +3481,8 @@ console.log(cardNumberMaxLength);
         if (CVVLength == undefined) {
             CVVLength = 3;
         }
-        document.getElementById(_cvvContainerId).innerHTML = _translationJSON[HiPay.Form.locale]["FORM_CVV_"+CVVLength+"_HELP_MESSAGE"];
+        // document.getElementById(_cvvContainerId).innerHTML = _translationJSON[HiPay.Form.locale]["FORM_CVV_"+CVVLength+"_HELP_MESSAGE"];
+        return _translationJSON[HiPay.Form.locale]["FORM_CVV_"+CVVLength+"_HELP_MESSAGE"];
         // return _messagesHelpCVC[CVVLength][HiPay.Form.locale];
     };
 
