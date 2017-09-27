@@ -235,9 +235,10 @@ require_once('credentials.php');
 
 //            HiPay.Form.functionTwo(1, 2, function (x) { alert(x); }, function (x) { alert(x); });
 
-
+        $("#pay-button").prop('disabled', !HiPay.Form.paymentFormDataIsValid());
             HiPay.Form.change(function() {
 //alert('toto');
+//                alert(HiPay.Form.paymentFormDataIsValid());
 //                console.info(HiPay.Form.paymentFormDataIsValid());
             $("#pay-button").prop('disabled', !HiPay.Form.paymentFormDataIsValid());
 //            alert('titi');
