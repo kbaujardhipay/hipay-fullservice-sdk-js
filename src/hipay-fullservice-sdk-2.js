@@ -573,8 +573,11 @@ var HiPay = (function (HiPay) {
                 creditCardNumber = document.getElementById(_idInputMapper.cardNumber).value;
             }
 
-            document.getElementById(_idInputMapper.cardType).src = undefined;
-            document.getElementById(_idInputMapper.cardType).setAttribute('style','display:none;');
+
+            if (document.getElementById(_idInputMapper.cardType)) {
+                document.getElementById(_idInputMapper.cardType).src = undefined;
+                document.getElementById(_idInputMapper.cardType).setAttribute('style', 'display:none;');
+            }
             for (var propt in _cardFormatDefinition) {
 
                 /* range */
