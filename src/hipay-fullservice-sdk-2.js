@@ -771,16 +771,7 @@ var HiPay = (function (HiPay) {
             } else {
               if (7 == document.getElementById(_idInputMapper.cardExpiryDate).value.length && validatorCreditCardExpiryDate.isValid(document.getElementById(_idInputMapper.cardExpiryDate).value) === false) {
 
-                    // console.log(validatorCreditCardExpiryDate.errorCollection[0]['message']);
-                    // document.getElementById("creditCardExpiryDateMessageContainer").innerHTML="Le format de la carte n'est pas valide";
-                    // document.getElementById("creditCardExpiryDateMessageContainer").innerHTML=validatorCreditCardExpiryDate.errorCollection[0]['message'];
 
-
-
-                    // document.bgColor = _colorInput['error'];
-                    // document.getElementById(_idInputMapper.cardNumber).value = 'toto';
-                    // document.getElementById(_idInputMapper.cardExpiryDate).setAttribute('style', 'color:'+ _colorInput["error"] + ' !important; border-color:'+ _colorInput["error"] + ' !important;');
-                    // document.getElementById(_idInputMapper.cardHolder).style.color = "#ff0000";
                 }
             }
         };
@@ -1955,7 +1946,7 @@ var HiPay = (function (HiPay) {
     var _addListenerMulti = function (idElement, s, fn) {
         var eventList = s.split(' ');
         for(var eventIndex = 0; eventIndex < eventList.length; eventIndex++) {
-            document.getElementById(idElement).addEventListener(eventList[eventIndex], function (e) {fn();console.log("ok" + eventIndex);},false);
+            document.getElementById(idElement).addEventListener(eventList[eventIndex], function (e) {fn();},false);
         }
     };
 
@@ -1987,7 +1978,7 @@ var HiPay = (function (HiPay) {
             if (propt == 'cardNumber') {
 
                 document.getElementById(_idInputMapper['cardNumber']).addEventListener('keydown', function (e) {
-                    // console.log("first");
+
                     evt = e || window.event;
 
                     var charCode = evt.keyCode || evt.which;
@@ -2012,7 +2003,7 @@ var HiPay = (function (HiPay) {
                     // return false;
                     evt = e || window.event;
 
-                    // console.log(document.getElementById(_idInputMapper['cardNumber']));
+
                     var charCode = evt.keyCode || evt.which;
 
                     evt.preventDefault();
@@ -2120,7 +2111,7 @@ var HiPay = (function (HiPay) {
             else if (propt == 'cardCVV') {
 
                 document.getElementById(_idInputMapper['cardCVV']).addEventListener('keydown', function (e) {
-                    // console.log("first");
+
                     evt = e || window.event;
 
                     var charCode = evt.keyCode || evt.which;
@@ -2186,7 +2177,7 @@ var HiPay = (function (HiPay) {
 
         var explodeExpiryDate = creditCardExpiryDate.split(' / ');
 
-        // console.log(explodeExpiryDate.length);
+
 
         var month = "";
         var year = "";
@@ -2292,7 +2283,7 @@ var HiPay = (function (HiPay) {
 
     HiPay.Form.paymentFormDataIsValid = function() {
 
-        // console.log(_instanceServiceCreditCard);
+
         var params = {
             card_number: $('#input-card')[0].value,
             card_holder: $('#input-name')[0].value,
@@ -2556,7 +2547,7 @@ var HiPay = (function (HiPay) {
         //     .catch(function (error) {
 
         //     });
-        
+
         function isIE () {
             var myNav = navigator.userAgent.toLowerCase();
             return (myNav.indexOf('msie') != -1) ? parseInt(myNav.split('msie')[1]) : false;
