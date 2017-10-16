@@ -237,6 +237,8 @@ require_once('credentials.php');
 
         $("#pay-button").prop('disabled', !HiPay.Form.paymentFormDataIsValid());
             HiPay.Form.change(function() {
+
+
 //alert('toto');
 //                alert(HiPay.Form.paymentFormDataIsValid());
 //                console.info(HiPay.Form.paymentFormDataIsValid());
