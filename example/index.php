@@ -233,6 +233,8 @@ require_once('credentials.php');
 
         $("#pay-button").prop('disabled', !HiPay.Form.paymentFormDataIsValid());
             HiPay.Form.change(function() {
+
+                console.log(HiPay.getCVVInformation());
                 console.log('change form');
                 $("#pay-button").prop('disabled', !HiPay.Form.paymentFormDataIsValid());
                 var errorCollection = HiPay.Form.paymentFormDataGetErrors();

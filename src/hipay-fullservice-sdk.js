@@ -2144,12 +2144,19 @@ var HiPay = (function (HiPay) {
 
     /**
      *
-     * @returns {*}
+     * @returns {{type: *, length: *}}
      */
     HiPay.getCVVInformation = function() {
         _instanceServiceCreditCard = new _serviceCreditCard();
+
+        var CVVLength = _instanceServiceCreditCard.getCreditCardCVVLengthMax();
+        if (CVVLength == undefined) {
+            CVVLength = 3;
+        }
+
         var idType = _instanceServiceCreditCard.getTypeWithCardNumber(_instanceServiceCreditCard.getCreditCardNumberValue());
-        return _idCVVMapper[idType];
+        return {type:_idCVVMapper[idType],
+        length: CVVLength};
     }
 
     /**
