@@ -1238,9 +1238,8 @@ var HiPay = (function (HiPay) {
                     var tempStringAfterDebut = newTempStringAfter.substring(0, (parseInt(startB)));
                     var tempStringAfterFin = newTempStringAfter.substring((parseInt(startB) + 1), newTempStringAfter.length);
                     newTempStringAfter = tempStringAfterDebut + "" + tempStringAfterFin;
-                    console.log(tempStringAfterDebut);
-                    console.log(tempStringAfterFin);
-                    // startA = startA - 1;
+
+
                 }
                 endA = startA;
             } else if(startB == 0) {
@@ -1248,9 +1247,8 @@ var HiPay = (function (HiPay) {
                     var tempStringAfterDebut = newTempStringAfter.substring(0, (parseInt(startB)));
                     var tempStringAfterFin = newTempStringAfter.substring((parseInt(startB) + 1), newTempStringAfter.length);
                     newTempStringAfter = tempStringAfterDebut + "" + tempStringAfterFin;
-                    console.log(tempStringAfterDebut);
-                    console.log(tempStringAfterFin);
-                    // startA = 0;
+
+
                 }
                 endA = startA;
             }
@@ -1263,7 +1261,7 @@ var HiPay = (function (HiPay) {
             var startAtemp = startA;
             for (var nbBefore = 0; nbBefore <= newTempStringAfter.length;nbBefore++ ) {
 
-                // if (nbBefore == realCursorPositionInNumberBefore) {
+
                 if (nbBefore == startA) {
 
 
@@ -1271,7 +1269,6 @@ var HiPay = (function (HiPay) {
 
                     } else {
                         tempStringAfter += serviceCreditCard.lastCharString;
-                        // realCursorPositionInNumberAfter = realCursorPositionInNumberBefore + 1;
                         startAtemp = startAtemp + 1;
 
 
@@ -1812,9 +1809,9 @@ var HiPay = (function (HiPay) {
      * @private
      */
     var _initErrorHandler = function(e){
-        console.log('init error');
-       var evt = e || window.event;
-        console.log(evt);
+
+       // var evt = e || window.event;
+
 
 
         // _callbackEventFormChange();
@@ -1851,7 +1848,6 @@ var HiPay = (function (HiPay) {
      * @private
      */
     var _initListenEvent = function(idElement){
-        // console.log('init' + idElement);
         _addListenerMulti(idElement, 'keypress blur focus', _initErrorHandler);
     };
 
@@ -2074,10 +2070,6 @@ var HiPay = (function (HiPay) {
             }
 
             document.getElementById(_idInputMapper[propt]).addEventListener('blur', function (e) {
-                // if (document.getElementById(_idInputMapper.cardNumber) !== document.activeElement) {
-                console.log('blur holder');
-                // console.log(document.activeElement);
-                // }
                 _callbackEventFormChange();
 
             });
