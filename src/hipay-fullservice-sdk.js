@@ -1498,6 +1498,15 @@ var HiPay = (function (HiPay) {
 
                 }
                 endA = startA;
+            } else if(startB == 0) {
+                if(charCode == 46) {
+                    var tempStringAfterDebut = newTempStringAfter.substring(0, (parseInt(startB)));
+                    var tempStringAfterFin = newTempStringAfter.substring((parseInt(startB) + 1), newTempStringAfter.length);
+                    newTempStringAfter = tempStringAfterDebut + "" + tempStringAfterFin;
+
+
+                }
+                endA = startA;
             }
 
 
@@ -1514,7 +1523,7 @@ var HiPay = (function (HiPay) {
                 if (nbBefore == startA) {
 
 
-                    if (charCode == 8) {
+                    if (charCode == 8 || charCode == 46) {
 
                     } else {
                         tempStringAfter += serviceCreditCard.lastCharStringCreditCardHolder;
@@ -1636,6 +1645,15 @@ var HiPay = (function (HiPay) {
 
                 }
                 endA = startA;
+            } else if(startB == 0) {
+                if(charCode == 46) {
+                    var tempStringAfterDebut = newTempStringAfter.substring(0, (parseInt(startB)));
+                    var tempStringAfterFin = newTempStringAfter.substring((parseInt(startB) + 1), newTempStringAfter.length);
+                    newTempStringAfter = tempStringAfterDebut + "" + tempStringAfterFin;
+
+
+                }
+                endA = startA;
             }
 
 
@@ -1652,7 +1670,7 @@ var HiPay = (function (HiPay) {
 
             for (var nbBefore = 0; nbBefore <= newTempStringAfter.length;nbBefore++ ) {
                 if (nbBefore == startA) {
-                    if (charCode == 8) {
+                    if (charCode == 8 || charCode == 46) {
                     } else {
                         tempStringAfter += serviceCreditCard.lastCharStringCreditCardExpiryDate;
                         startAtemp = startAtemp + 1;
@@ -1754,6 +1772,15 @@ var HiPay = (function (HiPay) {
 
                 }
                 endA = startA;
+            } else if(startB == 0) {
+                if(charCode == 46) {
+                    var tempStringAfterDebut = newTempStringAfter.substring(0, (parseInt(startB)));
+                    var tempStringAfterFin = newTempStringAfter.substring((parseInt(startB) + 1), newTempStringAfter.length);
+                    newTempStringAfter = tempStringAfterDebut + "" + tempStringAfterFin;
+
+
+                }
+                endA = startA;
             }
 
             var startA = startBFormat;
@@ -1761,7 +1788,7 @@ var HiPay = (function (HiPay) {
             var startAtemp = startA;
             for (var nbBefore = 0; nbBefore <= newTempStringAfter.length;nbBefore++ ) {
                 if (nbBefore == startA) {
-                    if (charCode == 8) {
+                    if (charCode == 8 || charCode == 46) {
                     } else {
                         tempStringAfter += serviceCreditCard.lastCharStringCreditCardCVV;
                         // realCursorPositionInNumberAfter = realCursorPositionInNumberBefore + 1;
