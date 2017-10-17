@@ -8215,10 +8215,10 @@ var HiPay = (function (HiPay) {
         return _translationJSON[HiPay.Form.locale][id];
     };
 
-    var _colorInput = {
-        'default': '#005a94',
-        'error': '#ff0000',
-    };
+    // var _colorInput = {
+    //     'default': '#005a94',
+    //     'error': '#ff0000',
+    // };
 
     var _cvvContainerId = "container-cvv-help-message";
 
@@ -8236,7 +8236,6 @@ var HiPay = (function (HiPay) {
         card_visa_info: "CVV",
         card_mastercard_info: "CVC",
         card_american_express_info: "CID"
-
     };
     var _cardImg = {
         card_visa_info: "ic_credit_card_visa.png",
@@ -8244,7 +8243,7 @@ var HiPay = (function (HiPay) {
         card_diners_info: "ic_credit_card_diners.png",
         card_american_express_info: "ic_credit_card_amex.png",
         card_maestro_info: "ic_credit_card_maestro.png"
-    }
+    };
 
     var _cardFormatDefinition = {
         card_visa_info:
@@ -8370,222 +8369,6 @@ var HiPay = (function (HiPay) {
     }
 
 
-
-
-
-
-    /**
-     * dump
-     */
-    function dump(obj) {
-        var out = '';
-        for (var i in obj) {
-            out += i + ": " + obj[i] + " - ";
-        }
-
-        alert(out);
-
-        // or, if you wanted to avoid alerts...
-
-        // var pre = document.createElement('pre');
-        // pre.innerHTML = out;
-        // document.body.appendChild(pre)
-    }
-
-    var _isBrowser=new Function("try {return this===window;}catch(e){ return false;}");
-
-
-    var _extend = function () {
-
-        // Variablesbtoa
-        var extended = {};
-        var deep = false;
-        var i = 0;
-        var length = arguments.length;
-
-        // Check if a deep merge
-        if ( Object.prototype.toString.call( arguments[0] ) === '[object Boolean]' ) {
-            deep = arguments[0];
-            i++;
-        }
-
-        // Merge the object into the extended object
-        var merge = function (obj) {
-            for ( var prop in obj ) {
-                if ( Object.prototype.hasOwnProperty.call( obj, prop ) ) {
-                    // If deep merge and property is an object, merge properties
-                    if ( deep && Object.prototype.toString.call(obj[prop]) === '[object Object]' ) {
-                        extended[prop] = extend( true, extended[prop], obj[prop] );
-                    } else {
-                        extended[prop] = obj[prop];
-                    }
-                }
-            }
-        };
-
-        // Loop through each object and conduct a merge
-        for ( ; i < length; i++ ) {
-            var obj = arguments[i];
-            merge(obj);
-        }
-
-        return extended;
-
-    };
-
-
-
-    var _Error = function (code, message) {
-        _processObjectPayload(this, {
-            code: code,
-            message: message
-        });
-    };
-
-    // Properties: browser compatibility
-    var _canDefineProperty = (typeof Object.defineProperty === 'function');
-
-    if (_canDefineProperty) {
-        try {
-            Object.defineProperty({}, 'x', {});
-        } catch (e) {
-            _canDefineProperty = false;
-        }
-    }
-
-    if (_canDefineProperty) {
-        Object.defineProperties(HiPay, {
-
-            allowedParameters: {
-                enumerable: true, writable: true, value:{
-                    'card_number':true,
-                    'card_holder':true,
-                    'card_expiry_month':true,
-                    'card_expiry_year':true,
-                    'cvc':true,
-                    'multi_use':true,
-                    'generate_request_id':true
-                }
-            },
-
-            /**
-             * The target type stage or production to make API calls in stage or production.
-             *
-             * @property target
-             * @default "production"
-             * @type string
-             * @example
-             *    HiPay.target = "stage";
-             */
-
-            target: {enumerable: true, writable: true, value:'production'},
-
-            /**
-             * The username. You must provide this value in order to be able to make API calls.
-             *
-             * @property username
-             * @type string
-             */
-
-            username: {enumerable: false, writable: true},
-
-            /**
-             * The user public key. You must provide this value in order to be able to make API calls.
-             *
-             * @property publicKey
-             * @type string
-             */
-
-            publicKey: {enumerable: false, writable: true}
-        });
-    }
-
-    else {
-        allowedParameters = {
-            enumerable: true, writable: true, value:{
-                'card_number':true,
-                'card_holder':true,
-                'card_expiry_month':true,
-                'card_expiry_year':true,
-                'cvc':true,
-                'multi_use':true,
-                'generate_request_id':true
-            }
-        }
-        HiPayPrivate.target = 'production';
-    }
-
-    // Define property helper
-    var _defineProperties = function(object, properties) {
-        for (var key in properties) {
-            // properties[key].propertyDescriptors = Object.assign({}, {enumerable: true, writable: false, configurable: false}, properties[key].propertyDescriptors || {});
-            properties[key].propertyDescriptors = _extend({}, {enumerable: true, writable: false, configurable: false}, properties[key].propertyDescriptors || {});
-
-        }
-        // var mapping = Object.assign({}, object.prototype._mapping || {}, properties);
-        var mapping = _extend({}, object.prototype._mapping || {}, properties);
-
-
-        if (_canDefineProperty) {
-            Object.defineProperties(object.prototype, {
-                "_mapping": {
-                    enumerable: false,
-                    configurable: true,
-                    writable: false,
-                    value: mapping
-                }
-            });
-
-        } else {
-            object.prototype._mapping = mapping;
-        }
-
-        if (_canDefineProperty) {
-            var propConfig = {};
-            for (var key in properties) {
-                var valueProp = properties[key];
-                propConfig[valueProp.name] = valueProp.propertyDescriptors;
-            }
-
-            Object.defineProperties(object.prototype, propConfig);
-        }
-    };
-
-    var _bootstrapInstanceProperties = function (instance) {
-        if (_canDefineProperty) {
-            var propertyConfig = [];
-            for (var key in instance._mapping) {
-                // $.each(instance._mapping, function (key, val) {
-                var val =  instance._mapping[key];
-                propertyConfig[val.name] = _extend({}, true, val.propertyDescriptors.clone, {
-                    writable: true,
-                    configurable: true
-                });
-                // });
-            }
-            Object.defineProperties(instance, propertyConfig);
-        }
-    };
-
-    var _doGetCaretPosition = function (ctrl)
-    {
-        var CaretPos = 0;
-
-        if (ctrl.selectionStart || ctrl.selectionStart == 0)
-        {// Standard.
-            CaretPos = ctrl.selectionStart;
-        }
-        else if (document.selection)
-        {// Legacy IE
-            ctrl.focus ();
-            var Sel = document.selection.createRange ();
-            Sel.moveStart ('character', -ctrl.value.length);
-            CaretPos = Sel.text.length;
-        }
-
-        return (CaretPos);
-    }
-
     var _setCaretPosition = function(ctrl,pos)
     {
         if (ctrl.setSelectionRange)
@@ -8626,6 +8409,7 @@ var HiPay = (function (HiPay) {
 
     var _instanceServiceCreditCard = null;
 
+    // service credit card
     var _serviceCreditCard = function(charCode) {
 
         var serviceCreditCard = {};
@@ -8788,9 +8572,6 @@ var HiPay = (function (HiPay) {
             }
 
         };
-
-
-
 
         serviceCreditCard.unformatCreditCardNumber = function(cardNumberStringFormatted) {
             if (cardNumberStringFormatted != undefined) {
@@ -9957,16 +9738,13 @@ var HiPay = (function (HiPay) {
      *
      */
     var _callbackEventFormChange;
-    /**
-     *
-     */
-    var _callbackEventFormChangeTest;
 
     /**
      *
      * @private
      */
     var _initErrorHandler = function(){
+        console.log('has error');
         for (var indexInput in _idInputMapper) {
             if (indexInput != "cardType") {
                 document.getElementById(_idInputMapper[indexInput]).setAttribute('style', 'color:' + _colorInput["default"] + ' !important');
@@ -10000,6 +9778,7 @@ var HiPay = (function (HiPay) {
      * @private
      */
     var _initListenEvent = function(idElement){
+        console.log('init listen');
         _addListenerMulti(idElement, 'keypress blur focus', _initErrorHandler);
     };
 
@@ -10024,10 +9803,12 @@ var HiPay = (function (HiPay) {
 
         for(var propt in _idInputMapper){
             if (propt == 'cardNumber') {
+                console.log('init listen');
+                _initListenEvent(_idInputMapper['cardNumber']);
 
                 document.getElementById(_idInputMapper['cardNumber']).addEventListener('keydown', function (e) {
 
-                    evt = e || window.event;
+                    var evt = e || window.event;
 
                     var charCode = evt.keyCode || evt.which;
                     if (charCode == 8 || charCode == 46) {
@@ -10072,8 +9853,13 @@ var HiPay = (function (HiPay) {
                     _instanceServiceCreditCard.initCreditCardNumber();
 
                 });
+                document.getElementById(_idInputMapper[propt]).addEventListener('blur', function (e) {
+                    _instanceServiceCreditCard = new _serviceCreditCard();
+                    _instanceServiceCreditCard.initCreditCardCVV();
+                    _instanceServiceCreditCard.initCreditCardNumber();
+                });
 
-                _initListenEvent(_idInputMapper[propt]);
+
 
             }
             else if (propt == 'cardHolder') {
@@ -10280,8 +10066,9 @@ var HiPay = (function (HiPay) {
 
         if (creditCardNumberUnformatted != "") {
 
-            if (!validatorCreditCardNumber.isPotentiallyValid(creditCardNumberUnformatted) ||
-                (!validatorCreditCardNumber.isValid(creditCardNumberUnformatted) && document.getElementById(_idInputMapper.cardNumber) !== document.activeElement )
+            if (!validatorCreditCardNumber.isPotentiallyValid(creditCardNumberUnformatted)
+                || (!validatorCreditCardNumber.isValid(creditCardNumberUnformatted) && document.getElementById(_idInputMapper.cardNumber) !== document.activeElement )
+                // || (validatorCreditCardNumber.isPotentiallyValid(creditCardNumberUnformatted) && document.getElementById(_idInputMapper.cardNumber) !== document.activeElement)
             ) {
                errorCollection['cardNumber'] = validatorCreditCardNumber.errorCollection[0]['message'];
             }
