@@ -2823,14 +2823,31 @@ var HiPay = (function (HiPay) {
         // _callbackEventFormChange();
         for (var indexInput in _idInputMapper) {
             if (indexInput != "cardType") {
-                document.getElementById(_idInputMapper[indexInput]).setAttribute('style', 'color:' + _colorInput["default"] + ' !important');
+
+                if (document.getElementById(_idInputMapper[indexInput]).classList.contains('error-card-form')) {
+                    document.getElementById(_idInputMapper[indexInput]).classList.remove('error-card-form');
+                }
+                if (!document.getElementById(_idInputMapper[indexInput]).classList.contains('default-card-form')) {
+                    document.getElementById(_idInputMapper[indexInput]).classList.add('default-card-form');
+                }
+                    // document.getElementById(_idInputMapper[indexInput]).setAttribute('style', 'color:' + _colorInput["default"] + ' !important');
             }
         }
 
         var errors = HiPay.Form.paymentFormDataGetErrors();
 
         for (var indexError in errors) {
-            document.getElementById(_idInputMapper[indexError]).setAttribute('style', 'color:#ff0000 !important');
+            if (!document.getElementById(_idInputMapper[indexInput]).classList.contains('error-card-form')) {
+                // The box that we clicked has a class of bad so let's remove it and add the good class
+                document.getElementById(_idInputMapper[indexError]).classList.add('error-card-form');
+            }
+            if (document.getElementById(_idInputMapper[indexError]).classList.contains('default-card-form')) {
+                document.getElementById(_idInputMapper[indexError]).classList.remove('default-card-form');
+            }
+
+
+            // document.getElementById(_idInputMapper[indexError]).setAttribute('style', 'color:#ff0000 !important');
+
         }
     };
 
@@ -2854,7 +2871,7 @@ var HiPay = (function (HiPay) {
      * @private
      */
     var _initListenEvent = function(idElement){
-        _addListenerMulti(idElement, 'keypress blur focus', _initErrorHandler);
+        _addListenerMulti(idElement, 'keydown keypress blur focus', _initErrorHandler);
     };
 
     /* add listener on all input form */
@@ -2920,22 +2937,14 @@ var HiPay = (function (HiPay) {
 
                     _callbackEventFormChange();
 
-                    // _callbackEventFormChange();
                 });
-                //
-                // document.getElementById(_idInputMapper[propt]).addEventListener('keyup', function (e) {
-                //     _instanceServiceCreditCard = new _serviceCreditCard();
-                //     _instanceServiceCreditCard.initCreditCardCVV();
-                //     _instanceServiceCreditCard.initCreditCardNumber();
-                //     console.log(document.activeElement);
-                //
-                // });
 
 
 
 
 
-                _initListenEvent(_idInputMapper[propt]);
+
+                // _initListenEvent(_idInputMapper[propt]);
 
             }
             else if (propt == 'cardHolder') {
@@ -3024,7 +3033,9 @@ var HiPay = (function (HiPay) {
 
                 document.getElementById(_idInputMapper['cardCVV']).addEventListener('keydown', function (e) {
 
-                    evt = e || window.event;
+
+
+                    var evt = e || window.event;
 
                     var charCode = evt.keyCode || evt.which;
                     if (charCode == 8 || charCode == 46) {
@@ -3033,14 +3044,12 @@ var HiPay = (function (HiPay) {
                         _instanceServiceCreditCard.initCreditCardCVV(charCode);
                         evt.preventDefault();
 
-                    } else {
-
                     }
 
 
 
 
-                    var validatorCreditCardCVV = _instanceServiceCreditCard.validatorCreditCardCVV();
+                    // var validatorCreditCardCVV = _instanceServiceCreditCard.validatorCreditCardCVV();
 
 
                     _callbackEventFormChange();
@@ -3051,7 +3060,9 @@ var HiPay = (function (HiPay) {
 
                 document.getElementById(_idInputMapper['cardCVV']).addEventListener('keypress', function (e) {
 
-                    evt = e || window.event;
+
+
+                    var evt = e || window.event;
 
 
                     var charCode = evt.keyCode || evt.which;
@@ -3067,10 +3078,10 @@ var HiPay = (function (HiPay) {
                 });
 
 
-                document.getElementById(_idInputMapper['cardCVV']).addEventListener('blur', function (e) {
-                    _instanceServiceCreditCard = new _serviceCreditCard();
-                    var validatorCreditCardCVV = _instanceServiceCreditCard.validatorCreditCardCVV();
-                });
+                // document.getElementById(_idInputMapper['cardCVV']).addEventListener('blur', function (e) {
+                //     _instanceServiceCreditCard = new _serviceCreditCard();
+                //     var validatorCreditCardCVV = _instanceServiceCreditCard.validatorCreditCardCVV();
+                // });
             }
             else {
             }
@@ -3123,7 +3134,7 @@ var HiPay = (function (HiPay) {
 
     /**
      *
-     * @returns {*}
+     * @returns {{type: *, length: *}}
      */
     HiPay.getCVVInformation = function() {
         _instanceServiceCreditCard = new _serviceCreditCard();
