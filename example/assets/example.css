@@ -9,6 +9,10 @@ html body {
     text-align: justify;
 }
 
+body {
+    background-image: url("custom-bg.png");
+}
+
 span#card-type {
     padding: 2px; !important
 }
@@ -71,37 +75,7 @@ span#card-type {
 }
 
 
-input , input[placeholder], [placeholder] {
-    color: #005a94 !important;
-    font-weight: bold;
-}
 
-.form-control::-moz-placeholder {
-    color: #5da3d0 !important;
-    opacity: 1;
-}
-.form-control:-ms-input-placeholder {
-    color: #5da3d0 !important;
-}
-.form-control::-webkit-input-placeholder {
-    color: #5da3d0 !important;
-}
-
-input:disabled , input[placeholder]:disabled, [placeholder]:disabled {
-    /*color: #005a94 !important;*/
-    color: #ccc !important;
-    font-weight: bold;
-}
-input:disabled.form-control::-moz-placeholder {
-    color: #ccc !important;
-    opacity: 1;
-}
-input:disabled.form-control:-ms-input-placeholder {
-    color: #ccc !important;
-}
-input:disabled.form-control::-webkit-input-placeholder {
-    color: #ccc !important;
-}
 .form-control::-ms-expand {
     background-color: transparent;
     border: 0;
