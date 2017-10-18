@@ -1,11 +1,26 @@
+
 /**
  * HiPay Fullservice library
+ *
+ * @class HiPay
+ * @param {HiPay} HiPay
+ *
  */
-
 var HiPay = (function (HiPay) {
 
     var HiPay = {};
+
+    /**
+     *
+     * @class HiPay.Form
+     *
+     */
     HiPay.Form = {};
+    /**
+     * Locale fr_FR ...
+     * @attribute HiPay.Form.locale
+     *
+     */
     HiPay.Form.locale = "fr_FR";
     var _translationJSON = {
         "en_EN" : {
@@ -2157,6 +2172,13 @@ var HiPay = (function (HiPay) {
      *
      * @returns {{type: *, length: *}}
      */
+
+
+    /**
+     * CVV information by card (name and length of CVV)
+     * @method HiPay.getCVVInformation
+     * @return {object}
+     */
     HiPay.getCVVInformation = function() {
         _instanceServiceCreditCard = new _serviceCreditCard();
 
@@ -2171,8 +2193,10 @@ var HiPay = (function (HiPay) {
     }
 
     /**
+     * Get errors in form
      *
-     * @returns {{}}
+     * @method HiPay.Form.paymentFormDataGetErrors
+     * @return errorCollection
      */
     HiPay.Form.paymentFormDataGetErrors = function() {
 
@@ -2243,14 +2267,21 @@ var HiPay = (function (HiPay) {
     };
 
     /**
+     * Callback on form change
      *
-     * @param callback
+     * @method HiPay.Form.change
+     * @parameter {function} callback
+     *
      */
     HiPay.Form.change = function(callback) {
         _callbackEventFormChange = callback;
     };
 
     /**
+     * Is valid form data.
+     *
+     * @method HiPay.Form.paymentFormDataIsValid
+     * @return {Boolean} Form is or is not valid
      *
      */
     HiPay.Form.paymentFormDataIsValid = function() {
@@ -2857,34 +2888,8 @@ var HiPay = (function (HiPay) {
 
 
     _defineProperties(HiPay.Token, {
-
-        /**
-         * The type of error.
-         *
-         * @property token
-         * @type string
-         * @final
-         */
         token: {name: 'token'},
-
-        /**
-         * Additional details such as a list of invalid parameters. Refer to the API reference for more information.
-         *
-         * @property request_id
-         * @type Object
-         * @final
-         */
-
         requestId: {name: 'request_id'},
-
-        /**
-         * The cc brand.
-         *
-         * @property serverResponse
-         * @type string
-         * @final
-         */
-
         brand: {name: 'brand'},
         pan: {name: 'pan'},
         cardHolder: {name: 'card_holder'},
@@ -2898,110 +2903,38 @@ var HiPay = (function (HiPay) {
 
 
     _defineProperties(_APIError, {
-
-        /**
-         * The type of error.
-         *
-         * @property code
-         * @type number
-         * @final
-         */
         code: {name: 'code'},
-
-        /**
-         * Additional details such as a list of invalid parameters. Refer to the API reference for more information.
-         *
-         * @property message
-         * @type Object
-         * @final
-         */
-
         message: {name: 'message'},
 
     });
 
 
     _defineProperties(_InvalidParametersError, {
-
-        /**
-         * The type of error.
-         *
-         * @property code
-         * @type number
-         * @final
-         */
-
         code: {name: 'code'},
-
-        /**
-         * Additional details such as a list of invalid parameters. Refer to the API reference for more information.
-         *
-         * @property details
-         * @type Object
-         * @final
-         */
-
         message: {name: 'message'},
-
-        /**
-         * The server response body.
-         *
-         * @property serverResponse
-         * @type string
-         * @final
-         */
-
         server_response: {name: 'serverResponse'}
     });
 
 
     _defineProperties(_InvalidFormTokenizationError, {
-
-        /**
-         * The type of error.
-         *
-         * @property code
-         * @type number
-         * @final
-         */
-
         code: {name: 'code'},
-
-        /**
-         * Additional details such as a list of invalid parameters. Refer to the API reference for more information.
-         *
-         * @property details
-         * @type Object
-         * @final
-         */
-
         message: {name: 'message'},
-
-        /**
-         *
-         */
         errorCollection: {name: 'errorCollection'},
-
-        /**
-         * The server response body.
-         *
-         * @property serverResponse
-         * @type string
-         * @final
-         */
-
         server_response: {name: 'serverResponse'}
     });
 
     /**
+     * Get a token with credit card information.
      *
-     * @param cardNumber
-     * @param expiryMonth
-     * @param expiryYear
-     * @param cardHolder
-     * @param cvv
-     * @param multiUse
-     * @param generateRequestId
+     * @method HiPay.tokenize
+     * @param {String} cardNumber
+     * @param {String} expiryMonth
+     * @param {String} expiryYear
+     * @param {String} cardHolder
+     * @param {String} cvv
+     * @param {Boolean} multiUse
+     * @param {Boolean} generateRequestId
+     *
      */
     HiPay.tokenize = function(cardNumber, expiryMonth, expiryYear, cardHolder, cvv, multiUse, generateRequestId) {
 
@@ -3088,9 +3021,8 @@ var HiPay = (function (HiPay) {
 
 
     /**
-     *
-     * @returns {*}
-     * @constructor
+     * Helper to display CVC information
+     * @method HiPay.Form.CVCHelpText
      */
     HiPay.Form.CVCHelpText = function() {
 
@@ -3104,9 +3036,10 @@ var HiPay = (function (HiPay) {
     };
 
     /**
-     *
-     * @returns {boolean}
+     * Tokenize form data.
+     * @method HiPay.Form.tokenizePaymentFormData
      */
+
     HiPay.Form.tokenizePaymentFormData = function() {
 
         if (!HiPay.Form.paymentFormDataIsValid()) {
