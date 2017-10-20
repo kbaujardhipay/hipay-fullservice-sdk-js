@@ -24,20 +24,22 @@ require_once('credentials.php');
     <!--[if lt IE 9]>
     <script src="../node_modules/lt-ie-9/lt-ie-9.min.js"></script>
     <link href="./assets/old_bws.css" media="screen" rel="stylesheet" type="text/css">
+
     <![endif]-->
 
 <!--    <script type="text/javascript" src="./assets/input.js"></script>-->
-    <script type="text/javascript" src="../dist/hipay-fullservice-sdk.js"></script>
+<!--    <script type="text/javascript" src="../dist/hipay-fullservice-sdk-ie8.js"></script>-->
+   <script type="text/javascript" src="../dist/hipay-fullservice-sdk.js"></script>
 
 </head>
 
 <body>
 <div id="main" class="container">
 
-    <div class="row">
-        <div class="col-sm-12 col-lg-7">
+   <div class="row">
+       <div class="col-sm-12 col-lg-7">
 
-            <!-- Main component for a primary marketing message or call to action -->
+           <!-- Main component for a primary marketing message or call to action -->
             <div class="scontainer" id ="infos-txt" class="">
                 <h1 class="main-title" id="price">HiPay Direct Post Tokenization Simulator</h1>
                 <p id="order">Submit the form in oder to tokenize the credit card details using the HiPay Fullservice SDK for JavaScript (payment details won't hit the server). You will see the HiPay Fullservice platform response below.</p>
@@ -64,13 +66,11 @@ require_once('credentials.php');
                             <div class="input-group">
                                 <div class="input-group-addon-icon input-group-addon"><span class="glyphicon glyphicon-credit-card" aria-hidden="true"></span></div>
                                 <input type="tel" class="form-control" id="input-card"  placeholder="Ex : 5136 0000 0000 0000" autocomplete="off" pattern="\d*" name="cardNumber" value="">
-<!--                                <span id="card-type" class="input-group-addon"></span>-->
                             </div>
                             <div id="creditCardNumberMessageContainer" class="inputMessageContainer"></div>
                         </div>
                     </div>
                 </div>
-
 
                 <div class="row">
                     <div class="col-lg-12">
@@ -85,21 +85,6 @@ require_once('credentials.php');
                     </div>
                 </div>
 
-
-<!--                <div class="row">-->
-<!--                    <div class="col-lg-12">-->
-<!--                        <div class="form-group">-->
-<!--                            <label class="sr-only" for="input-name">Expiry (Month/Year)</label>-->
-<!--                            <div class="input-group">-->
-<!--                                <div class="input-group-addon-icon input-group-addon"><span class="glyphicon glyphicon-calendar" aria-hidden="true"></span></div>-->
-<!--                                <input id="input-month" type="number"  class="form-control" placeholder="Month" maxlength="2" value="">-->
-<!--                                <span class="input-group-btn" style="width:0px;"></span>-->
-<!--                                <input id="input-year" type="number"  class="form-control" placeholder="Year" maxlength="4" value="">-->
-<!---->
-<!--                            </div>-->
-<!--                        </div>-->
-<!--                    </div>-->
-<!--                </div>-->
                 <div class="row">
                     <div class="col-lg-12">
                         <div class="form-group">
@@ -126,18 +111,8 @@ require_once('credentials.php');
                                 <span id="cvv-button" class="input-group-addon"><button type="button" data-toggle="modal" data-target="#cvv-modal">?</button></span>
                             </div>
                             <div id="creditCardCVVMessageContainer" class="inputMessageContainer"></div>
-
-
                         </div>
-
                     </div>
-
-                    <!--                <div class="col-sm-6 col-lg-2">-->
-                    <!--                    <span  class="input-group-btn">-->
-                    <!--                        <button type="button" data-toggle="modal" data-target="#cvv-modal">?</button>-->
-                    <!--                    </span>-->
-                    <!--                </div>-->
-
                 </div>
 
 

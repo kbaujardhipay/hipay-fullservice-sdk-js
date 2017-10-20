@@ -22,6 +22,11 @@ var HiPay = (function (HiPay) {
      *
      */
     HiPay.Form.locale = "fr_FR";
+
+    var _endPointTokenize = {
+        stage: 'https://stage-secure2-vault.hipay-tpp.com/rest/v2/token/create.json',
+        prod: 'https://secure2-vault.hipay-tpp.com/rest/v2/token/create.json'
+    };
     var _translationJSON = {
         "en_EN" : {
             "FORM_CVV_3_HELP_MESSAGE": "For security reasons, you have to enter your card security code (CVC). It's the 3-digits number on the back of your card for VISA®, MASTERCARD® and MAESTRO®.",
@@ -204,13 +209,16 @@ var HiPay = (function (HiPay) {
 
                 "format":[4,4,4,4]
             }
-    }
+    };
 
 
 
 
 
-
+    function isIE () {
+        var myNav = navigator.userAgent.toLowerCase();
+        return (myNav.indexOf('msie') != -1) ? parseInt(myNav.split('msie')[1]) : false;
+    };
     /**
      * dump
      */
@@ -227,7 +235,7 @@ var HiPay = (function (HiPay) {
         // var pre = document.createElement('pre');
         // pre.innerHTML = out;
         // document.body.appendChild(pre)
-    }
+    };
 
     var _isBrowser=new Function("try {return this===window;}catch(e){ return false;}");
 
@@ -563,7 +571,8 @@ var HiPay = (function (HiPay) {
 
 
             if (document.getElementById(_idInputMapper.cardType)) {
-                document.getElementById(_idInputMapper.cardType).src = undefined;
+                // document.getElementById(_idInputMapper.cardType).src = undefined;
+                document.getElementById(_idInputMapper.cardType).src = "";
                 document.getElementById(_idInputMapper.cardType).setAttribute('style', 'display:none;');
             }
             for (var propt in _cardFormatDefinition) {
@@ -1334,11 +1343,11 @@ var HiPay = (function (HiPay) {
 
                                 var my_elem = document.getElementById(_idInputMapper.cardNumber);
 
-                                var span = document.createElement('img');
-                                // span.innerHTML = '*';
-                                span.className = 'asterisk';
-
-                                my_elem.parentNode.insertBefore(span, my_elem);
+                                // var span = document.createElement('img');
+                                //
+                                // span.className = 'asterisk';
+                                //
+                                // my_elem.parentNode.insertBefore(span, my_elem);
 
 
 
@@ -1840,11 +1849,7 @@ var HiPay = (function (HiPay) {
     /**
      *
      */
-    var _callbackEventFormChange;
-    /**
-     *
-     */
-    var _callbackEventFormChangeTest;
+    var _callbackEventFormChange = new Function();
 
     /**
      *
@@ -2348,6 +2353,73 @@ var HiPay = (function (HiPay) {
         }
     };
 
+    // IE classlist
+    if(Object.defineProperty && isIE() == 8) {
+    Object.defineProperty(Element.prototype, 'classList', {
+        // _defineProperties(Element.prototype, 'classList', {
+            get: function () {
+                var self = this, bValue = self.className.split(" ")
+
+                bValue.add = function () {
+                    var b;
+                    for (i in arguments) {
+                        b = true;
+                        for (var j = 0; j < bValue.length; j++)
+                            if (bValue[j] == arguments[i]) {
+                                b = false
+                                break
+                            }
+                        if (b)
+                            self.className += (self.className ? " " : "") + arguments[i]
+                    }
+                }
+                bValue.remove = function () {
+                    self.className = ""
+                    for (i in arguments)
+                        for (var j = 0; j < bValue.length; j++)
+                            if (bValue[j] != arguments[i])
+                                self.className += (self.className ? " " : "") + bValue[j]
+                }
+                bValue.toggle = function (x) {
+                    var b;
+                    if (x) {
+                        self.className = ""
+                        b = false;
+                        for (var j = 0; j < bValue.length; j++)
+                            if (bValue[j] != x) {
+                                self.className += (self.className ? " " : "") + bValue[j]
+                                b = false
+                            } else b = true
+                        if (!b)
+                            self.className += (self.className ? " " : "") + x
+                    } else throw new TypeError("Failed to execute 'toggle': 1 argument required")
+                    return !b;
+                }
+                // bValue.contains = function () {
+                //     var b;
+                //     for (i in arguments) {
+                //         b = false;
+                //         for (var j = 0; j < bValue.length; j++)
+                //             if (bValue[j] == arguments[i]) {
+                //                 b = true
+                //                 break
+                //             }
+                //
+                //         return b;
+                //     }
+                // }
+
+                return bValue;
+            },
+            enumerable: true,
+            configurable: true
+        });
+
+    }
+
+
+
+
     /**
      *
      * @type {{APIIncorrectCredentials: number, APIIncorrectSignature: number, APIAccountNotActive: number, APIAccountLocked: number, APIInsufficientPermissions: number, APIForbiddenAccess: number, APIUnsupportedVersion: number, APITemporarilyUnavailable: number, APINotAllowed: number, APIMethodNotAllowedGateway: number, APIInvalidParameter: number, APIMethodNotAllowedSecureVault: number, APIInvalidCardToken: number, APIRequiredParameterMissing: number, APIInvalidParameterFormat: number, APIInvalidParameterLength: number, APIInvalidParameterNonAlpha: number, APIInvalidParameterNonNum: number, APIInvalidParameterNonDecimal: number, APIInvalidDate: number, APIInvalidTime: number, APIInvalidIPAddress: number, APIInvalidEmailAddress: number, APIInvalidSoftDescriptorCodeMessage: number, APINoRouteToAcquirer: number, APIUnsupportedECIDescription: number, APIUnsupported: number, APIUnknownOrder: number, APIUnknownTransaction: number, APIUnknownMerchant: number, APIUnsupportedOperation: number, APIUnknownIPAddress: number, APISuspicionOfFraud: number, APIFraudSuspicion: number, APIUnknownToken: number, APILuhnCheckFailed: number, APIUnsupportedCurrency: number, APIAmountLimitExceeded: number, APIMaxAttemptsExceeded: number, APIDuplicateOrder: number, APICheckoutSessionExpired: number, APIOrderCompleted: number, APIOrderExpired: number, APIOrderVoided: number, APIAuthorizationExpired: number, APIAllowableAmountLimitExceeded: number, APINotEnabled: number, APINotAllowedCapture: number, APINotAllowedPartialCapture: number, APIPermissionDenied: number, APICurrencyMismatch: number, APIAuthorizationCompleted: number, APINoMore: number, APIInvalidAmount: number, APIAmountLimitExceededCapture: number, APIAmountLimitExceededPartialCapture: number, APIOperationNotPermittedClosed: number, APIOperationNotPermittedFraud: number, APIRefundNotEnabled: number, APIRefundNotAllowed: number, APIPartialRefundNotAllowed: number, APIRefundPermissionDenied: number, APIRefundCurrencyMismatch: number, APIAlreadyRefunded: number, APIRefundNoMore: number, APIRefundInvalidAmount: number, APIRefundAmountLimitExceeded: number, APIRefundAmountLimitExceededPartial: number, APIOperationNotPermitted: number, APITooLate: number, APIReauthorizationNotEnabled: number, APIReauthorizationNotAllowed: number, APICannotReauthorize: number, APIMaxLimitExceeded: number, APIVoidNotAllowed: number, APICannotVoid: number, APIAuthorizationVoided: number, APIDeclinedAcquirer: number, APIDeclinedFinancialInstituion: number, APIInsufficientFundsAccount: number, APITechnicalProblem: number, APICommunicationFailure: number, APIAcquirerUnavailable: number, APIDuplicateTransaction: number, APIPaymentCancelledByTheCustomer: number, APIInvalidTransaction: number, APIPleaseCallTheAcquirerSupportCallNumber: number, APIAuthenticationFailedPleaseRetryOrCancel: number, APINoUIDConfiguredForThisOperation: number, APIRefusalNoExplicitReason: number, APIIssuerNotAvailable: number, APIInsufficientFundsCredit: number, APITransactionNotPermitted: number, APIInvalidCardNumber: number, APIUnsupportedCard: number, APICardExpired: number, APIExpiryDateIncorrect: number, APICVCRequired: number, APICVCError: number, APIAVSFailed: number, APIRetainCard: number, APILostOrStolenCard: number, APIRestrictedCard: number, APICardLimitExceeded: number, APICardBlacklisted: number, APIUnauthorisedIPAddressCountry: number, APICardnotInAuthorisersDatabase: number}}
@@ -2558,6 +2630,44 @@ var HiPay = (function (HiPay) {
 
 
     // API Calls
+
+    var _makeRequest = function(opts) {
+        return new Promise(function (resolve, reject) {
+            var xhr = new XMLHttpRequest();
+            xhr.open(opts.method, opts.url);
+            xhr.onload = function () {
+                if (this.status >= 200 && this.status < 300) {
+                    resolve(xhr.response);
+                } else {
+                    reject({
+                        status: this.status,
+                        statusText: xhr.statusText
+                    });
+                }
+            };
+            xhr.onerror = function () {
+                reject({
+                    status: this.status,
+                    statusText: xhr.statusText
+                });
+            };
+            if (opts.headers) {
+                Object.keys(opts.headers).forEach(function (key) {
+                    xhr.setRequestHeader(key, opts.headers[key]);
+                });
+            }
+            var params = opts.params;
+            // We'll need to stringify if we've been given an object
+            // If we have a string, this is skipped.
+            if (params && typeof params === 'object') {
+                params = Object.keys(params).map(function (key) {
+                    return encodeURIComponent(key) + '=' + encodeURIComponent(params[key]);
+                }).join('&');
+            }
+            xhr.send(params);
+        });
+    };
+
     /**
      *
      * @param endpoint
@@ -2579,6 +2689,7 @@ var HiPay = (function (HiPay) {
             throw new _Error('missing_public_key');
         }
 
+        // Ne fonctionne pas avec IE 10 ?
         if ('XDomainRequest' in window && window.XDomainRequest !== null) {
             requestParams['Authorization'] = 'Basic ' + window.btoa(HiPay.username + ':' + HiPay.publicKey);
         }
@@ -2598,10 +2709,7 @@ var HiPay = (function (HiPay) {
 
         //     });
 
-        function isIE () {
-            var myNav = navigator.userAgent.toLowerCase();
-            return (myNav.indexOf('msie') != -1) ? parseInt(myNav.split('msie')[1]) : false;
-        }
+
 
 
         // if (isIE () == 8) {
@@ -2777,6 +2885,14 @@ var HiPay = (function (HiPay) {
         //
         // });
 
+
+        // return _makeRequest({
+        //     method: 'POST',
+        //     url: endpoint,
+        //     params: requestParams,
+        //     headers: config['headers']
+        // });
+
         return new Promise(function (resolve, reject) {
             axios.post(endpoint,requestParams,config)
                 .then(function(responseJson) {
@@ -2785,6 +2901,7 @@ var HiPay = (function (HiPay) {
                         reject(new _APIError(responseJson));
                     }
                     else {
+
                         var cardToken = new HiPay.Token(responseJson);
                         cardToken.constructor.populateProperties(cardToken, responseJson.data);
                         resolve(cardToken);
@@ -2792,7 +2909,7 @@ var HiPay = (function (HiPay) {
                 }).catch(function (error) {
                 reject(new _APIError(error));
 
-                /* IE */
+
 
 
 
@@ -2817,9 +2934,6 @@ var HiPay = (function (HiPay) {
             });
         });
 
-
-
-        // }
     };
 
 
@@ -2861,7 +2975,10 @@ var HiPay = (function (HiPay) {
      * @param message
      * @private
      */
-    var _InvalidParametersError = function (code, message) {
+
+    // var _InvalidParametersError = function (code, message)
+    function _InvalidParametersError(code, message)
+    {
         _processObjectPayload(this, {
             type: 'invalid_parameters',
             code: code,
@@ -2982,9 +3099,9 @@ var HiPay = (function (HiPay) {
         }
 
         else {
-            var endpoint = 'https://secure2-vault.hipay-tpp.com/rest/v2/token/create.json';
+            var endpoint = _endPointTokenize['prod'];
             if (HiPay.getTarget() == 'test' || HiPay.getTarget() == 'stage' ) {
-                endpoint = 'https://stage-secure2-vault.hipay-tpp.com/rest/v2/token/create.json';
+                endpoint = _endPointTokenize['stage'];
             } else if (HiPay.getTarget() == 'dev') {
                 endpoint = 'http://localhost:8080/example/dev-api-token.php';
             }
@@ -3001,13 +3118,8 @@ var HiPay = (function (HiPay) {
                 headers: {'Authorization': 'Basic ' + window.btoa(HiPay.username + ':' + HiPay.publicKey)}
             };
 
-
-
-
             return _performAPICall(endpoint, params, returnPromise);
         }
-
-
     };
 
     /**
