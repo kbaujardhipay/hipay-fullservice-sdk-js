@@ -29,7 +29,7 @@ require_once('credentials.php');
 
 <!--    <script type="text/javascript" src="./assets/input.js"></script>-->
 <!--    <script type="text/javascript" src="../dist/hipay-fullservice-sdk-ie8.js"></script>-->
-   <script type="text/javascript" src="../dist/hipay-fullservice-sdk.js"></script>
+   <script type="text/javascript" src="../dist/hipay-fullservice-sdk-2.js"></script>
 
 </head>
 

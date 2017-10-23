@@ -1181,7 +1181,7 @@ var HiPay = (function (HiPay) {
 
         };
 
-        serviceCreditCard.initCreditCardNumber = function(charCode){
+        serviceCreditCard.initCreditCardNumber = function(charCode, stringPaste){
 
             serviceCreditCard.lastCharCode = charCode;
 
@@ -1192,13 +1192,13 @@ var HiPay = (function (HiPay) {
                 serviceCreditCard.lastCharString = String.fromCharCode(charCode);
             }
 
-
             if (serviceCreditCard.lastCharString === '') {
 
             }
 
             serviceCreditCard.cardNumberStringFormatBefore = document.getElementById(_idInputMapper.cardNumber).value;
             serviceCreditCard.cardNumberStringFormatedBefore = document.getElementById(_idInputMapper.cardNumber).value;
+
 
             //realposition cursor in number
             var splitFormatBeforetemp = serviceCreditCard.cardNumberStringFormatBefore;
@@ -1232,49 +1232,82 @@ var HiPay = (function (HiPay) {
 
             var newTempStringAfter = serviceCreditCard.cardNumberStringUnformatedBefore;
 
+            console.log("newTempStringAfter");
+            console.log(newTempStringAfter);
 
 
-            if (startB >= 0 && endB > 0 && startB < endB) {
 
-                // if(charCode == 46) {
-                //
-                //     startA = startA - 1;
-                // }
+
+            if (stringPaste) {
+                // delete all chars but number
+                var stringPaste = stringPaste.replace(/[^0-9]/g, '');
+                // newTempStringAfter = stringPaste;
+                // endA = startA;
+
+                if (startB >= 0 && endB > 0 && startB < endB) {
+
+                    // if(charCode == 46) {
+                    //
+                    //     startA = startA - 1;
+                    // }
+
+
+                    newTempStringAfter = newTempStringAfter.substring(0, startB) + stringPaste + newTempStringAfter.substring(endB, newTempStringAfter.length);
+                    endA = stringPaste.length;
+                    // realCursorPositionInNumberAfter = realCursorPositionInNumberBefore;
+
+                } else if (startB >= 0) {
+                    newTempStringAfter = newTempStringAfter.substring(0, startB) + stringPaste;
+                    endA = stringPaste.length;
+                }
+
+
+
+            } else {
+
+
+                if (startB >= 0 && endB > 0 && startB < endB) {
+
+                    // if(charCode == 46) {
+                    //
+                    //     startA = startA - 1;
+                    // }
 
 
                     newTempStringAfter = newTempStringAfter.substring(0, startB) + "" + newTempStringAfter.substring(endB, newTempStringAfter.length);
                     endA = startA;
                     // realCursorPositionInNumberAfter = realCursorPositionInNumberBefore;
 
-            }
-            else if (startB > 0) {
-                if(charCode == 8) {
-
-                    var tempStringAfterDebut = newTempStringAfter.substring(0, (parseInt(startB) - 1));
-                    var tempStringAfterFin = newTempStringAfter.substring((parseInt(startB)), newTempStringAfter.length);
-                    // dump(tempStringAfterDebut);
-                    // dump(tempStringAfterFin);
-                    newTempStringAfter = tempStringAfterDebut + "" + tempStringAfterFin;
-
-                    startA = startA - 1;
-
-                } else if(charCode == 46) {
-                    var tempStringAfterDebut = newTempStringAfter.substring(0, (parseInt(startB)));
-                    var tempStringAfterFin = newTempStringAfter.substring((parseInt(startB) + 1), newTempStringAfter.length);
-                    newTempStringAfter = tempStringAfterDebut + "" + tempStringAfterFin;
-
-
                 }
-                endA = startA;
-            } else if(startB == 0) {
-                if(charCode == 46) {
-                    var tempStringAfterDebut = newTempStringAfter.substring(0, (parseInt(startB)));
-                    var tempStringAfterFin = newTempStringAfter.substring((parseInt(startB) + 1), newTempStringAfter.length);
-                    newTempStringAfter = tempStringAfterDebut + "" + tempStringAfterFin;
+                else if (startB > 0) {
+                    if (charCode == 8) {
+
+                        var tempStringAfterDebut = newTempStringAfter.substring(0, (parseInt(startB) - 1));
+                        var tempStringAfterFin = newTempStringAfter.substring((parseInt(startB)), newTempStringAfter.length);
+                        // dump(tempStringAfterDebut);
+                        // dump(tempStringAfterFin);
+                        newTempStringAfter = tempStringAfterDebut + "" + tempStringAfterFin;
+
+                        startA = startA - 1;
+
+                    } else if (charCode == 46) {
+                        var tempStringAfterDebut = newTempStringAfter.substring(0, (parseInt(startB)));
+                        var tempStringAfterFin = newTempStringAfter.substring((parseInt(startB) + 1), newTempStringAfter.length);
+                        newTempStringAfter = tempStringAfterDebut + "" + tempStringAfterFin;
 
 
+                    }
+                    endA = startA;
+                } else if (startB == 0) {
+                    if (charCode == 46) {
+                        var tempStringAfterDebut = newTempStringAfter.substring(0, (parseInt(startB)));
+                        var tempStringAfterFin = newTempStringAfter.substring((parseInt(startB) + 1), newTempStringAfter.length);
+                        newTempStringAfter = tempStringAfterDebut + "" + tempStringAfterFin;
+
+
+                    }
+                    endA = startA;
                 }
-                endA = startA;
             }
 
 
@@ -1292,8 +1325,12 @@ var HiPay = (function (HiPay) {
                     if (charCode == 8 || charCode == 46) {
 
                     } else {
-                        tempStringAfter += serviceCreditCard.lastCharString;
-                        startAtemp = startAtemp + 1;
+                        if (stringPaste) {
+                            startAtemp = startAtemp + stringPaste.length;
+                        } else {
+                            tempStringAfter += serviceCreditCard.lastCharString;
+                            startAtemp = startAtemp + 1;
+                        }
 
 
                     }
@@ -1315,7 +1352,8 @@ var HiPay = (function (HiPay) {
             serviceCreditCard.idType = null;
 
 
-
+console.log("tempStringAfter");
+console.log(tempStringAfter);
 
 
 
@@ -1441,6 +1479,9 @@ var HiPay = (function (HiPay) {
                 tempForStringAfter += serviceCreditCard.cardNumberStringAfter.charAt(nb);
             }
 
+
+            console.log("tempForStringAfter2");
+            console.log(tempForStringAfter);
             serviceCreditCard.cardNumberStringFormatAfter = tempForStringAfter;
 
             var startAFormat = startA + numberSpaceBeforeStartFormated;
@@ -1857,7 +1898,7 @@ var HiPay = (function (HiPay) {
      */
     var _initErrorHandler = function(e){
 
-       // var evt = e || window.event;
+        // var evt = e || window.event;
 
 
 
@@ -1871,7 +1912,7 @@ var HiPay = (function (HiPay) {
                 if (!document.getElementById(_idInputMapper[indexInput]).classList.contains('default-card-form')) {
                     document.getElementById(_idInputMapper[indexInput]).classList.add('default-card-form');
                 }
-                    // document.getElementById(_idInputMapper[indexInput]).setAttribute('style', 'color:' + _colorInput["default"] + ' !important');
+                // document.getElementById(_idInputMapper[indexInput]).setAttribute('style', 'color:' + _colorInput["default"] + ' !important');
             }
         }
 
@@ -1915,6 +1956,9 @@ var HiPay = (function (HiPay) {
         _addListenerMulti(idElement, 'keydown keypress blur focus', _initErrorHandler);
     };
 
+
+
+
     /* add listener on all input form */
     window.onload = function() {
 
@@ -1942,7 +1986,6 @@ var HiPay = (function (HiPay) {
                 document.getElementById(_idInputMapper['cardNumber']).addEventListener('keydown', function (e) {
 
                     evt = e || window.event;
-
                     var charCode = evt.keyCode || evt.which;
                     if (charCode == 8 || charCode == 46) {
 
@@ -1960,6 +2003,106 @@ var HiPay = (function (HiPay) {
                     // HiPay.Form.paymentFormDataGetErrors();
 
                 });
+
+
+
+var handler = function(e) {
+//
+    var evt = e || window.event;
+//
+    var pastedText = "";
+    if (window.clipboardData) {
+        pastedText = window.clipboardData.getData('Text');
+        console.log("getData paste 1");
+
+    } else if(evt.clipboardData && evt.clipboardData.getData) {
+            console.log("getData paste 2");
+//         //
+//         //     if (window.clipboardData && window.clipboardData.getData) { // IE
+//         //         pastedText = window.clipboardData.getData('Text');
+//         //     } else if (e.clipboardData && e.clipboardData.getData) {
+                pastedText = e.clipboardData.getData('text/plain');
+        //     }
+//         //
+//         //
+        }
+    console.log(pastedText);
+//         // else{
+//         //     // alert('Not paste object!');
+//         // }
+//
+//     var clipboardData = e.clipboardData || window.clipboardData;
+//     var pastedData = clipboardData.getData('Text');
+
+//     console.log(evt);
+//     // console.log(pastedText);
+//     console.log(pastedData);
+//
+
+    evt.preventDefault ? evt.preventDefault() : (evt.returnValue = false);
+
+//     //
+    _instanceServiceCreditCard = new _serviceCreditCard();
+    _instanceServiceCreditCard.initCreditCardNumber("",pastedText);
+//     //
+    _callbackEventFormChange();
+//
+//
+//
+};
+                if (document.getElementById(_idInputMapper['cardNumber']).attachEvent) {
+                    document.getElementById(_idInputMapper['cardNumber']).attachEvent("onpaste", handler);
+                } else {
+                    document.getElementById(_idInputMapper['cardNumber']).addEventListener ("paste", handler, false);  // all browsers and IE9+
+                }
+
+
+
+
+
+
+
+
+
+
+
+                // document.getElementById(_idInputMapper['cardNumber']).addEventListener('paste', function (e) {
+                //
+                //
+                //
+                //     var evt = e || window.event;
+                //
+                //     if(evt.clipboardData && evt.clipboardData.getData) {
+                //         console.log("getData paste");
+                //         var pastedText = "";
+                //         if (window.clipboardData && window.clipboardData.getData) { // IE
+                //             pastedText = window.clipboardData.getData('Text');
+                //         } else if (e.clipboardData && e.clipboardData.getData) {
+                //             pastedText = e.clipboardData.getData('text/plain');
+                //         }
+                //
+                //         // alert(pastedText);
+                //     }
+                //     // else{
+                //     //     // alert('Not paste object!');
+                //     // }
+                //
+                //      evt.preventDefault();
+                //     //
+                //     // // alert(pastedText);
+                //     //
+                //     _instanceServiceCreditCard = new _serviceCreditCard();
+                //     _instanceServiceCreditCard.initCreditCardNumber("",pastedText);
+                //     //
+                //     //
+                //     //
+                //      _callbackEventFormChange();
+                //
+                //
+                //
+                //
+                //
+                // });
 
 
                 document.getElementById(_idInputMapper['cardNumber']).addEventListener('keypress', function (e) {
@@ -2194,7 +2337,7 @@ var HiPay = (function (HiPay) {
 
         var idType = _instanceServiceCreditCard.getTypeWithCardNumber(_instanceServiceCreditCard.getCreditCardNumberValue());
         return {type:_idCVVMapper[idType],
-        length: CVVLength};
+            length: CVVLength};
     }
 
     /**
@@ -2354,9 +2497,9 @@ var HiPay = (function (HiPay) {
     };
 
     // IE classlist
-    if(Object.defineProperty && isIE() == 8) {
-    Object.defineProperty(Element.prototype, 'classList', {
-        // _defineProperties(Element.prototype, 'classList', {
+    if(Object.defineProperty && isIE() < 10) {
+        Object.defineProperty(Element.prototype, 'classList', {
+            // _defineProperties(Element.prototype, 'classList', {
             get: function () {
                 var self = this, bValue = self.className.split(" ")
 
@@ -2395,19 +2538,19 @@ var HiPay = (function (HiPay) {
                     } else throw new TypeError("Failed to execute 'toggle': 1 argument required")
                     return !b;
                 }
-                // bValue.contains = function () {
-                //     var b;
-                //     for (i in arguments) {
-                //         b = false;
-                //         for (var j = 0; j < bValue.length; j++)
-                //             if (bValue[j] == arguments[i]) {
-                //                 b = true
-                //                 break
-                //             }
-                //
-                //         return b;
-                //     }
-                // }
+                bValue.contains = function () {
+                    var b;
+                    for (i in arguments) {
+                        b = false;
+                        for (var j = 0; j < bValue.length; j++)
+                            if (bValue[j] == arguments[i]) {
+                                b = true
+                                break
+                            }
+
+                        return b;
+                    }
+                }
 
                 return bValue;
             },
@@ -2550,6 +2693,9 @@ var HiPay = (function (HiPay) {
     HiPay.Token = function (responseJSON) {
         var payload;
 
+
+        console.log("responseJSON Token");
+        console.log(responseJSON);
         if (typeof responseJSON.data !== 'undefined') {
             payload = responseJSON.data;
         }
@@ -2570,7 +2716,7 @@ var HiPay = (function (HiPay) {
      */
     HiPay.Token = function() {
         _bootstrapInstanceProperties(this);
-    }
+    };
 
     /**
      *
@@ -2690,14 +2836,19 @@ var HiPay = (function (HiPay) {
         }
 
         // Ne fonctionne pas avec IE 10 ?
-        if ('XDomainRequest' in window && window.XDomainRequest !== null) {
+        if ('XDomainRequest' in window && window.XDomainRequest !== null && isIE() != 10) {
             requestParams['Authorization'] = 'Basic ' + window.btoa(HiPay.username + ':' + HiPay.publicKey);
         }
 
         var config = {
             headers: {
                 'Authorization': 'Basic ' + authEncoded,
-                'contentType': 'application/json'
+                // 'contentType': 'application/json'
+                // 'Accept': 'application/json',
+                // 'Content-Type': 'application/json'
+                // 'Accept': 'application/json, text/plain, */*',
+                // 'Access-Control-Origin': '*',
+                'Content-Type': 'application/json'
             }
         };
 
@@ -2893,45 +3044,83 @@ var HiPay = (function (HiPay) {
         //     headers: config['headers']
         // });
 
-        return new Promise(function (resolve, reject) {
-            axios.post(endpoint,requestParams,config)
-                .then(function(responseJson) {
 
-                    if( typeof responseJson['code'] != 'undefined' )  {
-                        reject(new _APIError(responseJson));
+
+        // return new Promise(function (resolve, reject) {
+        //     axios.post(endpoint,requestParams,config)
+        //         .then(function(responseJson) {
+        //
+        //             if( typeof responseJson['code'] != 'undefined' )  {
+        //                 reject(new _APIError(responseJson));
+        //             }
+        //             else {
+        //                 console.log("responseJson");
+        //                 console.log(responseJson);
+        //                 var cardToken = new HiPay.Token(responseJson);
+        //                 cardToken.constructor.populateProperties(cardToken, responseJson.data);
+        //                 resolve(cardToken);
+        //             }
+        //         }).catch(function (error) {
+        //         reject(new _APIError(error));
+        //
+        //
+        //
+        //
+        //
+        //
+        //
+        //
+        //
+        //         // var appliance = new window.XDomainRequest();
+        //         // appliance.onload = function() {
+        //         //     // do something with appliance.responseText
+        //         // };
+        //         // appliance.onerror = function() {
+        //         //     // error handling
+        //         // };
+        //         //
+        //         // // (endpoint,requestParams,config
+        //         // appliance.open("POST", endpoint, true);
+        //         // appliance.send(requestParams);
+        //
+        //
+        //         // returnPromise.reject(new _APIError(error));
+        //     });
+        // });
+
+
+
+
+
+
+
+        return new Promise(function (resolve, reject) {
+
+            fetch(endpoint, {
+                method: 'POST',
+                headers: config['headers'],
+                body: JSON.stringify( requestParams )
+            })
+                .then(function (response) {
+                    return response.json();
+                })
+                .then(function (result) {
+                    if( typeof result['code'] != 'undefined' )  {
+                        reject(new _APIError(result));
                     }
                     else {
-
-                        var cardToken = new HiPay.Token(responseJson);
-                        cardToken.constructor.populateProperties(cardToken, responseJson.data);
+                        var cardToken = new HiPay.Token(result);
+                        cardToken.constructor.populateProperties(cardToken,result);
                         resolve(cardToken);
+
                     }
-                }).catch(function (error) {
-                reject(new _APIError(error));
 
+                })
+                .catch(function (error) {
+                    reject(new _APIError(error));
 
+                });
 
-
-
-
-
-
-
-                // var appliance = new window.XDomainRequest();
-                // appliance.onload = function() {
-                //     // do something with appliance.responseText
-                // };
-                // appliance.onerror = function() {
-                //     // error handling
-                // };
-                //
-                // // (endpoint,requestParams,config
-                // appliance.open("POST", endpoint, true);
-                // appliance.send(requestParams);
-
-
-                // returnPromise.reject(new _APIError(error));
-            });
         });
 
     };
