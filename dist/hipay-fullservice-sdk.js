@@ -8205,6 +8205,9 @@ var HiPay = (function (HiPay) {
         stage: 'https://stage-secure2-vault.hipay-tpp.com/rest/v2/token/create.json',
         prod: 'https://secure2-vault.hipay-tpp.com/rest/v2/token/create.json'
     };
+
+    var _separatorMonthYear = '/';
+
     var _translationJSON = {
         "en_EN" : {
             "FORM_CVV_3_HELP_MESSAGE": "For security reasons, you have to enter your card security code (CVC). It's the 3-digits number on the back of your card for VISA®, MASTERCARD® and MAESTRO®.",
@@ -8220,7 +8223,7 @@ var HiPay = (function (HiPay) {
             // placeholder
             "FORM_PLACEHOLDER_CARD_NUMBER": "Ex : 5136 0000 0000 0000",
             "FORM_PLACEHOLDER_CARD_HOLDER": "FirstName LastName",
-            "FORM_PLACEHOLDER_CARD_EXPIRY_DATE": "MM / YY",
+            "FORM_PLACEHOLDER_CARD_EXPIRY_DATE": "MM" + _separatorMonthYear + "YY",
             "FORM_PLACEHOLDER_CARD_CVV": "123"
 
         },
@@ -8237,7 +8240,7 @@ var HiPay = (function (HiPay) {
             // placeholder
             "FORM_PLACEHOLDER_CARD_NUMBER": "Ex : 5136 0000 0000 0000",
             "FORM_PLACEHOLDER_CARD_HOLDER": "Prénom Nom",
-            "FORM_PLACEHOLDER_CARD_EXPIRY_DATE": "MM / AA",
+            "FORM_PLACEHOLDER_CARD_EXPIRY_DATE": "MM"+_separatorMonthYear+"AA",
             "FORM_PLACEHOLDER_CARD_CVV": "123"
         },
     };
@@ -9123,7 +9126,7 @@ var HiPay = (function (HiPay) {
 
 
 
-                var splitExpiryDate = creditCardExpiryDate.split(' / ');
+                var splitExpiryDate = creditCardExpiryDate.split(_separatorMonthYear);
 
                 if (splitExpiryDate.length < 2) {
 
@@ -9182,7 +9185,7 @@ var HiPay = (function (HiPay) {
                 if (creditCardExpiryDate == undefined) {
                     creditCardExpiryDate = document.getElementById(_idInputMapper.cardExpiryDate).value;
                 }
-                var splitExpiryDate = creditCardExpiryDate.split(' / ');
+                var splitExpiryDate = creditCardExpiryDate.split(_separatorMonthYear);
                 if (splitExpiryDate.length != 2) {
                     validatorExpiryDate.errorCollection.push(new _InvalidParametersError(50, 'format de date non valide'));
                     return false;
@@ -9421,13 +9424,15 @@ var HiPay = (function (HiPay) {
 
             var newTempStringAfter = serviceCreditCard.cardNumberStringUnformatedBefore;
 
-            console.log("newTempStringAfter");
+            console.log("newTempStringAfter a");
             console.log(newTempStringAfter);
 
 
 
 
             if (stringPaste) {
+
+                console.log(startB);
                 // delete all chars but number
                 var stringPaste = stringPaste.replace(/[^0-9]/g, '');
                 // newTempStringAfter = stringPaste;
@@ -9446,8 +9451,13 @@ var HiPay = (function (HiPay) {
                     // realCursorPositionInNumberAfter = realCursorPositionInNumberBefore;
 
                 } else if (startB >= 0) {
-                    newTempStringAfter = newTempStringAfter.substring(0, startB) + stringPaste;
+                    console.log('position 0');
+                    newTempStringAfter = newTempStringAfter.substring(0, startB) + "" + stringPaste + newTempStringAfter.substring(startB, newTempStringAfter.length);
                     endA = stringPaste.length;
+                }
+
+                if (newTempStringAfter.length >= 25) {
+                    newTempStringAfter =newTempStringAfter.substring(0,25);
                 }
 
 
@@ -9536,7 +9546,7 @@ var HiPay = (function (HiPay) {
 // formatage du numero
 
             serviceCreditCard.cardLengthMin = 0;
-            serviceCreditCard.cardLengthMax = null;
+            serviceCreditCard.cardLengthMax = 25;
 
             serviceCreditCard.idType = null;
 
@@ -9628,8 +9638,13 @@ var HiPay = (function (HiPay) {
                 serviceCreditCard.cardNumberStringAfter = tempStringAfter;
             }
             else {
-                serviceCreditCard.cardNumberStringAfter = serviceCreditCard.cardNumberStringUnformatedBefore;
-                startA = startB;
+
+                if (stringPaste) {
+                    serviceCreditCard.cardNumberStringAfter = tempStringAfter.substr(0,serviceCreditCard.cardLengthMax);
+                } else {
+                    serviceCreditCard.cardNumberStringAfter = serviceCreditCard.cardNumberStringUnformatedBefore;
+                    startA = startB;
+                }
             }
 
 
@@ -9674,6 +9689,8 @@ var HiPay = (function (HiPay) {
             serviceCreditCard.cardNumberStringFormatAfter = tempForStringAfter;
 
             var startAFormat = startA + numberSpaceBeforeStartFormated;
+
+
 
             document.getElementById(_idInputMapper.cardNumber).value = serviceCreditCard.cardNumberStringFormatAfter;
             _setCaretPosition(document.getElementById(_idInputMapper.cardNumber), startAFormat);
@@ -9819,7 +9836,9 @@ var HiPay = (function (HiPay) {
 
 
 
-        serviceCreditCard.initCreditCardExpiryDate = function(charCode){
+        serviceCreditCard.initCreditCardExpiryDate = function(charCode, stringPaste){
+
+
 
             serviceCreditCard.lastCharCodeCreditCardExpiryDate = charCode;
             if (charCode == undefined || charCode == '' || charCode == 8 || charCode == 46) {
@@ -9839,7 +9858,7 @@ var HiPay = (function (HiPay) {
 
             //realposition cursor in number
             var splitFormatBeforetemp = serviceCreditCard.creditCardExpiryDateFormattedBefore;
-            serviceCreditCard.creditCardExpiryDateUnformattedBefore = splitFormatBeforetemp.split(' / ').join('');
+            serviceCreditCard.creditCardExpiryDateUnformattedBefore = splitFormatBeforetemp.split(_separatorMonthYear).join('');
 
 
 
@@ -9858,15 +9877,15 @@ var HiPay = (function (HiPay) {
 
             var subStringStart =  serviceCreditCard.creditCardExpiryDateFormattedBefore.substr(0, startBFormat);
 
-            var splitSubStringStart = subStringStart.split(' / ');
-            var nbSpaceStart = (splitSubStringStart.length - 1)*3;
+            var splitSubStringStart = subStringStart.split(_separatorMonthYear);
+            var nbSpaceStart = (splitSubStringStart.length - 1)*_separatorMonthYear.length;
 
 
             var subStringEnd =  serviceCreditCard.creditCardExpiryDateFormattedBefore.substr(0, endBFormat);
 
 
-            var splitSubStringEnd = subStringEnd.split(' / ');
-            var nbSpaceEnd = (splitSubStringEnd.length - 1)*3;
+            var splitSubStringEnd = subStringEnd.split(_separatorMonthYear);
+            var nbSpaceEnd = (splitSubStringEnd.length - 1)*_separatorMonthYear.length;
 
             var startB = parseInt(startBFormat) - parseInt(nbSpaceStart);
             var endB = parseInt(endBFormat) - parseInt(nbSpaceEnd);
@@ -9876,38 +9895,79 @@ var HiPay = (function (HiPay) {
 
             var newTempStringAfter = serviceCreditCard.creditCardExpiryDateUnformattedBefore;
 
-            if (startB >= 0 && endB > 0 && startB < endB) {
 
-                newTempStringAfter = newTempStringAfter.substring(0,startB) + "" + newTempStringAfter.substring(endB, newTempStringAfter.length);
-                endA = startA;
 
-            }
-            else if (startB > 0) {
-                if(charCode == 8) {
 
-                    var tempStringAfterDebut = newTempStringAfter.substring(0, (parseInt(startB) - 1));
-                    var tempStringAfterFin = newTempStringAfter.substring((parseInt(startB)), newTempStringAfter.length);
 
-                    newTempStringAfter = tempStringAfterDebut + "" + tempStringAfterFin;
 
-                    startA = startA - 1;
+            if (stringPaste) {
 
-                } else if(charCode == 46) {
-                    var tempStringAfterDebut = newTempStringAfter.substring(0, (parseInt(startB)));
-                    var tempStringAfterFin = newTempStringAfter.substring((parseInt(startB) + 1), newTempStringAfter.length);
-                    newTempStringAfter = tempStringAfterDebut + "" + tempStringAfterFin;
+                console.log(startB);
+                // delete all chars but number
+                var stringPaste = stringPaste.replace(/[^0-9]/g, '');
+                // newTempStringAfter = stringPaste;
+                // endA = startA;
+
+                if (startB >= 0 && endB > 0 && startB < endB) {
+
+                    // if(charCode == 46) {
+                    //
+                    //     startA = startA - 1;
+                    // }
+
+
+                    newTempStringAfter = newTempStringAfter.substring(0, startB) + stringPaste + newTempStringAfter.substring(endB, newTempStringAfter.length);
+                    endA = stringPaste.length;
+                    // realCursorPositionInNumberAfter = realCursorPositionInNumberBefore;
+
+                } else if (startB >= 0) {
+                    console.log('position 0');
+                    newTempStringAfter = newTempStringAfter.substring(0, startB) + "" + stringPaste + newTempStringAfter.substring(startB, newTempStringAfter.length);
+                    endA = stringPaste.length;
+                }
+
+                if (newTempStringAfter.length >= 4) {
+                    newTempStringAfter =newTempStringAfter.substring(0,4);
+                }
+
+
+
+            } else {
+
+
+                if (startB >= 0 && endB > 0 && startB < endB) {
+
+                    newTempStringAfter = newTempStringAfter.substring(0, startB) + "" + newTempStringAfter.substring(endB, newTempStringAfter.length);
+                    endA = startA;
 
                 }
-                endA = startA;
-            } else if(startB == 0) {
-                if(charCode == 46) {
-                    var tempStringAfterDebut = newTempStringAfter.substring(0, (parseInt(startB)));
-                    var tempStringAfterFin = newTempStringAfter.substring((parseInt(startB) + 1), newTempStringAfter.length);
-                    newTempStringAfter = tempStringAfterDebut + "" + tempStringAfterFin;
+                else if (startB > 0) {
+                    if (charCode == 8) {
+
+                        var tempStringAfterDebut = newTempStringAfter.substring(0, (parseInt(startB) - 1));
+                        var tempStringAfterFin = newTempStringAfter.substring((parseInt(startB)), newTempStringAfter.length);
+
+                        newTempStringAfter = tempStringAfterDebut + "" + tempStringAfterFin;
+
+                        startA = startA - 1;
+
+                    } else if (charCode == 46) {
+                        var tempStringAfterDebut = newTempStringAfter.substring(0, (parseInt(startB)));
+                        var tempStringAfterFin = newTempStringAfter.substring((parseInt(startB) + 1), newTempStringAfter.length);
+                        newTempStringAfter = tempStringAfterDebut + "" + tempStringAfterFin;
+
+                    }
+                    endA = startA;
+                } else if (startB == 0) {
+                    if (charCode == 46) {
+                        var tempStringAfterDebut = newTempStringAfter.substring(0, (parseInt(startB)));
+                        var tempStringAfterFin = newTempStringAfter.substring((parseInt(startB) + 1), newTempStringAfter.length);
+                        newTempStringAfter = tempStringAfterDebut + "" + tempStringAfterFin;
 
 
+                    }
+                    endA = startA;
                 }
-                endA = startA;
             }
 
 
@@ -9953,9 +10013,9 @@ var HiPay = (function (HiPay) {
 
             if ( serviceCreditCard.cardExpiryDateStringFormattedAfter.length >= 2) {
 
-                if (serviceCreditCard.cardExpiryDateStringFormattedAfter.split(' / ').length < 2) {
-                    serviceCreditCard.cardExpiryDateStringFormattedAfter = serviceCreditCard.cardExpiryDateStringFormattedAfter.substring(0, 2) + " / " + serviceCreditCard.cardExpiryDateStringFormattedAfter.substring(2, serviceCreditCard.cardExpiryDateStringFormattedAfter.length);
-                    startA = startA + 3;
+                if (serviceCreditCard.cardExpiryDateStringFormattedAfter.split(_separatorMonthYear).length < 2) {
+                    serviceCreditCard.cardExpiryDateStringFormattedAfter = serviceCreditCard.cardExpiryDateStringFormattedAfter.substring(0, 2) + _separatorMonthYear + serviceCreditCard.cardExpiryDateStringFormattedAfter.substring(2, serviceCreditCard.cardExpiryDateStringFormattedAfter.length);
+                    startA = startA + _separatorMonthYear.length;
                 }
             }
 
@@ -10476,6 +10536,42 @@ console.log('placeholder');
                     _callbackEventFormChange();
                 });
 
+
+                var handlerExpiryDate = function(e) {
+                    var evt = e || window.event;
+
+                    var pastedText = "";
+                    if (window.clipboardData) {
+                        pastedText = window.clipboardData.getData('Text');
+                        console.log("getData paste 1");
+
+                    } else if(evt.clipboardData && evt.clipboardData.getData) {
+                        console.log("getData paste 2");
+                        pastedText = e.clipboardData.getData('text/plain');
+
+                    }
+                    console.log(pastedText);
+
+
+
+                    evt.preventDefault ? evt.preventDefault() : (evt.returnValue = false);
+
+                    _instanceServiceCreditCard = new _serviceCreditCard();
+                    _instanceServiceCreditCard.initCreditCardExpiryDate("",pastedText);
+
+                    _callbackEventFormChange();
+                };
+                if (document.getElementById(_idInputMapper[propt]).attachEvent) {
+                    document.getElementById(_idInputMapper[propt]).attachEvent("onpaste", handlerExpiryDate);
+                } else {
+                    document.getElementById(_idInputMapper[propt]).addEventListener ("paste", handlerExpiryDate, false);  // all browsers and IE9+
+                }
+
+
+
+
+
+
             }
 
             else if (propt == 'cardCVV') {
@@ -10555,7 +10651,7 @@ console.log('placeholder');
         var creditCardExpiryDate = document.getElementById(_idInputMapper.cardExpiryDate).value;
 
 
-        var explodeExpiryDate = creditCardExpiryDate.split(' / ');
+        var explodeExpiryDate = creditCardExpiryDate.split(_separatorMonthYear);
 
 
 
@@ -10650,7 +10746,7 @@ console.log('placeholder');
         var validatorCreditCardExpiryDate = _instanceServiceCreditCard.validatorCreditCardExpiryDate();
         var creditCardExpiryDateString = params['card_expiry_month'];
         if (params['card_expiry_year'] != "") {
-            creditCardExpiryDateString +=  " / " + params['card_expiry_year'];
+            creditCardExpiryDateString +=  _separatorMonthYear + params['card_expiry_year'];
         }
 
         if (creditCardExpiryDateString != "") {
@@ -11613,7 +11709,7 @@ console.log('placeholder');
         }
 
         var creditCardExpiryDate = document.getElementById(_idInputMapper.cardExpiryDate).value;
-        var explodeExpiryDate = creditCardExpiryDate.split(' / ');
+        var explodeExpiryDate = creditCardExpiryDate.split(_separatorMonthYear);
         var month = explodeExpiryDate[0];
         var year = "20"+explodeExpiryDate[1];
         var params = {
