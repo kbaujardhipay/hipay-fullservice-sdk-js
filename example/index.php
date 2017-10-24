@@ -62,6 +62,18 @@ require_once('credentials.php');
                 <div class="row">
                     <div class="col-lg-12">
                         <div class="form-group">
+                            <label class="sr-only" for="input-name">Prénom Nom</label>
+                            <div class="input-group">
+                                <div class="input-group-addon-icon input-group-addon"><span class="glyphicon glyphicon-user" aria-hidden="true"></span></div>
+
+                                <input type="text" class="form-control" id="input-name" placeholder="" value="">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-lg-12">
+                        <div class="form-group">
                             <label class="sr-only" for="input-card">Card number</label>
                             <div class="input-group">
                                 <div class="input-group-addon-icon input-group-addon"><span class="glyphicon glyphicon-credit-card" aria-hidden="true"></span></div>
@@ -72,18 +84,7 @@ require_once('credentials.php');
                     </div>
                 </div>
 
-                <div class="row">
-                    <div class="col-lg-12">
-                        <div class="form-group">
-                            <label class="sr-only" for="input-name">Prénom Nom</label>
-                            <div class="input-group">
-                                <div class="input-group-addon-icon input-group-addon"><span class="glyphicon glyphicon-user" aria-hidden="true"></span></div>
 
-                                <input type="text" class="form-control" id="input-name" placeholder="" value="">
-                            </div>
-                        </div>
-                    </div>
-                </div>
 
                 <div class="row">
                     <div class="col-lg-12">
