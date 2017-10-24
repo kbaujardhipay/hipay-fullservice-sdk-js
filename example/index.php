@@ -27,19 +27,19 @@ require_once('credentials.php');
 
     <![endif]-->
 
-<!--    <script type="text/javascript" src="./assets/input.js"></script>-->
-<!--    <script type="text/javascript" src="../dist/hipay-fullservice-sdk-ie8.js"></script>-->
-   <script type="text/javascript" src="../dist/hipay-fullservice-sdk-2.js"></script>
+    <!--    <script type="text/javascript" src="./assets/input.js"></script>-->
+    <!--    <script type="text/javascript" src="../dist/hipay-fullservice-sdk-ie8.js"></script>-->
+    <script type="text/javascript" src="../dist/hipay-fullservice-sdk-2.js"></script>
 
 </head>
 
 <body>
 <div id="main" class="container">
 
-   <div class="row">
-       <div class="col-sm-12 col-lg-7">
+    <div class="row">
+        <div class="col-sm-12 col-lg-7">
 
-           <!-- Main component for a primary marketing message or call to action -->
+            <!-- Main component for a primary marketing message or call to action -->
             <div class="scontainer" id ="infos-txt" class="">
                 <h1 class="main-title" id="price">HiPay Direct Post Tokenization Simulator</h1>
                 <p id="order">Submit the form in oder to tokenize the credit card details using the HiPay Fullservice SDK for JavaScript (payment details won't hit the server). You will see the HiPay Fullservice platform response below.</p>
@@ -136,20 +136,18 @@ require_once('credentials.php');
     <div class="modal-dialog">
         <div class="modal-content">
             <div class="modal-header">
+                <button type="button" id="btn-close" class="close" data-dismiss="modal">&times;</button>
                 <div id="modal-header-title">
                     <h4 class="modal-title" id="myModalLabel">Card verification code</h4>
-                </div>
-                <div id="modal-header-close">
-                    <button type="button" id="btn-close" data-dismiss="modal"></button>
                 </div>
             </div>
             <div class="modal-body">
                 <p id="container-cvv-help-message"></p>
-<!--                <p>For security reasons, you have to enter your card security code (CVC).-->
-<!--                    It's the 3-digits number on the back of your card for <span class="modal-bold">VISA®</span>, <span class="modal-bold">MASTERCARD®</span> and <span class="modal-bold">MAESTRO®</span></p>-->
-<!--                <p>The <span class="modal-bold">AMERICAN EXPRESS</span> security code is the 4-digits number on the front of your card.</p>-->
-                <div id="cvv-img">
-                    <img src="./assets/card.png">
+                <!--                <p>For security reasons, you have to enter your card security code (CVC).-->
+                <!--                    It's the 3-digits number on the back of your card for <span class="modal-bold">VISA®</span>, <span class="modal-bold">MASTERCARD®</span> and <span class="modal-bold">MAESTRO®</span></p>-->
+                <!--                <p>The <span class="modal-bold">AMERICAN EXPRESS</span> security code is the 4-digits number on the front of your card.</p>-->
+                <div id="cvv-img-container">
+                    <img id="cvv-img" src="./assets/card.png">
                 </div>
             </div>
         </div>
@@ -158,6 +156,15 @@ require_once('credentials.php');
 
 <script type="text/javascript">
     $(document).ready(function(){
+
+        // message CVV
+        document.getElementById('container-cvv-help-message').innerHTML = HiPay.Form.CVVHelpText();
+        // img CVV
+        var myImgCVV = document.getElementById("cvv-img");
+        var cvvInfo = HiPay.getCVVInformation();
+        myImgCVV.src = "./assets/cvv_"+cvvInfo['length']+".png";
+
+
         var token = null;
 
         $('#link').click(function() {
@@ -167,16 +174,6 @@ require_once('credentials.php');
             $('#input-year').prop('value', '2020');
             $('#input-name').prop('value', 'John Doe');
         });
-
-//        HiPay.Form.change(function() {
-//            alert('toto');
-//            $("#pay-button").prop('disabled', !HiPay.Form.paymentFormDataIsValid());
-//        });
-//
-//        window.onload = function(e){
-//            document.getElementById('input-card').addEventListener('change', HiPay.Form.change);
-//        }
-
 
         $("#charge-button").click(function() {
 
@@ -204,15 +201,18 @@ require_once('credentials.php');
         });
 
         $("#pay-button").prop('disabled', !HiPay.Form.paymentFormDataIsValid());
-            HiPay.Form.change(function() {
+        HiPay.Form.change(function() {
+            // Information on card CVV
+            // message CVV
+            document.getElementById('container-cvv-help-message').innerHTML = HiPay.Form.CVVHelpText();
+            // img CVV
+            var myImgCVV = document.getElementById("cvv-img");
+            var cvvInfo = HiPay.getCVVInformation();
+            myImgCVV.src = "./assets/cvv_"+cvvInfo['length']+".png";
 
-                console.log(HiPay.getCVVInformation());
-                console.log('change form');
-                $("#pay-button").prop('disabled', !HiPay.Form.paymentFormDataIsValid());
-                var errorCollection = HiPay.Form.paymentFormDataGetErrors();
-                console.log("errorCollection from client");
-                console.log(errorCollection);
-            });
+            $("#pay-button").prop('disabled', !HiPay.Form.paymentFormDataIsValid());
+            var errorCollection = HiPay.Form.paymentFormDataGetErrors();
+        });
 
 
         var focusHandler = function(event) {
@@ -239,8 +239,6 @@ require_once('credentials.php');
 
             var params = {
                 card_number: $('#input-card')[0].value,
-//                card_expiry_month: $('#input-month')[0].value,
-//                card_expiry_year: $('#input-year')[0].value,
                 card_expiry_date: $('#input-expiry-date')[0].value,
                 card_holder: $('#input-name')[0].value,
                 cvv: $('#input-cvv')[0].value,
@@ -252,46 +250,18 @@ require_once('credentials.php');
             HiPay.setTarget('stage'); // default is production/live
             HiPay.setCredentials('<?php echo $credentials['public']['username']; ?>', '<?php echo $credentials['public']['password']; ?>');
 
-//            HiPay.create(params,
-//                function(result) {
-//
-//                    token = result.token;
-//
-//                    $("#pay-button").text("Tokenize");
-//                    $("#order").text("The token has been created using the JavaScript SDK (client side).");
-//
-//                    $('#code').text(JSON.stringify(result, null, 4));
-//                    $('#link-area').text('');
-//
-//                    $("#charge-button").show();
-//
-//                }, function (errors) {
-//                    $("#pay-button").text("Tokenize");
-//                    $("#form :input").prop("disabled", false);
-//                    $("#form :button").prop("disabled", false);
-//
-//                    if (typeof errors.message != "undefined") {
-//                        $("#error").text("Error: " + errors.message);
-//                    } else {
-//                        $("#error").text("An error occurred with the request.");
-//                    }
-//                }
-//            );
-
-//            HiPay.tokenize(params)
-
 
             HiPay.Form.tokenizePaymentFormData()
                 .then(function(cardToken) {
-                token = cardToken.token;
-                $("#pay-button").text("Tokenize");
-                $("#order").text("The token has been created using the JavaScript SDK (client side).");
+                    token = cardToken.token;
+                    $("#pay-button").text("Tokenize");
+                    $("#order").text("The token has been created using the JavaScript SDK (client side).");
 
-                $('#code').text(JSON.stringify(cardToken, null, 4));
-                $('#link-area').text('');
+                    $('#code').text(JSON.stringify(cardToken, null, 4));
+                    $('#link-area').text('');
 
-                $("#charge-button").show();
-            })
+                    $("#charge-button").show();
+                })
                 .catch(function(error){
                     if (error.code === HiPay.ErrorReason.APIIncorrectCredentials) { // égal à 1012003
                         console.log("Invalid crédentials");
@@ -301,13 +271,9 @@ require_once('credentials.php');
                         console.log("Token passé invalide…");
                     }
 
-
                     $("#pay-button").text("Tokenize");
                     $("#form :input").prop("disabled", false);
                     $("#form :button").prop("disabled", false);
-
-
-
 
 
                     if (error.errorCollection != undefined && error.errorCollection.length > 0) {
@@ -318,47 +284,6 @@ require_once('credentials.php');
                     }
 
                 });
-
-
-//            HiPay.tokenize(params['card_number'], params['card_expiry_month'], params['card_expiry_year'], params['card_holder'], params['cvv'], params['multi_use'], params['generate_request_id'] )
-//                .then(function(cardToken) {
-//                    token = cardToken.token;
-//                    $("#pay-button").text("Tokenize");
-//                    $("#order").text("The token has been created using the JavaScript SDK (client side).");
-//
-//                    $('#code').text(JSON.stringify(cardToken, null, 4));
-//                    $('#link-area').text('');
-//
-//                    $("#charge-button").show();
-//                })
-//                .catch(function(error){
-//                    if (error.code === HiPay.ErrorReason.APIIncorrectCredentials) { // égal à 1012003
-//                        console.log("Invalid crédentials");
-//                    }
-//
-//                    if (error.code === HiPay.ErrorReason.InvalidCardToken) { // égal à 1012003
-//                        console.log("Token passé invalide…");
-//                    }
-//
-//
-//                    $("#pay-button").text("Tokenize");
-//                    $("#form :input").prop("disabled", false);
-//                    $("#form :button").prop("disabled", false);
-//
-//
-//
-//
-//
-//                    if (error.errorCollection != undefined && error.errorCollection.length > 0) {
-//                        for (var i = 0; i < error.errorCollection.length; i++) {
-//                            var errorParameters = error.errorCollection[i];
-//                            $("#error").append(errorParameters.message);
-//                        }
-//                    }
-//
-//                });
-
-
             return false;
         });
 
