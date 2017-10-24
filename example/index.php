@@ -65,7 +65,7 @@ require_once('credentials.php');
                             <label class="sr-only" for="input-card">Card number</label>
                             <div class="input-group">
                                 <div class="input-group-addon-icon input-group-addon"><span class="glyphicon glyphicon-credit-card" aria-hidden="true"></span></div>
-                                <input type="tel" class="form-control" id="input-card"  placeholder="Ex : 5136 0000 0000 0000" autocomplete="off" pattern="\d*" name="cardNumber" value="">
+                                <input type="tel" class="form-control" id="input-card"  placeholder="" autocomplete="off" pattern="\d*" name="cardNumber" value="">
                             </div>
                             <div id="creditCardNumberMessageContainer" class="inputMessageContainer"></div>
                         </div>
@@ -79,7 +79,7 @@ require_once('credentials.php');
                             <div class="input-group">
                                 <div class="input-group-addon-icon input-group-addon"><span class="glyphicon glyphicon-user" aria-hidden="true"></span></div>
 
-                                <input type="text" class="form-control" id="input-name" placeholder="Prénom Nom" value="">
+                                <input type="text" class="form-control" id="input-name" placeholder="" value="">
                             </div>
                         </div>
                     </div>
@@ -92,7 +92,7 @@ require_once('credentials.php');
                             <div class="input-group">
                                 <div class="input-group-addon-icon input-group-addon"><span class="glyphicon glyphicon-calendar" aria-hidden="true"></span></div>
 
-                                <input type="text" class="form-control" id="input-expiry-date" placeholder="MM / YY" value="">
+                                <input type="text" class="form-control" id="input-expiry-date" value="">
                             </div>
                             <div id="creditCardExpiryDateMessageContainer" class="inputMessageContainer"></div>
 
