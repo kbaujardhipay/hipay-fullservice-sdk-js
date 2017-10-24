@@ -28,7 +28,9 @@ var HiPay = (function (HiPay) {
         prod: 'https://secure2-vault.hipay-tpp.com/rest/v2/token/create.json'
     };
 
-    var _separatorMonthYear = '/';
+    var _separatorMonthYear = ' / ';
+
+    var _maxYearExpiry = 30;
 
     var _translationJSON = {
         "en_EN" : {
@@ -45,7 +47,7 @@ var HiPay = (function (HiPay) {
             // placeholder
             "FORM_PLACEHOLDER_CARD_NUMBER": "Ex : 5136 0000 0000 0000",
             "FORM_PLACEHOLDER_CARD_HOLDER": "FirstName LastName",
-            "FORM_PLACEHOLDER_CARD_EXPIRY_DATE": "MM" + _separatorMonthYear + "YY",
+            "FORM_PLACEHOLDER_CARD_EXPIRY_DATE": "MM"+_separatorMonthYear+"YY",
             "FORM_PLACEHOLDER_CARD_CVV": "123"
 
         },
@@ -670,7 +672,7 @@ var HiPay = (function (HiPay) {
             // document.getElementById("creditCardNumberMessageContainer").innerHTML="";
             // document.getElementById(_idInputMapper.cardNumber).setAttribute('style', 'color:'+ _colorInput["default"] + ' !important');
             document.getElementById(_idInputMapper.cardCVV).disabled = false;
-            if ( serviceCreditCard.cardNumberStringFormatAfter != '' && validatorCreditCardNumber.isValid( document.getElementById(_idInputMapper.cardNumber).value) ) {
+            if ( serviceCreditCard.cardNumberStringFormatAfter != '') {
 
                 // if maestro cvc disabled
 
@@ -696,8 +698,12 @@ var HiPay = (function (HiPay) {
                     cvvElement.disabled = true;
 
                 }
+
+            }
+            if(serviceCreditCard.cardNumberStringFormatAfter != '' && validatorCreditCardNumber.isValid( document.getElementById(_idInputMapper.cardNumber).value)) {
                 element.focus();
-            } else {
+            }
+            else {
                 if (serviceCreditCard.cardLengthMax == serviceCreditCard.cardNumberStringAfter.length && !validatorCreditCardNumber.isValid(document.getElementById(_idInputMapper.cardNumber).value)) {
 
 
@@ -977,7 +983,7 @@ var HiPay = (function (HiPay) {
                             var currentYear = currentTime.getFullYear();
 
                             var yearYYYY = "20" + year;
-                            if(yearYYYY > currentYear) {
+                            if(yearYYYY > currentYear && yearYYYY <= (currentYear + _maxYearExpiry)) {
                                 isPotentiallyValid = true;
                             } else if(yearYYYY == currentYear && month >= currentMonth) {
                                 isPotentiallyValid = true;
@@ -1031,7 +1037,7 @@ var HiPay = (function (HiPay) {
                 if(month > 12) {
                     validatorExpiryDate.errorCollection.push(new _InvalidParametersError(50, _getLocaleTranslationWithId("FORM_ERROR_INVALID_MONTH_EXPIRY_DATE")));
                     return false;
-                } else if(year < currentYear) {
+                } else if(year < currentYear || year > (currentYear + _maxYearExpiry)) {
                     validatorExpiryDate.errorCollection.push(new _InvalidParametersError(50, _getLocaleTranslationWithId("FORM_ERROR_INVALID_EXPIRY_DATE_PAST")));
                     return false;
                 }
