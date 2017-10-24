@@ -40,4 +40,11 @@ input:disabled.form-control::-webkit-input-placeholder {
 }
 /* ./ error input */
 
+/* CVV */
+#cvv-img-container {
+    margin:0 auto;
+    text-align:center;
+}
+
+
 

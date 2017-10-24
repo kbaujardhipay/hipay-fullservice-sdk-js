@@ -10026,7 +10026,7 @@ var HiPay = (function (HiPay) {
         };
 
 
-        serviceCreditCard.initCreditCardCVV = function(charCode){
+        serviceCreditCard.initCreditCardCVV = function(charCode, stringPaste){
 
             serviceCreditCard.lastCharCodeCreditCardCVV = charCode;
             if (charCode == undefined || charCode == '' || charCode == 8 || charCode == 46) {
@@ -10063,38 +10063,73 @@ var HiPay = (function (HiPay) {
             // string after
 
             var newTempStringAfter = serviceCreditCard.cardCVVStringFormatedBefore;
-            if (startB >= 0 && endB > 0 && startB < endB) {
-                newTempStringAfter = newTempStringAfter.substring(0,startB) + "" + newTempStringAfter.substring(endB, newTempStringAfter.length);
-                endA = startA;
 
 
-            }
-            else if (startB > 0) {
-                if(charCode == 8) {
+            if (stringPaste) {
 
-                    var tempStringAfterDebut = newTempStringAfter.substring(0, (parseInt(startB) - 1));
-                    var tempStringAfterFin = newTempStringAfter.substring((parseInt(startB)), newTempStringAfter.length);
+                console.log(startB);
+                console.log("string Paste");
+                // delete all chars but number
+                stringPaste = stringPaste.replace(/[^0-9]/g, '');
+                // newTempStringAfter = stringPaste;
+                // endA = startA;
 
-                    newTempStringAfter = tempStringAfterDebut + "" + tempStringAfterFin;
+                if (startB >= 0 && endB > 0 && startB < endB) {
 
-                    startA = startA - 1;
+                    newTempStringAfter = newTempStringAfter.substring(0, startB) + stringPaste + newTempStringAfter.substring(endB, newTempStringAfter.length);
 
-                } else if(charCode == 46) {
-                    var tempStringAfterDebut = newTempStringAfter.substring(0, (parseInt(startB)));
-                    var tempStringAfterFin = newTempStringAfter.substring((parseInt(startB) + 1), newTempStringAfter.length);
-                    newTempStringAfter = tempStringAfterDebut + "" + tempStringAfterFin;
+                    // realCursorPositionInNumberAfter = realCursorPositionInNumberBefore;
+
+                } else if (startB >= 0) {
+                    console.log('position 0');
+                    newTempStringAfter = newTempStringAfter.substring(0, startB) + "" + stringPaste + newTempStringAfter.substring(startB, newTempStringAfter.length);
+                    endA = stringPaste.length;
+                }
+                var startBFormat = startB + stringPaste.length;
+
+                console.log("newTempStringAfter");
+                console.log(startBFormat);
+                if (newTempStringAfter.length >= 4) {
+                    newTempStringAfter =newTempStringAfter.substring(0,4);
+                }
+
+
+
+            } else {
+
+                if (startB >= 0 && endB > 0 && startB < endB) {
+                    newTempStringAfter = newTempStringAfter.substring(0, startB) + "" + newTempStringAfter.substring(endB, newTempStringAfter.length);
+                    endA = startA;
+
 
                 }
-                endA = startA;
-            } else if(startB == 0) {
-                if(charCode == 46) {
-                    var tempStringAfterDebut = newTempStringAfter.substring(0, (parseInt(startB)));
-                    var tempStringAfterFin = newTempStringAfter.substring((parseInt(startB) + 1), newTempStringAfter.length);
-                    newTempStringAfter = tempStringAfterDebut + "" + tempStringAfterFin;
+                else if (startB > 0) {
+                    if (charCode == 8) {
+
+                        var tempStringAfterDebut = newTempStringAfter.substring(0, (parseInt(startB) - 1));
+                        var tempStringAfterFin = newTempStringAfter.substring((parseInt(startB)), newTempStringAfter.length);
+
+                        newTempStringAfter = tempStringAfterDebut + "" + tempStringAfterFin;
+
+                        startA = startA - 1;
+
+                    } else if (charCode == 46) {
+                        var tempStringAfterDebut = newTempStringAfter.substring(0, (parseInt(startB)));
+                        var tempStringAfterFin = newTempStringAfter.substring((parseInt(startB) + 1), newTempStringAfter.length);
+                        newTempStringAfter = tempStringAfterDebut + "" + tempStringAfterFin;
+
+                    }
+                    endA = startA;
+                } else if (startB == 0) {
+                    if (charCode == 46) {
+                        var tempStringAfterDebut = newTempStringAfter.substring(0, (parseInt(startB)));
+                        var tempStringAfterFin = newTempStringAfter.substring((parseInt(startB) + 1), newTempStringAfter.length);
+                        newTempStringAfter = tempStringAfterDebut + "" + tempStringAfterFin;
 
 
+                    }
+                    endA = startA;
                 }
-                endA = startA;
             }
 
             var startA = startBFormat;
@@ -10121,12 +10156,21 @@ var HiPay = (function (HiPay) {
                 }
             }
 
+            console.log("tempStringAfter");
+            console.log(tempStringAfter);
+            console.log(startA);
+
             if (serviceCreditCard.creditCardCVVLengthMax == null || tempStringAfter.length <= serviceCreditCard.creditCardCVVLengthMax) {
                 serviceCreditCard.cardCVVStringAfter = tempStringAfter;
             }
             else {
-                serviceCreditCard.cardCVVStringAfter = serviceCreditCard.cardCVVStringFormatedBefore;
-                startA = startBFormat;
+                if (stringPaste) {
+                    serviceCreditCard.cardCVVStringAfter = tempStringAfter.substr(0,serviceCreditCard.creditCardCVVLengthMax);
+                    // startA = stringPaste.length;
+                } else {
+                    serviceCreditCard.cardCVVStringAfter = serviceCreditCard.cardCVVStringFormatedBefore;
+                    startA = startBFormat;
+                }
             }
 
             document.getElementById(_idInputMapper.cardCVV).value = serviceCreditCard.cardCVVStringAfter;
@@ -10208,14 +10252,14 @@ var HiPay = (function (HiPay) {
 
 
     var _replacePlaceholderLikeBlur = function(idElement, stringPlaceholderLike) {
-console.log(stringPlaceholderLike);
+        console.log(stringPlaceholderLike);
         if (document.getElementById(idElement).value == "") {
             document.getElementById(idElement).value = stringPlaceholderLike;
         }
 
     }
     var _replacePlaceholderLikeFocus = function(idElement, stringPlaceholderLike) {
-console.log(stringPlaceholderLike);
+        console.log(stringPlaceholderLike);
         if (document.getElementById(idElement).value == stringPlaceholderLike) {
             document.getElementById(idElement).value = "";
         }
@@ -10226,7 +10270,7 @@ console.log(stringPlaceholderLike);
         for (var propt in _idInputMapper) {
 
             if (document.getElementById(_idInputMapper[propt]).placeholder == "") {
-console.log('placeholder');
+                console.log('placeholder');
                 switch (propt) {
                     case 'cardNumber':
                         document.getElementById(_idInputMapper[propt]).placeholder = _getLocaleTranslationWithId("FORM_PLACEHOLDER_CARD_NUMBER");
@@ -10332,9 +10376,9 @@ console.log('placeholder');
 
 
                 var handler = function(e) {
-//
+
                     var evt = e || window.event;
-//
+
                     var pastedText = "";
                     if (window.clipboardData) {
                         pastedText = window.clipboardData.getData('Text');
@@ -10342,93 +10386,27 @@ console.log('placeholder');
 
                     } else if(evt.clipboardData && evt.clipboardData.getData) {
                         console.log("getData paste 2");
-//         //
-//         //     if (window.clipboardData && window.clipboardData.getData) { // IE
-//         //         pastedText = window.clipboardData.getData('Text');
-//         //     } else if (e.clipboardData && e.clipboardData.getData) {
+
                         pastedText = e.clipboardData.getData('text/plain');
-                        //     }
-//         //
-//         //
+
+
+
                     }
                     console.log(pastedText);
-//         // else{
-//         //     // alert('Not paste object!');
-//         // }
-//
-//     var clipboardData = e.clipboardData || window.clipboardData;
-//     var pastedData = clipboardData.getData('Text');
 
-//     console.log(evt);
-//     // console.log(pastedText);
-//     console.log(pastedData);
-//
 
                     evt.preventDefault ? evt.preventDefault() : (evt.returnValue = false);
 
-//     //
                     _instanceServiceCreditCard = new _serviceCreditCard();
                     _instanceServiceCreditCard.initCreditCardNumber("",pastedText);
-//     //
+
                     _callbackEventFormChange();
-//
-//
-//
                 };
                 if (document.getElementById(_idInputMapper['cardNumber']).attachEvent) {
                     document.getElementById(_idInputMapper['cardNumber']).attachEvent("onpaste", handler);
                 } else {
                     document.getElementById(_idInputMapper['cardNumber']).addEventListener ("paste", handler, false);  // all browsers and IE9+
                 }
-
-
-
-
-
-
-
-
-
-
-
-                // document.getElementById(_idInputMapper['cardNumber']).addEventListener('paste', function (e) {
-                //
-                //
-                //
-                //     var evt = e || window.event;
-                //
-                //     if(evt.clipboardData && evt.clipboardData.getData) {
-                //         console.log("getData paste");
-                //         var pastedText = "";
-                //         if (window.clipboardData && window.clipboardData.getData) { // IE
-                //             pastedText = window.clipboardData.getData('Text');
-                //         } else if (e.clipboardData && e.clipboardData.getData) {
-                //             pastedText = e.clipboardData.getData('text/plain');
-                //         }
-                //
-                //         // alert(pastedText);
-                //     }
-                //     // else{
-                //     //     // alert('Not paste object!');
-                //     // }
-                //
-                //      evt.preventDefault();
-                //     //
-                //     // // alert(pastedText);
-                //     //
-                //     _instanceServiceCreditCard = new _serviceCreditCard();
-                //     _instanceServiceCreditCard.initCreditCardNumber("",pastedText);
-                //     //
-                //     //
-                //     //
-                //      _callbackEventFormChange();
-                //
-                //
-                //
-                //
-                //
-                // });
-
 
                 document.getElementById(_idInputMapper['cardNumber']).addEventListener('keypress', function (e) {
                     // return false;
@@ -10577,9 +10555,6 @@ console.log('placeholder');
             else if (propt == 'cardCVV') {
 
                 document.getElementById(_idInputMapper['cardCVV']).addEventListener('keydown', function (e) {
-
-
-
                     var evt = e || window.event;
 
                     var charCode = evt.keyCode || evt.which;
@@ -10590,22 +10565,10 @@ console.log('placeholder');
                         evt.preventDefault();
 
                     }
-
-
-
-
-                    // var validatorCreditCardCVV = _instanceServiceCreditCard.validatorCreditCardCVV();
-
-
                     _callbackEventFormChange();
-
-
                 });
 
-
                 document.getElementById(_idInputMapper['cardCVV']).addEventListener('keypress', function (e) {
-
-
 
                     var evt = e || window.event;
 
@@ -10621,6 +10584,39 @@ console.log('placeholder');
                     }
                     _callbackEventFormChange();
                 });
+
+
+                var handlerExpiryDate = function(e) {
+                    var evt = e || window.event;
+
+                    var pastedText = "";
+                    if (window.clipboardData) {
+                        pastedText = window.clipboardData.getData('Text');
+                        console.log("getData paste 1");
+
+                    } else if(evt.clipboardData && evt.clipboardData.getData) {
+                        console.log("getData paste 2");
+                        pastedText = e.clipboardData.getData('text/plain');
+
+                    }
+                    console.log(pastedText);
+
+
+
+                    evt.preventDefault ? evt.preventDefault() : (evt.returnValue = false);
+
+                    _instanceServiceCreditCard = new _serviceCreditCard();
+                    _instanceServiceCreditCard.initCreditCardCVV("",pastedText);
+
+                    _callbackEventFormChange();
+                };
+                if (document.getElementById(_idInputMapper[propt]).attachEvent) {
+                    document.getElementById(_idInputMapper[propt]).attachEvent("onpaste", handlerExpiryDate);
+                } else {
+                    document.getElementById(_idInputMapper[propt]).addEventListener ("paste", handlerExpiryDate, false);  // all browsers and IE9+
+                }
+
+
 
 
                 // document.getElementById(_idInputMapper['cardCVV']).addEventListener('blur', function (e) {
@@ -11683,10 +11679,10 @@ console.log('placeholder');
 
 
     /**
-     * Helper to display CVC information
-     * @method HiPay.Form.CVCHelpText
+     * Helper to display CVV information
+     * @method HiPay.Form.CVVHelpText
      */
-    HiPay.Form.CVCHelpText = function() {
+    HiPay.Form.CVVHelpText = function() {
 
         var serviceCreditCard = new _serviceCreditCard();
         var CVVLength = serviceCreditCard.getCreditCardCVVLengthMax();
