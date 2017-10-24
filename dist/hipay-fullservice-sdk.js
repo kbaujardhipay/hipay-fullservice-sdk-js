@@ -8217,6 +8217,11 @@ var HiPay = (function (HiPay) {
             "FORM_ERROR_INVALID_CVV": "The CVV field must contain %NUMBER% digits.",
             "FORM_ERROR_DEFAULT": "An error occured.",
 
+            // placeholder
+            "FORM_PLACEHOLDER_CARD_NUMBER": "Ex : 5136 0000 0000 0000",
+            "FORM_PLACEHOLDER_CARD_HOLDER": "FirstName LastName",
+            "FORM_PLACEHOLDER_CARD_EXPIRY_DATE": "MM / YY",
+            "FORM_PLACEHOLDER_CARD_CVV": "123"
 
         },
         "fr_FR" : {
@@ -8228,6 +8233,12 @@ var HiPay = (function (HiPay) {
             "FORM_ERROR_INVALID_MONTH_EXPIRY_DATE": "Le mois doit être compris entre 1 et 12.",
             "FORM_ERROR_INVALID_CVV": "Le champ CVV doit contenir %NUMBER% caractères.",
             "FORM_ERROR_DEFAULT": "Une erreur est survenue.",
+
+            // placeholder
+            "FORM_PLACEHOLDER_CARD_NUMBER": "Ex : 5136 0000 0000 0000",
+            "FORM_PLACEHOLDER_CARD_HOLDER": "Prénom Nom",
+            "FORM_PLACEHOLDER_CARD_EXPIRY_DATE": "MM / AA",
+            "FORM_PLACEHOLDER_CARD_CVV": "123"
         },
     };
 
@@ -9530,8 +9541,8 @@ var HiPay = (function (HiPay) {
             serviceCreditCard.idType = null;
 
 
-console.log("tempStringAfter");
-console.log(tempStringAfter);
+            console.log("tempStringAfter");
+            console.log(tempStringAfter);
 
 
 
@@ -10136,6 +10147,79 @@ console.log(tempStringAfter);
 
 
 
+    var _replacePlaceholderLikeBlur = function(idElement, stringPlaceholderLike) {
+console.log(stringPlaceholderLike);
+        if (document.getElementById(idElement).value == "") {
+            document.getElementById(idElement).value = stringPlaceholderLike;
+        }
+
+    }
+    var _replacePlaceholderLikeFocus = function(idElement, stringPlaceholderLike) {
+console.log(stringPlaceholderLike);
+        if (document.getElementById(idElement).value == stringPlaceholderLike) {
+            document.getElementById(idElement).value = "";
+        }
+
+    }
+
+    var _initPlaceholder = function() {
+        for (var propt in _idInputMapper) {
+
+            if (document.getElementById(_idInputMapper[propt]).placeholder == "") {
+console.log('placeholder');
+                switch (propt) {
+                    case 'cardNumber':
+                        document.getElementById(_idInputMapper[propt]).placeholder = _getLocaleTranslationWithId("FORM_PLACEHOLDER_CARD_NUMBER");
+                        break;
+                    case 'cardHolder':
+                        document.getElementById(_idInputMapper[propt]).placeholder = _getLocaleTranslationWithId("FORM_PLACEHOLDER_CARD_HOLDER");
+                        break;
+                    case 'cardExpiryDate':
+                        document.getElementById(_idInputMapper[propt]).placeholder = _getLocaleTranslationWithId("FORM_PLACEHOLDER_CARD_EXPIRY_DATE");
+                        break;
+                    case 'cardCVV':
+                        document.getElementById(_idInputMapper[propt]).placeholder = _getLocaleTranslationWithId("FORM_PLACEHOLDER_CARD_CVV");
+                        break;
+                }
+            } else {
+                // console.log('no placeholder');
+                // switch (propt) {
+                //     case 'cardNumber':
+                //         document.getElementById(_idInputMapper[propt]).value = _getLocaleTranslationWithId("FORM_PLACEHOLDER_CARD_NUMBER");
+                //         if (document.getElementById(_idInputMapper[propt]).attachEvent) {
+                //             document.getElementById(_idInputMapper[propt]).attachEvent("onblur", _replacePlaceholderLikeBlur(_idInputMapper[propt],_getLocaleTranslationWithId("FORM_PLACEHOLDER_CARD_NUMBER")));
+                //             document.getElementById(_idInputMapper[propt]).attachEvent("onfocus", _replacePlaceholderLikeFocus(_idInputMapper[propt],_getLocaleTranslationWithId("FORM_PLACEHOLDER_CARD_NUMBER")));
+                //         } else {
+                //             document.getElementById(_idInputMapper[propt]).addEventListener ("blur", _replacePlaceholderLikeBlur(_idInputMapper[propt], _getLocaleTranslationWithId("FORM_PLACEHOLDER_CARD_NUMBER")), false);  // all browsers and IE9+
+                //             document.getElementById(_idInputMapper[propt]).addEventListener ("focus", _replacePlaceholderLikeFocus(_idInputMapper[propt], _getLocaleTranslationWithId("FORM_PLACEHOLDER_CARD_NUMBER")), false);  // all browsers and IE9+
+                //         }
+                //
+                //
+                //         break;
+                //     case 'cardHolder':
+                //         document.getElementById(_idInputMapper[propt]).value = _getLocaleTranslationWithId("FORM_PLACEHOLDER_CARD_HOLDER");
+                //         if (document.getElementById(_idInputMapper[propt]).attachEvent) {
+                //             document.getElementById(_idInputMapper[propt]).attachEvent("onblur", _replacePlaceholderLikeBlur(_idInputMapper[propt],_getLocaleTranslationWithId("FORM_PLACEHOLDER_CARD_NUMBER")));
+                //             document.getElementById(_idInputMapper[propt]).attachEvent("onfocus", _replacePlaceholderLikeFocus(_idInputMapper[propt],_getLocaleTranslationWithId("FORM_PLACEHOLDER_CARD_NUMBER")));
+                //         } else {
+                //             document.getElementById(_idInputMapper[propt]).addEventListener ("blur", _replacePlaceholderLikeBlur(_idInputMapper[propt], _getLocaleTranslationWithId("FORM_PLACEHOLDER_CARD_NUMBER")), false);  // all browsers and IE9+
+                //             document.getElementById(_idInputMapper[propt]).addEventListener ("focus", _replacePlaceholderLikeFocus(_idInputMapper[propt], _getLocaleTranslationWithId("FORM_PLACEHOLDER_CARD_NUMBER")), false);  // all browsers and IE9+
+                //         }
+                //         break;
+                //     case 'cardExpiryDate':
+                //         document.getElementById(_idInputMapper[propt]).placeholder = _getLocaleTranslationWithId("FORM_PLACEHOLDER_CARD_EXPIRY_DATE");
+                //         break;
+                //     case 'cardCVV':
+                //         document.getElementById(_idInputMapper[propt]).placeholder = _getLocaleTranslationWithId("FORM_PLACEHOLDER_CARD_CVV");
+                //         break;
+                // }
+
+
+            }
+        }
+    };
+
+
 
     /* add listener on all input form */
     window.onload = function() {
@@ -10154,6 +10238,9 @@ console.log(tempStringAfter);
         imgType.setAttribute('style','display:none;');
 
         my_elem.parentNode.insertBefore(imgType, my_elem.nextSibling);
+
+        // add placeholder
+        _initPlaceholder();
 
 
         for(var propt in _idInputMapper){
@@ -10184,27 +10271,27 @@ console.log(tempStringAfter);
 
 
 
-var handler = function(e) {
+                var handler = function(e) {
 //
-    var evt = e || window.event;
+                    var evt = e || window.event;
 //
-    var pastedText = "";
-    if (window.clipboardData) {
-        pastedText = window.clipboardData.getData('Text');
-        console.log("getData paste 1");
+                    var pastedText = "";
+                    if (window.clipboardData) {
+                        pastedText = window.clipboardData.getData('Text');
+                        console.log("getData paste 1");
 
-    } else if(evt.clipboardData && evt.clipboardData.getData) {
-            console.log("getData paste 2");
+                    } else if(evt.clipboardData && evt.clipboardData.getData) {
+                        console.log("getData paste 2");
 //         //
 //         //     if (window.clipboardData && window.clipboardData.getData) { // IE
 //         //         pastedText = window.clipboardData.getData('Text');
 //         //     } else if (e.clipboardData && e.clipboardData.getData) {
-                pastedText = e.clipboardData.getData('text/plain');
-        //     }
+                        pastedText = e.clipboardData.getData('text/plain');
+                        //     }
 //         //
 //         //
-        }
-    console.log(pastedText);
+                    }
+                    console.log(pastedText);
 //         // else{
 //         //     // alert('Not paste object!');
 //         // }
@@ -10217,17 +10304,17 @@ var handler = function(e) {
 //     console.log(pastedData);
 //
 
-    evt.preventDefault ? evt.preventDefault() : (evt.returnValue = false);
+                    evt.preventDefault ? evt.preventDefault() : (evt.returnValue = false);
 
 //     //
-    _instanceServiceCreditCard = new _serviceCreditCard();
-    _instanceServiceCreditCard.initCreditCardNumber("",pastedText);
+                    _instanceServiceCreditCard = new _serviceCreditCard();
+                    _instanceServiceCreditCard.initCreditCardNumber("",pastedText);
 //     //
-    _callbackEventFormChange();
+                    _callbackEventFormChange();
 //
 //
 //
-};
+                };
                 if (document.getElementById(_idInputMapper['cardNumber']).attachEvent) {
                     document.getElementById(_idInputMapper['cardNumber']).attachEvent("onpaste", handler);
                 } else {
