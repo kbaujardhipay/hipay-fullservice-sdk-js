@@ -9261,8 +9261,9 @@ var HiPay = (function (HiPay) {
                     isPotentiallyValid = true;
                 }
 
-
-
+                if (serviceCreditCard.idType == 'card_maestro_info' && creditCardCVVString == "") {
+                    isPotentiallyValid = true;
+                }
 
                 if (isPotentiallyValid == false) {
                     validatorCreditCardCVV.isValid(creditCardCVVString);
@@ -9274,9 +9275,14 @@ var HiPay = (function (HiPay) {
 
 
             validatorCreditCardCVV.isValid = function (creditCardCVVString) {
+
+                if (serviceCreditCard.idType == 'card_maestro_info') {
+                    return true;
+                }
+
+
+
                 if (creditCardCVVString == "" || creditCardCVVString == undefined || creditCardCVVString == null) {
-
-
                     return false;
                 }
 
@@ -9352,13 +9358,13 @@ var HiPay = (function (HiPay) {
                     // return false;
                 }
 
-
                 var validatorCreditCardCVV = serviceCreditCard.validatorCreditCardCVV(validatorCreditCard.errorCollection);
                 if (!validatorCreditCardCVV.isValid(params['cvc'])) {
                     hasError = true;
                     // return false;
                 }
-
+                console.log('valid cvv ?');
+                console.log(validatorCreditCardCVV.isValid(params['cvc']));
                 if (hasError) {
                     return false;
                 }
