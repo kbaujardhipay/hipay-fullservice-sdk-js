@@ -8284,128 +8284,148 @@ var HiPay = (function (HiPay) {
 
     var _cardFormatDefinition = {
         card_visa_info:
-            {
-                "ranges":[
-                    {
-                        "first": 4,
-                        "variable": null
-                    }
-                ],
-
-                "lengths": {
-                    "length": 16,
+        {
+            "ranges":[
+                {
+                    "first": 4,
                     "variable": null
-                },
+                }
+            ],
 
-                "format":[4,4,4]
+            "lengths": {
+                "length": 16,
+                "variable": null
             },
+
+            "format":[4,4,4]
+        },
         card_mastercard_info:
-            {
-                "ranges":[
+        {
+            "ranges":[
 
-                    {
-                        "first": 51,
-                        "variable": 4
-                    }
-                ],
+                {
+                    "first": 51,
+                    "variable": 4
+                }
+            ],
 
-                "lengths": {
-                    "length": 16,
-                    "variable": null
+            "lengths": {
+                "length": 16,
+                "variable": null
+            },
+
+            "format":[4,4,4]
+        },
+        card_diners_info:
+        {
+            "ranges":[
+
+                {
+                    "first": 300,
+                    "variable": 5
                 },
 
-                "format":[4,4,4]
-            },
-        card_diners_info:
-            {
-                "ranges":[
-
-                    {
-                        "first": 300,
-                        "variable": 5
-                    },
-
-                    {
-                        "first": 38,
-                        "variable": 1
-                    },
-
-                    {
-                        "first": 2014,
-                        "variable": null
-                    },
-
-                    {
-                        "first": 2149,
-                        "variable": null
-                    },
-
-                    {
-                        "first": 309,
-                        "variable": null
-                    },
-
-                    {
-                        "first": 36,
-                        "variable": null
-                    }
-                ],
-                "lengths": {
-                    "length": 14,
+                {
+                    "first": 38,
                     "variable": 1
                 },
 
-                "format":[4,6]
-            },
-        card_american_express_info:
-            {
-                "ranges":[
-
-                    {
-                        "first": 34,
-                        "variable": null
-                    },
-
-                    {
-                        "first": 37,
-                        "variable": null
-                    }
-
-                ],
-
-                "lengths": {
-                    "length": 15,
+                {
+                    "first": 2014,
                     "variable": null
                 },
 
-                "format":[4,6]
-            },
-        card_maestro_info:
-            {
-                "ranges":[
-
-                    {
-                        "first": 50,
-                        "variable": null
-                    },
-
-                    {
-                        "first": 56,
-                        "variable": 13
-                    }
-
-                ],
-
-                "lengths": {
-                    "length": 12,
-                    "variable": 7
+                {
+                    "first": 2149,
+                    "variable": null
                 },
 
-                "format":[4,4,4,4]
-            }
+                {
+                    "first": 309,
+                    "variable": null
+                },
+
+                {
+                    "first": 36,
+                    "variable": null
+                }
+            ],
+            "lengths": {
+                "length": 14,
+                "variable": 1
+            },
+
+            "format":[4,6]
+        },
+        card_american_express_info:
+        {
+            "ranges":[
+
+                {
+                    "first": 34,
+                    "variable": null
+                },
+
+                {
+                    "first": 37,
+                    "variable": null
+                }
+
+            ],
+
+            "lengths": {
+                "length": 15,
+                "variable": null
+            },
+
+            "format":[4,6]
+        },
+        card_maestro_info:
+        {
+            "ranges":[
+
+                {
+                    "first": 50,
+                    "variable": null
+                },
+
+                {
+                    "first": 56,
+                    "variable": 13
+                }
+
+            ],
+
+            "lengths": {
+                "length": 12,
+                "variable": 7
+            },
+
+            "format":[4,4,4,4]
+        }
     };
 
 
+
+
+    function _focusNextElement() {
+
+        // var focussableElements = 'a:not([disabled]), button:not([disabled]), input[type=text]:not([disabled]), [tabindex]:not([disabled]):not([tabindex="-1"])';
+        var focussableElements = 'button:not([disabled]), input:not([disabled]), [tabindex]:not([disabled]):not([tabindex="-1"])';
+
+        // if (document.activeElement && document.activeElement.form) {
+        if (document.activeElement) {
+
+            // var focussable = Array.prototype.filter.call(document.activeElement.form.querySelectorAll(focussableElements),
+            var focussable = Array.prototype.filter.call(document.querySelectorAll(focussableElements),
+                function(element) {
+                    return element.offsetWidth > 0 || element.offsetHeight > 0 || element === document.activeElement
+                });
+
+            var index = focussable.indexOf(document.activeElement);
+            focussable[index + 1].focus();
+        }
+    };
 
 
 
@@ -8879,7 +8899,8 @@ var HiPay = (function (HiPay) {
 
             }
             if(serviceCreditCard.cardNumberStringFormatAfter != '' && validatorCreditCardNumber.isValid( document.getElementById(_idInputMapper.cardNumber).value)) {
-                element.focus();
+                _focusNextElement();
+                // element.focus();
             }
             else {
                 if (serviceCreditCard.cardLengthMax == serviceCreditCard.cardNumberStringAfter.length && !validatorCreditCardNumber.isValid(document.getElementById(_idInputMapper.cardNumber).value)) {
@@ -8906,7 +8927,8 @@ var HiPay = (function (HiPay) {
             if ( 7 == document.getElementById(_idInputMapper.cardExpiryDate).value.length && validatorCreditCardExpiryDate.isValid( document.getElementById(_idInputMapper.cardExpiryDate).value) === true ) {
 
 
-                element.focus();
+                // element.focus();
+                _focusNextElement();
             } else {
                 if (7 == document.getElementById(_idInputMapper.cardExpiryDate).value.length && validatorCreditCardExpiryDate.isValid(document.getElementById(_idInputMapper.cardExpiryDate).value) === false) {
 
@@ -9363,8 +9385,7 @@ var HiPay = (function (HiPay) {
                     hasError = true;
                     // return false;
                 }
-                console.log('valid cvv ?');
-                console.log(validatorCreditCardCVV.isValid(params['cvc']));
+
                 if (hasError) {
                     return false;
                 }
@@ -9436,34 +9457,19 @@ var HiPay = (function (HiPay) {
 
             var newTempStringAfter = serviceCreditCard.cardNumberStringUnformatedBefore;
 
-            console.log("newTempStringAfter a");
-            console.log(newTempStringAfter);
-
-
 
 
             if (stringPaste) {
 
-                console.log(startB);
                 // delete all chars but number
                 var stringPaste = stringPaste.replace(/[^0-9]/g, '');
-                // newTempStringAfter = stringPaste;
-                // endA = startA;
 
                 if (startB >= 0 && endB > 0 && startB < endB) {
 
-                    // if(charCode == 46) {
-                    //
-                    //     startA = startA - 1;
-                    // }
-
-
                     newTempStringAfter = newTempStringAfter.substring(0, startB) + stringPaste + newTempStringAfter.substring(endB, newTempStringAfter.length);
                     endA = stringPaste.length;
-                    // realCursorPositionInNumberAfter = realCursorPositionInNumberBefore;
 
                 } else if (startB >= 0) {
-                    console.log('position 0');
                     newTempStringAfter = newTempStringAfter.substring(0, startB) + "" + stringPaste + newTempStringAfter.substring(startB, newTempStringAfter.length);
                     endA = stringPaste.length;
                 }
@@ -9479,11 +9485,6 @@ var HiPay = (function (HiPay) {
 
                 if (startB >= 0 && endB > 0 && startB < endB) {
 
-                    // if(charCode == 46) {
-                    //
-                    //     startA = startA - 1;
-                    // }
-
 
                     newTempStringAfter = newTempStringAfter.substring(0, startB) + "" + newTempStringAfter.substring(endB, newTempStringAfter.length);
                     endA = startA;
@@ -9495,8 +9496,7 @@ var HiPay = (function (HiPay) {
 
                         var tempStringAfterDebut = newTempStringAfter.substring(0, (parseInt(startB) - 1));
                         var tempStringAfterFin = newTempStringAfter.substring((parseInt(startB)), newTempStringAfter.length);
-                        // dump(tempStringAfterDebut);
-                        // dump(tempStringAfterFin);
+
                         newTempStringAfter = tempStringAfterDebut + "" + tempStringAfterFin;
 
                         startA = startA - 1;
@@ -9561,10 +9561,6 @@ var HiPay = (function (HiPay) {
             serviceCreditCard.cardLengthMax = 25;
 
             serviceCreditCard.idType = null;
-
-
-            console.log("tempStringAfter");
-            console.log(tempStringAfter);
 
 
 
@@ -9695,9 +9691,6 @@ var HiPay = (function (HiPay) {
                 tempForStringAfter += serviceCreditCard.cardNumberStringAfter.charAt(nb);
             }
 
-
-            console.log("tempForStringAfter2");
-            console.log(tempForStringAfter);
             serviceCreditCard.cardNumberStringFormatAfter = tempForStringAfter;
 
             var startAFormat = startA + numberSpaceBeforeStartFormated;
@@ -9914,26 +9907,14 @@ var HiPay = (function (HiPay) {
 
             if (stringPaste) {
 
-                console.log(startB);
+
                 // delete all chars but number
                 var stringPaste = stringPaste.replace(/[^0-9]/g, '');
-                // newTempStringAfter = stringPaste;
-                // endA = startA;
 
                 if (startB >= 0 && endB > 0 && startB < endB) {
-
-                    // if(charCode == 46) {
-                    //
-                    //     startA = startA - 1;
-                    // }
-
-
                     newTempStringAfter = newTempStringAfter.substring(0, startB) + stringPaste + newTempStringAfter.substring(endB, newTempStringAfter.length);
                     endA = stringPaste.length;
-                    // realCursorPositionInNumberAfter = realCursorPositionInNumberBefore;
-
                 } else if (startB >= 0) {
-                    console.log('position 0');
                     newTempStringAfter = newTempStringAfter.substring(0, startB) + "" + stringPaste + newTempStringAfter.substring(startB, newTempStringAfter.length);
                     endA = stringPaste.length;
                 }
@@ -9942,13 +9923,8 @@ var HiPay = (function (HiPay) {
                     newTempStringAfter =newTempStringAfter.substring(0,4);
                 }
 
-
-
             } else {
-
-
                 if (startB >= 0 && endB > 0 && startB < endB) {
-
                     newTempStringAfter = newTempStringAfter.substring(0, startB) + "" + newTempStringAfter.substring(endB, newTempStringAfter.length);
                     endA = startA;
 
@@ -9982,15 +9958,7 @@ var HiPay = (function (HiPay) {
                 }
             }
 
-
-
-
-
             var tempStringAfter = "";
-
-
-
-
             var startAtemp = startA;
 
 
@@ -10076,22 +10044,12 @@ var HiPay = (function (HiPay) {
 
             var newTempStringAfter = serviceCreditCard.cardCVVStringFormatedBefore;
 
-
             if (stringPaste) {
-
-                console.log(startB);
-                console.log("string Paste");
                 // delete all chars but number
                 stringPaste = stringPaste.replace(/[^0-9]/g, '');
-                // newTempStringAfter = stringPaste;
-                // endA = startA;
 
                 if (startB >= 0 && endB > 0 && startB < endB) {
-
                     newTempStringAfter = newTempStringAfter.substring(0, startB) + stringPaste + newTempStringAfter.substring(endB, newTempStringAfter.length);
-
-                    // realCursorPositionInNumberAfter = realCursorPositionInNumberBefore;
-
                 } else if (startB >= 0) {
                     console.log('position 0');
                     newTempStringAfter = newTempStringAfter.substring(0, startB) + "" + stringPaste + newTempStringAfter.substring(startB, newTempStringAfter.length);
@@ -10104,16 +10062,11 @@ var HiPay = (function (HiPay) {
                 if (newTempStringAfter.length >= 4) {
                     newTempStringAfter =newTempStringAfter.substring(0,4);
                 }
-
-
-
             } else {
 
                 if (startB >= 0 && endB > 0 && startB < endB) {
                     newTempStringAfter = newTempStringAfter.substring(0, startB) + "" + newTempStringAfter.substring(endB, newTempStringAfter.length);
                     endA = startA;
-
-
                 }
                 else if (startB > 0) {
                     if (charCode == 8) {
@@ -10137,8 +10090,6 @@ var HiPay = (function (HiPay) {
                         var tempStringAfterDebut = newTempStringAfter.substring(0, (parseInt(startB)));
                         var tempStringAfterFin = newTempStringAfter.substring((parseInt(startB) + 1), newTempStringAfter.length);
                         newTempStringAfter = tempStringAfterDebut + "" + tempStringAfterFin;
-
-
                     }
                     endA = startA;
                 }
@@ -10167,10 +10118,6 @@ var HiPay = (function (HiPay) {
                     serviceCreditCard.creditCardCVVLengthMax = 4;
                 }
             }
-
-            console.log("tempStringAfter");
-            console.log(tempStringAfter);
-            console.log(startA);
 
             if (serviceCreditCard.creditCardCVVLengthMax == null || tempStringAfter.length <= serviceCreditCard.creditCardCVVLengthMax) {
                 serviceCreditCard.cardCVVStringAfter = tempStringAfter;
@@ -10263,26 +10210,23 @@ var HiPay = (function (HiPay) {
 
 
 
-    var _replacePlaceholderLikeBlur = function(idElement, stringPlaceholderLike) {
-        console.log(stringPlaceholderLike);
-        if (document.getElementById(idElement).value == "") {
-            document.getElementById(idElement).value = stringPlaceholderLike;
-        }
-
-    }
-    var _replacePlaceholderLikeFocus = function(idElement, stringPlaceholderLike) {
-        console.log(stringPlaceholderLike);
-        if (document.getElementById(idElement).value == stringPlaceholderLike) {
-            document.getElementById(idElement).value = "";
-        }
-
-    }
+    // var _replacePlaceholderLikeBlur = function(idElement, stringPlaceholderLike) {
+    //     if (document.getElementById(idElement).value == "") {
+    //         document.getElementById(idElement).value = stringPlaceholderLike;
+    //     }
+    //
+    // }
+    // var _replacePlaceholderLikeFocus = function(idElement, stringPlaceholderLike) {
+    //     if (document.getElementById(idElement).value == stringPlaceholderLike) {
+    //         document.getElementById(idElement).value = "";
+    //     }
+    //
+    // }
 
     var _initPlaceholder = function() {
         for (var propt in _idInputMapper) {
 
             if (document.getElementById(_idInputMapper[propt]).placeholder == "") {
-                console.log('placeholder');
                 switch (propt) {
                     case 'cardNumber':
                         document.getElementById(_idInputMapper[propt]).placeholder = _getLocaleTranslationWithId("FORM_PLACEHOLDER_CARD_NUMBER");
@@ -10364,8 +10308,41 @@ var HiPay = (function (HiPay) {
 
             if (propt == 'cardNumber') {
 
-                document.getElementById(_idInputMapper['cardNumber']).addEventListener('keydown', function (e) {
 
+                // var handlerInput = function(e) {
+                //     console.log('oninput');
+                //         var evt = e || window.event;
+                //         var charCode = evt.keyCode || evt.which;
+                //         if (charCode == 8 || charCode == 46) {
+                //
+                //             // _instanceServiceCreditCard = new _serviceCreditCard(charCode);
+                //             _instanceServiceCreditCard = new _serviceCreditCard();
+                //             _instanceServiceCreditCard.initCreditCardNumber(charCode);
+                //             evt.preventDefault();
+                //             // _callbackEventFormChange();
+                //         } else {
+                //             // evt.preventDefault();
+                //         }
+                //
+                //         _callbackEventFormChange();
+                //
+                //     // _callbackEventFormChange();
+                // };
+                //
+                // if (document.getElementById(_idInputMapper['cardNumber']).attachEvent) {
+                //     document.getElementById(_idInputMapper['cardNumber']).attachEvent("oninput", handlerInput);
+                // } else {
+                //     document.getElementById(_idInputMapper['cardNumber']).addEventListener ("input", handlerInput, false);  // all browsers and IE9+
+                // }
+
+
+
+
+                // keydown
+
+                // document.getElementById(_idInputMapper['cardNumber']).addEventListener('keydown', function (e) {
+
+                var handlerKeydown = function(e) {
                     evt = e || window.event;
                     var charCode = evt.keyCode || evt.which;
                     if (charCode == 8 || charCode == 46) {
@@ -10383,29 +10360,33 @@ var HiPay = (function (HiPay) {
 
                     // HiPay.Form.paymentFormDataGetErrors();
 
-                });
+                };
+                // });
 
 
 
-                var handler = function(e) {
+                if (document.getElementById(_idInputMapper['cardNumber']).attachEvent) {
+                    document.getElementById(_idInputMapper['cardNumber']).attachEvent("onkeydown", handlerKeydown);
+                } else {
+                    document.getElementById(_idInputMapper['cardNumber']).addEventListener ("keydown", handlerKeydown, false);  // all browsers and IE9+
+                }
+
+                // ./ keydown
+
+
+
+                // paste
+                var handlerPaste = function(e) {
 
                     var evt = e || window.event;
 
                     var pastedText = "";
                     if (window.clipboardData) {
                         pastedText = window.clipboardData.getData('Text');
-                        console.log("getData paste 1");
 
                     } else if(evt.clipboardData && evt.clipboardData.getData) {
-                        console.log("getData paste 2");
-
                         pastedText = e.clipboardData.getData('text/plain');
-
-
-
                     }
-                    console.log(pastedText);
-
 
                     evt.preventDefault ? evt.preventDefault() : (evt.returnValue = false);
 
@@ -10415,10 +10396,12 @@ var HiPay = (function (HiPay) {
                     _callbackEventFormChange();
                 };
                 if (document.getElementById(_idInputMapper['cardNumber']).attachEvent) {
-                    document.getElementById(_idInputMapper['cardNumber']).attachEvent("onpaste", handler);
+                    document.getElementById(_idInputMapper['cardNumber']).attachEvent("onpaste", handlerPaste);
                 } else {
-                    document.getElementById(_idInputMapper['cardNumber']).addEventListener ("paste", handler, false);  // all browsers and IE9+
+                    document.getElementById(_idInputMapper['cardNumber']).addEventListener ("paste", handlerPaste, false);  // all browsers and IE9+
                 }
+
+                // ./ paste
 
                 document.getElementById(_idInputMapper['cardNumber']).addEventListener('keypress', function (e) {
                     // return false;
@@ -10443,7 +10426,10 @@ var HiPay = (function (HiPay) {
 
 
 
-                // _initListenEvent(_idInputMapper[propt]);
+
+
+
+                _initListenEvent(_idInputMapper[propt]);
 
             }
             else if (propt == 'cardHolder') {
@@ -10527,22 +10513,17 @@ var HiPay = (function (HiPay) {
                 });
 
 
+                // paste
                 var handlerExpiryDate = function(e) {
                     var evt = e || window.event;
 
                     var pastedText = "";
                     if (window.clipboardData) {
                         pastedText = window.clipboardData.getData('Text');
-                        console.log("getData paste 1");
-
                     } else if(evt.clipboardData && evt.clipboardData.getData) {
-                        console.log("getData paste 2");
                         pastedText = e.clipboardData.getData('text/plain');
 
                     }
-                    console.log(pastedText);
-
-
 
                     evt.preventDefault ? evt.preventDefault() : (evt.returnValue = false);
 
@@ -10557,7 +10538,7 @@ var HiPay = (function (HiPay) {
                     document.getElementById(_idInputMapper[propt]).addEventListener ("paste", handlerExpiryDate, false);  // all browsers and IE9+
                 }
 
-
+                // ./ paste
 
 
 
@@ -10598,22 +10579,17 @@ var HiPay = (function (HiPay) {
                 });
 
 
-                var handlerExpiryDate = function(e) {
+                // paste
+                var handlerExpiryDatePaste = function(e) {
                     var evt = e || window.event;
 
                     var pastedText = "";
                     if (window.clipboardData) {
                         pastedText = window.clipboardData.getData('Text');
-                        console.log("getData paste 1");
 
                     } else if(evt.clipboardData && evt.clipboardData.getData) {
-                        console.log("getData paste 2");
                         pastedText = e.clipboardData.getData('text/plain');
-
                     }
-                    console.log(pastedText);
-
-
 
                     evt.preventDefault ? evt.preventDefault() : (evt.returnValue = false);
 
@@ -10623,11 +10599,11 @@ var HiPay = (function (HiPay) {
                     _callbackEventFormChange();
                 };
                 if (document.getElementById(_idInputMapper[propt]).attachEvent) {
-                    document.getElementById(_idInputMapper[propt]).attachEvent("onpaste", handlerExpiryDate);
+                    document.getElementById(_idInputMapper[propt]).attachEvent("onpaste", handlerExpiryDatePaste);
                 } else {
-                    document.getElementById(_idInputMapper[propt]).addEventListener ("paste", handlerExpiryDate, false);  // all browsers and IE9+
+                    document.getElementById(_idInputMapper[propt]).addEventListener ("paste", handlerExpiryDatePaste, false);  // all browsers and IE9+
                 }
-
+                // ./ paste
 
 
 
@@ -11061,10 +11037,6 @@ var HiPay = (function (HiPay) {
      */
     HiPay.Token = function (responseJSON) {
         var payload;
-
-
-        console.log("responseJSON Token");
-        console.log(responseJSON);
         if (typeof responseJSON.data !== 'undefined') {
             payload = responseJSON.data;
         }

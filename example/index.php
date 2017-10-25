@@ -55,6 +55,7 @@ require_once('credentials.php');
 
         <div class="col-sm-12 col-lg-5">
             <div class="scontainer" id="form">
+
                 <p class="form-description details">
                     Enter your payment details:
                 </p>
