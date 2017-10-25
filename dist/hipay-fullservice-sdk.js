@@ -8206,6 +8206,11 @@ var HiPay = (function (HiPay) {
         prod: 'https://secure2-vault.hipay-tpp.com/rest/v2/token/create.json'
     };
 
+    var _endPointAvailablePaymentProducts = {
+        stage: 'https://stage-secure-gateway.hipay-tpp.com/rest/v2/available-payment-products',
+        prod: 'https://stage-secure-gateway.hipay-tpp.com/rest/v2/available-payment-products'
+    };
+
     var _separatorMonthYear = ' / ';
 
     var _maxYearExpiry = 30;
@@ -9042,6 +9047,11 @@ var HiPay = (function (HiPay) {
 
 
 
+                if (_isEnabled(serviceCreditCard.getCardTypeId()) === false) {
+                    validatorCreditCardNumber.errorCollection.push(new _InvalidParametersError(50,  _getLocaleTranslationWithId('FORM_ERROR_INVALID_CARD_NUMBER')));
+                    return false;
+                }
+
                 if (_isTypeValid(serviceCreditCard.getCardTypeId()) === false) {
                     validatorCreditCardNumber.errorCollection.push(new _InvalidParametersError(50,  _getLocaleTranslationWithId('FORM_ERROR_INVALID_CARD_NUMBER')));
                     return false;
@@ -9067,6 +9077,13 @@ var HiPay = (function (HiPay) {
 
                 return true;
             };
+
+            var _isEnabled = function() {
+                var collectionPaymentProductEnabled = _getEnablePaymentProducts();
+
+                console.log("collectionPaymentProductEnabled");
+                console.log(collectionPaymentProductEnabled);
+            }
 
             var _isTypeValid =function(cardTypeId) {
                 if (_cardFormatDefinition.hasOwnProperty(cardTypeId) === false) {
@@ -11080,6 +11097,7 @@ var HiPay = (function (HiPay) {
      */
     HiPay.setTarget = function(target) {
         HiPay.target = target;
+        _initListPaymentMethod();
     };
 
     /**
@@ -11098,7 +11116,32 @@ var HiPay = (function (HiPay) {
     HiPay.setCredentials = function(username, publicKey) {
         HiPay.username = username;
         HiPay.publicKey = publicKey;
+
+        _initListPaymentMethod();
     };
+
+
+    var _availablePaymentProductsCustomerCountry = "";
+    var _availablePaymentProductsCurrency = "";
+
+    var _customPaymentProducts = [];
+    var _availablePaymentProductsCollection = [];
+    var _availableAndEnabledPaymentProductsCollection = [];
+
+    HiPay.setAvailalblePaymentProductsCustomerCountry = function(countryISO2) {
+        _availablePaymentProductsCustomerCountry = countryISO2;
+        _initListPaymentMethod();
+    }
+
+    HiPay.setAvailalblePaymentProductsCurrency = function(currency) {
+        _availablePaymentProductsCurrency = currency;
+        _initListPaymentMethod();
+    }
+
+    HiPay.enabledPaymentProducts = function(collectionPaymentProducts) {
+        _customPaymentProducts = collectionPaymentProducts;
+        _initListPaymentMethod();
+    }
 
     // HiPay.getFormCC = function(containerId) {
     //
@@ -11154,6 +11197,19 @@ var HiPay = (function (HiPay) {
             xhr.send(params);
         });
     };
+
+
+    function _disableAllInput() {
+        for(var propt in _idInputMapper){
+            document.getElementById(_idInputMapper[propt]).disabled = true;
+        }
+    }
+
+    function _enableAllInput() {
+        for(var propt in _idInputMapper){
+            document.getElementById(_idInputMapper[propt]).disabled = false;
+        }
+    }
 
     /**
      *
@@ -11452,17 +11508,160 @@ var HiPay = (function (HiPay) {
                     else {
                         var cardToken = new HiPay.Token(result);
                         cardToken.constructor.populateProperties(cardToken,result);
+                        _disableAllInput();
                         resolve(cardToken);
 
                     }
 
                 })
                 .catch(function (error) {
-                    reject(new _APIError(error));
+                    // retry call
+                    fetch(endpoint, {
+                        method: 'POST',
+                        headers: config['headers'],
+                        body: JSON.stringify( requestParams )
+                    })
+                        .then(function (response) {
+                            return response.json();
+                        })
+                        .then(function (result) {
+                            if( typeof result['code'] != 'undefined' )  {
+                                reject(new _APIError(result));
+                            }
+                            else {
+                                var cardToken = new HiPay.Token(result);
+                                cardToken.constructor.populateProperties(cardToken,result);
+                                _disableAllInput();
+                                resolve(cardToken);
+
+                            }
+
+                        })
+                        .catch(function (error) {
+                            reject(new _APIError(error));
+
+                        });
 
                 });
 
         });
+
+    };
+
+
+var _getEnablePaymentProducts = function() {
+    // _customPaymentProducts
+
+
+
+    // _availableAndEnabledPaymentProductsCollection
+
+    var _listEnabledPaymentProducts = [];
+    _availableAndEnabledPaymentProductsCollection = [];
+
+    console.log(_availablePaymentProductsCollection);
+    if (_availablePaymentProductsCollection.length > 0) {
+        if (_customPaymentProducts.length > 0) {
+            for (productAvailable in _availablePaymentProductsCollection) {
+
+                console.log("productCodeAvailable");
+
+                // _availablePaymentProductsCodeCollection
+                console.log(_availablePaymentProductsCollection[productAvailable]['code']);
+                // _availableAndEnabledPaymentProductsCollection
+                // _customPaymentProducts
+                // _listAvailablePaymentProductsTemp
+
+                // _listAvailablePaymentProducts.push()
+            }
+        } else {
+            for (productAvailable in _availablePaymentProductsCollection) {
+                _availableAndEnabledPaymentProductsCollection.push(_availablePaymentProductsCollection[productAvailable]['code']);
+            }
+
+        }
+    }
+
+    return _availableAndEnabledPaymentProductsCollection;
+
+
+};
+
+
+
+var _getAvailablePaymentProducts = function() {
+
+
+    if (!HiPay.getTarget() || !HiPay.username || !HiPay.publicKey || !_availablePaymentProductsCustomerCountry || !_availablePaymentProductsCurrency) {
+        return;
+    }
+
+    var endpoint = _endPointAvailablePaymentProducts['prod'];
+    if (HiPay.getTarget() == 'test' || HiPay.getTarget() == 'stage' ) {
+        endpoint = _endPointAvailablePaymentProducts['stage'];
+    } else if (HiPay.getTarget() == 'dev') {
+        endpoint = 'http://localhost:8080/example/dev-api-token.php';
+    }
+
+console.log("_getAvailablePaymentProducts");
+console.log(HiPay.username);
+    // endpoint = endpoint + "?eci=7&payment_product=visa&payment_product_category_list=credit-card&customer_country=FR&currency=EUR";
+    endpoint = endpoint + "?eci=7&customer_country="+_availablePaymentProductsCustomerCountry+"&currency=" + _availablePaymentProductsCurrency;
+    // endpoint = endpoint + "accept_url=hipay%3A%2F%2Fhipay-fullservice%2Fgateway%2Forders%2FDEMO_59f08c099ca87%2Faccept&amount=60.0&authentication_indicator=0&cancel_url=hipay%3A%2F%2Fhipay-fullservice%2Fgateway%2Forders%2FDEMO_59f08c099ca87%2Fcancel&city=Paris&country=FR&currency=EUR&decline_url=hipay%3A%2F%2Fhipay-fullservice%2Fgateway%2Forders%2FDEMO_59f08c099ca87%2Fdecline&description=Un%20beau%20v%C3%AAtement.&display_selector=0&eci=7&email=client%40domain.com&exception_url=hipay%3A%2F%2Fhipay-fullservice%2Fgateway%2Forders%2FDEMO_59f08c099ca87%2Fexception&firstname=Martin&gender=U&language=en_US&lastname=Dupont&long_description=Un%20tr%C3%A8s%20beau%20v%C3%AAtement%20en%20soie%20de%20couleur%20bleue.&multi_use=1&orderid=DEMO_59f08c099ca87&payment_product_category_list=ewallet%2Cdebit-card%2Crealtime-banking%2Ccredit-card&pending_url=hipay%3A%2F%2Fhipay-fullservice%2Fgateway%2Forders%2FDEMO_59f08c099ca87%2Fpending&recipientinfo=Employee&shipping=1.56&state=France&streetaddress2=Immeuble%20de%20droite&streetaddress=6%20Place%20du%20Colonel%20Bourgoin&tax=2.67&zipcode=75012";
+    try{
+        var authEncoded = window.btoa(HiPay.username+':'+HiPay.publicKey);
+    }catch(e) {
+        throw new _Error('missing_public_key');
+    }
+
+    console.log(authEncoded);
+    var config = {
+        headers: {
+            'Authorization': 'Basic ' + authEncoded,
+            // 'contentType': 'application/json'
+            // 'Accept': 'application/json',
+            // 'Content-Type': 'application/json'
+            'Accept': 'application/json'
+            // 'Access-Control-Origin': '*',
+            // 'Content-Type': 'application/json'
+        }
+    };
+
+
+    // var requestParams = {
+    //     'currency' : "EUR"
+    // };
+
+    return fetch(endpoint, {
+        method: 'GET',
+        headers: config['headers']
+        // body: JSON.stringify( requestParams )
+    }).then(function (response) {
+        console.log(response);
+        return response.json();
+    }).then(function (availablePaymentProductsCollection) {
+        console.log("availablePaymentProductsCollection toto");
+        console.log(availablePaymentProductsCollection);
+        _availablePaymentProductsCollection = availablePaymentProductsCollection;
+    })
+        .catch(function (error) {
+            reject(new _APIError(error));
+
+        });
+
+
+};
+
+    var _initListPaymentMethod = function() {
+
+        console.log("init payment");
+
+        _getAvailablePaymentProducts();
+
+
+
+
+
 
     };
 

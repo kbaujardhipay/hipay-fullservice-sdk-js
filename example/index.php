@@ -159,6 +159,13 @@ require_once('credentials.php');
 <script type="text/javascript">
     $(document).ready(function(){
 
+        HiPay.setTarget('stage'); // default is production/live
+        HiPay.setCredentials('<?php echo $credentials['public']['username']; ?>', '<?php echo $credentials['public']['password']; ?>');
+        HiPay.setAvailalblePaymentProductsCustomerCountry('FR');
+        HiPay.setAvailalblePaymentProductsCurrency('EUR');
+
+
+
         // message CVV
         document.getElementById('container-cvv-help-message').innerHTML = HiPay.Form.CVVHelpText();
         // img CVV
@@ -233,7 +240,7 @@ require_once('credentials.php');
 
         $("#pay-button").click(function() {
 
-            $("#form :input").prop("disabled", true);
+//            $("#form :input").prop("disabled", true);
             $("#form :button").prop("disabled", true);
             $("#error").text("");
 
@@ -249,8 +256,8 @@ require_once('credentials.php');
             };
 
 
-            HiPay.setTarget('stage'); // default is production/live
-            HiPay.setCredentials('<?php echo $credentials['public']['username']; ?>', '<?php echo $credentials['public']['password']; ?>');
+//            HiPay.setTarget('stage'); // default is production/live
+//            HiPay.setCredentials('<?php //echo $credentials['public']['username']; ?>//', '<?php //echo $credentials['public']['password']; ?>//');
 
 
             HiPay.Form.tokenizePaymentFormData()
