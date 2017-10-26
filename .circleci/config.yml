@@ -1,0 +1,15 @@
+version: 2
+jobs:
+   build:
+     docker:
+       - image: circleci/php:5.6
+     steps:
+       - checkout
+       - run: echo "hello world"
+
+     deployment:
+       prod:
+         branch: /.*?/
+         tag: /.*?/
+         commands:
+           - sh ./bin/deployment/deploy_project.sh
