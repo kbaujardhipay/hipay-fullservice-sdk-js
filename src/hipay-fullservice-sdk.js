@@ -74,6 +74,11 @@ var HiPay = (function (HiPay) {
         },
     };
 
+
+    var _loadPaymentProduct;
+
+
+
     var _getLocaleTranslationWithId = function(id) {
         return _translationJSON[HiPay.Form.locale][id];
     };
@@ -780,6 +785,9 @@ var HiPay = (function (HiPay) {
             var validatorCreditCardNumber = {};
 
 
+
+
+
             validatorCreditCardNumber.errorCollection = errorArray || [];
 
 
@@ -845,6 +853,11 @@ var HiPay = (function (HiPay) {
                 }
 
 
+                if (_isEnabled(serviceCreditCard.getCardTypeId()) === false) {
+                    isPotentiallyValid = false;
+                }
+
+
 
                 if (isPotentiallyValid == false) {
                     validatorCreditCardNumber.isValid(creditCardNumber);
@@ -882,6 +895,9 @@ var HiPay = (function (HiPay) {
 
                 if (_isEnabled(serviceCreditCard.getCardTypeId()) === false) {
                     validatorCreditCardNumber.errorCollection.push(new _InvalidParametersError(50,  _getLocaleTranslationWithId('FORM_ERROR_INVALID_CARD_NUMBER')));
+
+                    console.log("not enabled");
+
                     return false;
                 }
 
@@ -911,11 +927,30 @@ var HiPay = (function (HiPay) {
                 return true;
             };
 
-            var _isEnabled = function() {
-                var collectionPaymentProductEnabled = _getEnablePaymentProducts();
+            var _isEnabled = function(cardTypeId) {
 
-                console.log("collectionPaymentProductEnabled");
-                console.log(collectionPaymentProductEnabled);
+                if (_availableAndEnabledPaymentProductsCollection.length == 0) {
+                    _initAvailableAndEnabledPaymentProductsCollection();
+                }
+
+
+                if (_availableAndEnabledPaymentProductsCollection.length == 0) {
+                    return true;
+                } else {
+                    for (indexEnableProduct in _availableAndEnabledPaymentProductsCollection) {
+                        console.log('toto');
+                        console.log(_availableAndEnabledPaymentProductsCollection[indexEnableProduct]);
+console.log(_idProductAPIMapper[_availableAndEnabledPaymentProductsCollection[indexEnableProduct]]);
+                        console.log("cardTypeId");
+                        console.log(cardTypeId);
+                        if (_idProductAPIMapper[_availableAndEnabledPaymentProductsCollection[indexEnableProduct]] == cardTypeId) {
+                            return true;
+                        }
+                    }
+                }
+
+                return false;
+
             }
 
             var _isTypeValid =function(cardTypeId) {
@@ -2958,7 +2993,8 @@ var HiPay = (function (HiPay) {
     var _availablePaymentProductsCurrency = "";
 
     var _customPaymentProducts = [];
-    var _availablePaymentProductsCollection = ["cb", "visa", "mastercard", "american-express", "carte-accord", "bcmc", "maestro", "postfinance-card", "bcmc-mobile", "dexia-directnet", "giropay", "ideal", "ing-homepay", "sofort-uberweisung", "sisal", "sdd", "paypal", "yandex", "payulatam", "paysafecard"];
+    // var _availablePaymentProductsCodeCollection = ["cb", "visa", "mastercard", "american-express", "carte-accord", "bcmc", "maestro", "postfinance-card", "bcmc-mobile", "dexia-directnet", "giropay", "ideal", "ing-homepay", "sofort-uberweisung", "sisal", "sdd", "paypal", "yandex", "payulatam", "paysafecard"];
+    var _availablePaymentProductsCollection = [];
     var _availableAndEnabledPaymentProductsCollection = [];
 
     HiPay.setAvailalblePaymentProductsCustomerCountry = function(countryISO2) {
@@ -3382,7 +3418,7 @@ var HiPay = (function (HiPay) {
     };
 
 
-var _getEnablePaymentProducts = function() {
+var _initAvailableAndEnabledPaymentProductsCollection = function() {
     // _customPaymentProducts
 
 
@@ -3391,16 +3427,29 @@ var _getEnablePaymentProducts = function() {
 
     var _listEnabledPaymentProducts = [];
     _availableAndEnabledPaymentProductsCollection = [];
+console.log('start available');
 
-    console.log(_availablePaymentProductsCollection);
     if (_availablePaymentProductsCollection.length > 0) {
+        console.log('start _availablePaymentProductsCollection');
+        console.log(_availablePaymentProductsCollection);
         if (_customPaymentProducts.length > 0) {
-            for (productAvailable in _availablePaymentProductsCollection) {
+
+            console.log('start _customPaymentProducts');
+            for (productAvailableIndex in _availablePaymentProductsCollection) {
+
+
+                for (productCustomIndex in _customPaymentProducts) {
+                    console.log("productCodeCustom");
+                    console.log(_customPaymentProducts[productCustomIndex]);
+                    if (_customPaymentProducts[productCustomIndex] == _availablePaymentProductsCollection[productAvailableIndex]['code']) {
+                        _availableAndEnabledPaymentProductsCollection.push(_availablePaymentProductsCollection[productAvailableIndex]['code']);
+                    }
+                }
 
                 console.log("productCodeAvailable");
 
-                // _availablePaymentProductsCodeCollection
-                console.log(_availablePaymentProductsCollection[productAvailable]['code']);
+                // _availablePaymentProductsCollection
+                console.log(_availablePaymentProductsCollection[productAvailableIndex]['code']);
                 // _availableAndEnabledPaymentProductsCollection
                 // _customPaymentProducts
                 // _listAvailablePaymentProductsTemp
@@ -3409,13 +3458,14 @@ var _getEnablePaymentProducts = function() {
             }
         } else {
             for (productAvailable in _availablePaymentProductsCollection) {
-                _availableAndEnabledPaymentProductsCollection.push(_availablePaymentProductsCollection[productAvailable]['code']);
+                _availableAndEnabledPaymentProductsCollection.push(_availablePaymentProductsCollection[productAvailableIndex]['code']);
             }
 
         }
     }
-
-    return _availableAndEnabledPaymentProductsCollection;
+console.log("_availableAndEnabledPaymentProductsCollection");
+console.log(_availableAndEnabledPaymentProductsCollection);
+    // return _availableAndEnabledPaymentProductsCollection;
 
 
 };
@@ -3465,6 +3515,8 @@ console.log(HiPay.username);
     //     'currency' : "EUR"
     // };
 
+    _loadPaymentProduct = true;
+
     return fetch(endpoint, {
         method: 'GET',
         headers: config['headers']
@@ -3476,8 +3528,10 @@ console.log(HiPay.username);
         console.log("availablePaymentProductsCollection toto");
         console.log(availablePaymentProductsCollection);
         _availablePaymentProductsCollection = availablePaymentProductsCollection;
+        _loadPaymentProduct = false;
     })
         .catch(function (error) {
+            _loadPaymentProduct = false;
             reject(new _APIError(error));
 
         });
