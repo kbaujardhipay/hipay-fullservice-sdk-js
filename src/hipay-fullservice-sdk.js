@@ -852,8 +852,10 @@ var HiPay = (function (HiPay) {
                     }
                 }
 
-
-                if (_isEnabled(serviceCreditCard.getCardTypeId()) === false) {
+                console.log("type card poipoipoipoipoipoipoipoipoipoipoipoipoi");
+console.log(serviceCreditCard.getCardTypeId());
+                if (serviceCreditCard.getCardTypeId() != undefined && _isEnabled(serviceCreditCard.getCardTypeId()) === false) {
+                    console.log("no type card poipoipoipoipoipoipoipoipoipoipoipoipoi");
                     isPotentiallyValid = false;
                 }
 
@@ -896,7 +898,9 @@ var HiPay = (function (HiPay) {
                 if (_isEnabled(serviceCreditCard.getCardTypeId()) === false) {
                     validatorCreditCardNumber.errorCollection.push(new _InvalidParametersError(50,  _getLocaleTranslationWithId('FORM_ERROR_INVALID_CARD_NUMBER')));
 
-                    console.log("not enabled");
+
+                    document.getElementById(_idInputMapper.cardType).setAttribute('style','display:none;');
+                    // console.log("not enabled");
 
                     return false;
                 }
