@@ -1,8 +1,7 @@
 site:
   build: .
   ports :
-   - "4748:80"
-   - "4438:443"
+   - "{PORT_WEB}:80"
   volumes:
    - .:/var/www/html/
   labels:
