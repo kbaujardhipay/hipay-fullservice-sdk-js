@@ -9,8 +9,8 @@ test:
     - sudo apt-get install sshpass
   environment:
     CIRCLE_TEST_REPORTS: /tmp/test-reports
-  override:
-    - grunt test-min
+  #override:
+  #  - grunt test-min
 deployment:
   prod:
     branch: /.*?/
