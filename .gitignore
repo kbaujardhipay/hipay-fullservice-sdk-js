@@ -14,3 +14,5 @@ example/credentials.php
 \.idea/
 
 etc/ssl/
+
+\.ideaold/
