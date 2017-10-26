@@ -1,0 +1,10 @@
+site:
+  build: .
+  ports :
+   - "4748:80"
+   - "4438:443"
+  volumes:
+   - .:/var/www/html/
+  labels:
+   - "com.hipay.github={label}"
+   - "com.hipay.circleci={circleci}"

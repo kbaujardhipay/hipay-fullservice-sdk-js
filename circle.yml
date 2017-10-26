@@ -1,0 +1,29 @@
+machine:
+  timezone:
+    Europe/Paris
+  services:
+    - docker
+test:
+  pre:
+    - npm install
+    - sudo apt-get install sshpass
+  environment:
+    CIRCLE_TEST_REPORTS: /tmp/test-reports
+  override:
+    - grunt test-min
+deployment:
+  prod:
+    branch: /.*?/
+    tag: /.*?/
+    commands:
+      - sh ./bin/deployment/deploy_project.sh
+
+#    - docker-compose run grunt compile
+#    - docker-compose run casper
+#    - docker-compose run caspermin
+#  post:
+#    - cd $CIRCLE_TEST_REPORTS
+#    - mkdir -p $CIRCLE_TEST_REPORTS/casper/
+#    - find . -type f -regex ".*/build/test-results/.*xml" -exec cp {} $CIRCLE_TEST_REPORTS/casper/ \;
+
+

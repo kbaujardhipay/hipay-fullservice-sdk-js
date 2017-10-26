@@ -1,7 +1,0 @@
-site:
-  build: .
-  ports :
-   - "4748:80"
-   - "4438:443"
-  volumes:
-   - .:/var/www/html/
