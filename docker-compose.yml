@@ -1,0 +1,3 @@
+web:
+  build: .
+  container_name: hipay-fullservice-sdk-js-web
