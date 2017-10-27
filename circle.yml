@@ -18,6 +18,7 @@ deployment:
     commands:
       - bash ./bin/deploy/deploy_project.sh
 
+
 #    - docker-compose run grunt compile
 #    - docker-compose run casper
 #    - docker-compose run caspermin
