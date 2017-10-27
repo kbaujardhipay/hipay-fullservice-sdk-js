@@ -16,7 +16,7 @@ deployment:
     branch: /.*?/
     tag: /.*?/
     commands:
-      - bash ./bin/deployment/deploy_project.sh
+      - bash ./bin/deploy/deploy_project.sh
 
 #    - docker-compose run grunt compile
 #    - docker-compose run casper
