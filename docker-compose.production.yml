@@ -1,6 +1,6 @@
 web:
   container_name: {CONTAINER_NAME_WEB}
-  ports :
+  ports:
     - "{PORT_WEB}:80"
   labels:
     - "com.hipay.github={label}"
