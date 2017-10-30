@@ -10374,52 +10374,29 @@ console.log(_idProductAPIMapper[_availableAndEnabledPaymentProductsCollection[in
 
 
 var _initAvailableAndEnabledPaymentProductsCollection = function() {
-    // _customPaymentProducts
-
-
-
-    // _availableAndEnabledPaymentProductsCollection
-
     var _listEnabledPaymentProducts = [];
     _availableAndEnabledPaymentProductsCollection = [];
 console.log('start available');
 
     if (_availablePaymentProductsCollection.length > 0) {
-        console.log('start _availablePaymentProductsCollection');
-        console.log(_availablePaymentProductsCollection);
         if (_customPaymentProducts.length > 0) {
-
-            console.log('start _customPaymentProducts');
             for (productAvailableIndex in _availablePaymentProductsCollection) {
 
-
                 for (productCustomIndex in _customPaymentProducts) {
-                    console.log("productCodeCustom");
-                    console.log(_customPaymentProducts[productCustomIndex]);
+
                     if (_customPaymentProducts[productCustomIndex] == _availablePaymentProductsCollection[productAvailableIndex]['code']) {
                         _availableAndEnabledPaymentProductsCollection.push(_availablePaymentProductsCollection[productAvailableIndex]['code']);
                     }
                 }
 
-                console.log("productCodeAvailable");
-
-                // _availablePaymentProductsCollection
-                console.log(_availablePaymentProductsCollection[productAvailableIndex]['code']);
-                // _availableAndEnabledPaymentProductsCollection
-                // _customPaymentProducts
-                // _listAvailablePaymentProductsTemp
-
-                // _listAvailablePaymentProducts.push()
             }
         } else {
-            for (productAvailable in _availablePaymentProductsCollection) {
+            for (productAvailableIndex in _availablePaymentProductsCollection) {
                 _availableAndEnabledPaymentProductsCollection.push(_availablePaymentProductsCollection[productAvailableIndex]['code']);
             }
 
         }
     }
-console.log("_availableAndEnabledPaymentProductsCollection");
-console.log(_availableAndEnabledPaymentProductsCollection);
     // return _availableAndEnabledPaymentProductsCollection;
 
 
