@@ -17,7 +17,6 @@ deployment:
     tag: /.*?/
     commands:
       - bash ./bin/deploy/deploy_project.sh
-      - echo $PUB_STAGE_USERNAME
 
 #    - docker-compose run grunt compile
 #    - docker-compose run casper
