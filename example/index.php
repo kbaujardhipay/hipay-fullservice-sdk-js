@@ -164,7 +164,7 @@ require_once('credentials.php');
         HiPay.setAvailalblePaymentProductsCustomerCountry('FR');
         HiPay.setAvailalblePaymentProductsCurrency('EUR');
 
-        HiPay.enabledPaymentProducts(['toto', 'maestro']);
+       // HiPay.enabledPaymentProducts(['toto', 'maestro']);
 
 
 
