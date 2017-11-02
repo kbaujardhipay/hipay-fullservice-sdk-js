@@ -5,8 +5,10 @@ RUN sed -i -e 's@/var/www/html@/var/www/htdocs/example@' /etc/apache2/apache2.co
 RUN sed -i -e 's@/var/www/html@/var/www/htdocs/example@' /etc/apache2/sites-available/000-default.conf
 RUN a2enmod rewrite
 RUN usermod -u 1000 www-data
+
 WORKDIR /var/www/htdocs
 
+RUN npm install
 
 #COPY ./bin/conf/credentials.php ./example/credentials.php
 COPY ./bin/conf/credentials.php /var/www/htdocs/example/credentials.php
