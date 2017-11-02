@@ -6,10 +6,12 @@ RUN sed -i -e 's@/var/www/html@/var/www/htdocs/example@' /etc/apache2/sites-avai
 RUN a2enmod rewrite
 RUN usermod -u 1000 www-data
 
-WORKDIR /var/www/htdocs
-
 FROM node:8.2
 RUN npm install
+
+WORKDIR /var/www/htdocs
+
+
 
 #COPY ./bin/conf/credentials.php ./example/credentials.php
 COPY ./bin/conf/credentials.php /var/www/htdocs/example/credentials.php
