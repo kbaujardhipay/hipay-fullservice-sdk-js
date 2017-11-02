@@ -1,8 +1,8 @@
 FROM php:7.0-apache
 COPY . /var/www/htdocs/
 
-RUN sed -i -e `s/\/var\/www\/html/\/var\/www\/htdocs/example` /etc/apache2/apache2.conf
-RUN sed -i -e `s/\/var\/www\/html/\/var\/www\/htdocs/example` /etc/apache2/sites-available/000-default.conf
+RUN sed -i -e "s/\/var\/www\/html/\/var\/www\/htdocs/example" /etc/apache2/apache2.conf
+RUN sed -i -e "s/\/var\/www\/html/\/var\/www\/htdocs/example" /etc/apache2/sites-available/000-default.conf
 RUN a2enmod rewrite
 RUN usermod -u 1000 www-data
 WORKDIR /var/www/htdocs
