@@ -6,17 +6,19 @@ RUN sed -i -e 's@/var/www/html@/var/www/htdocs/example@' /etc/apache2/sites-avai
 RUN a2enmod rewrite
 RUN usermod -u 1000 www-data
 
-FROM node:8.2
-RUN npm install
 
 WORKDIR /var/www/htdocs
-
+FROM node:8.2
+#COPY ./package.json /var/www/htdocs/example/dist
+#COPY ./package-lock.json /var/www/htdocs/example/dist
+#WORKDIR .
+RUN npm install
 
 
 #COPY ./bin/conf/credentials.php ./example/credentials.php
 COPY ./bin/conf/credentials.php /var/www/htdocs/example/credentials.php
 COPY ./dist /var/www/htdocs/example/dist
-COPY ./node_modules /var/www/htdocs/example/node_modules
+#COPY ./node_modules /var/www/htdocs/example/node_modules
 
 
 COPY ./bin/conf /tmp
