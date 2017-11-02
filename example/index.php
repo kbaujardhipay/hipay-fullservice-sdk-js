@@ -29,17 +29,20 @@ require_once('credentials.php');
 
     <!--    <script type="text/javascript" src="./assets/input.js"></script>-->
     <!--    <script type="text/javascript" src="../dist/hipay-fullservice-sdk-ie8.js"></script>-->
-    <script type="text/javascript" src="./dist/hipay-fullservice-sdk-2.js"></script>
 
-</head>
 
-<body>
-<div id="main" class="container">
+    <!-- test -->
+        <script type="text/javascript" src="./dist/hipay-fullservice-sdk-2.js"></script>
 
-    <div class="row">
-        <div class="col-sm-12 col-lg-7">
+    </head>
 
-            <!-- Main component for a primary marketing message or call to action -->
+    <body>
+    <div id="main" class="container">
+
+        <div class="row">
+            <div class="col-sm-12 col-lg-7">
+
+                <!-- Main component for a primary marketing message or call to action -->
             <div class="scontainer" id ="infos-txt" class="">
                 <h1 class="main-title" id="price">HiPay Direct Post Tokenization Simulator</h1>
                 <p id="order">Submit the form in oder to tokenize the credit card details using the HiPay Fullservice SDK for JavaScript (payment details won't hit the server). You will see the HiPay Fullservice platform response below.</p>
