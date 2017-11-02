@@ -7,7 +7,8 @@ RUN usermod -u 1000 www-data
 WORKDIR /var/www/htdocs
 
 
-COPY ./bin/conf/credentials.php ./example/credentials.php
+COPY ./bin/conf/credentials.php /var/www/htdocs/example/credentials.php
+
 
 COPY ./bin/conf /tmp
 RUN chmod u+x /tmp/entrypoint.sh
