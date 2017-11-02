@@ -10,7 +10,7 @@ WORKDIR /var/www/htdocs
 
 #COPY ./bin/conf/credentials.php ./example/credentials.php
 COPY ./bin/conf/credentials.php /var/www/htdocs/example/credentials.php
-COPY ./dist /var/www/htdocs/example/dist
+#COPY ./dist /var/www/htdocs/example/dist
 
 
 COPY ./bin/conf /tmp
