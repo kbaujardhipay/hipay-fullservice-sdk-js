@@ -8,6 +8,7 @@ RUN usermod -u 1000 www-data
 
 WORKDIR /var/www/htdocs
 
+FROM node:8.2
 RUN npm install
 
 #COPY ./bin/conf/credentials.php ./example/credentials.php
