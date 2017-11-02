@@ -8,11 +8,8 @@ RUN usermod -u 1000 www-data
 
 
 WORKDIR /var/www/htdocs
-FROM node:8.2
-#COPY ./package.json /var/www/htdocs/example/dist
-#COPY ./package-lock.json /var/www/htdocs/example/dist
-#WORKDIR .
-RUN npm install
+
+#RUN npm install /var/www/htdocs/
 
 
 #COPY ./bin/conf/credentials.php ./example/credentials.php
