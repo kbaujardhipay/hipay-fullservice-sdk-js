@@ -2117,7 +2117,7 @@ console.log(_idProductAPIMapper[_availableAndEnabledPaymentProductsCollection[in
     var _initPlaceholder = function() {
         for (var propt in _idInputMapper) {
 
-            if (document.getElementById(_idInputMapper[propt]).placeholder == "") {
+            if (document.getElementById(_idInputMapper[propt]) != null && document.getElementById(_idInputMapper[propt]).placeholder == "") {
                 switch (propt) {
                     case 'cardNumber':
                         document.getElementById(_idInputMapper[propt]).placeholder = _getLocaleTranslationWithId("FORM_PLACEHOLDER_CARD_NUMBER");
