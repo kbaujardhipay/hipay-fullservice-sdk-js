@@ -29,7 +29,7 @@ RUN usermod -u 1000 www-data
 
 # add credentials php
 COPY ./bin/conf/credentials.php /var/www/htdocs/example/config/credentials.php
-COPY ./dist /var/www/htdocs/example/dist
+COPY ./dist /var/www/htdocs/example/lib/hipay-fullservice-sdk/dist
 
 
 #COPY /var/www/htdocs/example /var/www/htdocs/example/vendor

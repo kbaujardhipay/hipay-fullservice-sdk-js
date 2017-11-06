@@ -3,7 +3,7 @@ web:
     ports:
       - "4748:80"
     volumes:
-      - .:/var/www/html/
+      - .:/var/www/htdocs/
 #smtp:
 #  container_name: smtp-mg-latest.hipay-pos-platform.com
 #  ports:
