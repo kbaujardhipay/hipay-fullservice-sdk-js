@@ -11,8 +11,8 @@ require_once('credentials.php');
 
     <title>HiPay Fullservice Tokenization</title>
 
-    <link href="./assets/basic-client.css" media="screen" rel="stylesheet" type="text/css">
-    <link href="./assets/payment-methods.css" media="screen" rel="stylesheet" type="text/css">
+    <link href="../assets/basic-client.css" media="screen" rel="stylesheet" type="text/css">
+    <link href="../assets/payment-methods.css" media="screen" rel="stylesheet" type="text/css">
 
     
 
@@ -26,11 +26,11 @@ require_once('credentials.php');
     <!-- HTML5 shim, for IE6-8 support of HTML5 elements -->
     <!--[if lt IE 9]>
     <script src="../node_modules/lt-ie-9/lt-ie-9.min.js"></script>
-    <link href="./assets/old_bws.css" media="screen" rel="stylesheet" type="text/css">
+    <link href="../assets/old_bws.css" media="screen" rel="stylesheet" type="text/css">
     <![endif]-->
 
 <!--    <script type="text/javascript" src="./assets/input.js"></script>-->
-    <script type="text/javascript" src="../dist/hipay-fullservice-sdk-2.js"></script>
+    <script type="text/javascript" src="lib/hipay-fullservice-sdk/dist/hipay-fullservice-sdk-2.js"></script>
 
 </head>
 
@@ -177,7 +177,7 @@ require_once('credentials.php');
 <!--                    It's the 3-digits number on the back of your card for <span class="modal-bold">VISA®</span>, <span class="modal-bold">MASTERCARD®</span> and <span class="modal-bold">MAESTRO®</span></p>-->
 <!--                <p>The <span class="modal-bold">AMERICAN EXPRESS</span> security code is the 4-digits number on the front of your card.</p>-->
                 <div id="cvv-img">
-                    <img src="./assets/card.png">
+                    <img src="../assets/card.png">
                 </div>
             </div>
         </div>
