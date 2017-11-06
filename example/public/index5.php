@@ -26,9 +26,9 @@
 
 
     <link href="./assets/basic.css" media="screen" rel="stylesheet" type="text/css">
-    <link href="./assets/basic-client.css" media="screen" rel="stylesheet" type="text/css">
-    <link href="./assets/bootstrap.min.css" media="screen" rel="stylesheet" type="text/css">
-    <link href="./assets/payment-methods.css" media="screen" rel="stylesheet" type="text/css">
+    <link href="../assets/basic-client.css" media="screen" rel="stylesheet" type="text/css">
+    <link href="../assets/bootstrap.min.css" media="screen" rel="stylesheet" type="text/css">
+    <link href="../assets/payment-methods.css" media="screen" rel="stylesheet" type="text/css">
 
 
     <!-- HTML5 shim, for IE6-8 support of HTML5 elements -->
@@ -55,7 +55,7 @@
                     It's the 3-digits number on the back of your card for <span class="modal-bold">VISA®</span>, <span class="modal-bold">MASTERCARD®</span> and <span class="modal-bold">MAESTRO®</span></p>
                 <p>The <span class="modal-bold">AMERICAN EXPRESS</span> security code is the 4-digits number on the front of your card.</p>
                 <div id="cvv-img">
-                    <img src="./assets/card.png">
+                    <img src="../assets/card.png">
                 </div>
             </div>
         </div>
@@ -142,8 +142,8 @@
 
 </div>
 
-<script type="text/javascript" src="./assets/modal.js"></script>
-<script type="text/javascript" src="./assets/links.js"></script>
+<script type="text/javascript" src="../assets/modal.js"></script>
+<script type="text/javascript" src="../assets/links.js"></script>
 <!--<script type="text/javascript" src="./assets/input.js"></script>-->
 
 <script type="text/javascript">

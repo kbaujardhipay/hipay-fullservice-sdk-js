@@ -1,17 +1,17 @@
 web:
   build: .
   container_name: hipay-fullservice-sdk-js-web
-composer:
-  container_name: composer_bloc
-  image: composer/composer
-  volumes:
-    - ./example:/app
-  command: install
-npm:
-    container_name: npm_bloc
-    image: node
-    volumes:
-        - .:/data
-    working_dir: /data
-    entrypoint: ['npm', '--no-bin-link']
-    command: install
+#composer:
+#  container_name: composer_bloc
+#  image: composer/composer
+#  volumes:
+#    - ./example:/app
+#  command: install
+#npm:
+#    container_name: npm_bloc
+#    image: node
+#    volumes:
+#        - .:/data
+#    working_dir: /data
+#    entrypoint: ['npm', '--no-bin-link']
+#    command: install

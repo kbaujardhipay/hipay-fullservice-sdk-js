@@ -7599,8 +7599,8 @@ var HiPay = (function (HiPay) {
                                 // document.getElementById(_idInputMapper.cardType).innerHTML = propt;
 
                                 serviceCreditCard.idType = propt;
-                                // document.getElementById(_idInputMapper.cardType).innerHTML = '<img width="28px" src="./assets/type/' + _cardImg[propt] + '">';
-                                document.getElementById(_idInputMapper.cardType).src = "./assets/type/" + _cardImg[propt];
+                                // document.getElementById(_idInputMapper.cardType).innerHTML = '<img width="28px" src="./img/type/' + _cardImg[propt] + '">';
+                                document.getElementById(_idInputMapper.cardType).src = "./img/type/" + _cardImg[propt];
                                 document.getElementById(_idInputMapper.cardType).setAttribute('style','display:block;');
 
 
@@ -7622,9 +7622,9 @@ var HiPay = (function (HiPay) {
                         if (creditCardNumber.indexOf(_cardFormatDefinition[propt]["ranges"][i]["first"]) === 0) {
                             // document.getElementById(_idInputMapper.cardType).innerHTML = propt;
                             serviceCreditCard.idType = propt;
-                            // document.getElementById(_idInputMapper.cardType).innerHTML = '<img width="28px" src="./assets/type/' + _cardImg[propt] + '">';
+                            // document.getElementById(_idInputMapper.cardType).innerHTML = '<img width="28px" src="./img/type/' + _cardImg[propt] + '">';
 
-                            document.getElementById(_idInputMapper.cardType).src = "./assets/type/" + _cardImg[propt];
+                            document.getElementById(_idInputMapper.cardType).src = "./img/type/" + _cardImg[propt];
                             document.getElementById(_idInputMapper.cardType).setAttribute('style','display:block;');
 
 
@@ -8423,7 +8423,7 @@ console.log(_idProductAPIMapper[_availableAndEnabledPaymentProductsCollection[in
 
 
 
-                                // document.getElementById(_idInputMapper.cardType).innerHTML = '<img width="28px" src="./assets/type/' + _cardImg[propt] + '">';
+                                // document.getElementById(_idInputMapper.cardType).innerHTML = '<img width="28px" src="./img/type/' + _cardImg[propt] + '">';
 
 
 
@@ -8460,7 +8460,7 @@ console.log(_idProductAPIMapper[_availableAndEnabledPaymentProductsCollection[in
                             // document.getElementById(_idInputMapper.cardType).innerHTML = propt;
                             serviceCreditCard.idType = propt;
 
-                            // document.getElementById(_idInputMapper.cardType).innerHTML = '<img width="28px" src="./assets/type/' + _cardImg[propt] + '">';
+                            // document.getElementById(_idInputMapper.cardType).innerHTML = '<img width="28px" src="./img/type/' + _cardImg[propt] + '">';
 
 
 

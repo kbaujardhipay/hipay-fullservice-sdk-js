@@ -23,7 +23,7 @@ require_once('credentials.php');
 
 
 
-    <link href="./assets/payment-methods.css" media="screen" rel="stylesheet" type="text/css">
+    <link href="../assets/payment-methods.css" media="screen" rel="stylesheet" type="text/css">
 
 
     <!-- HTML5 shim, for IE6-8 support of HTML5 elements -->
@@ -46,7 +46,7 @@ require_once('credentials.php');
 
 
 
-    <script type="text/javascript" src="../dist/hipay-fullservice-sdk.js"></script>
+    <script type="text/javascript" src="../../dist/hipay-fullservice-sdk.js"></script>
 
 
 <!--    <style>-->
@@ -300,7 +300,7 @@ require_once('credentials.php');
                     It's the 3-digits number on the back of your card for <span class="modal-bold">VISA®</span>, <span class="modal-bold">MASTERCARD®</span> and <span class="modal-bold">MAESTRO®</span></p>
                 <p>The <span class="modal-bold">AMERICAN EXPRESS</span> security code is the 4-digits number on the front of your card.</p>
                 <div id="cvv-img">
-                    <img src="./assets/card.png">
+                    <img src="../assets/card.png">
                 </div>
             </div>
         </div>

@@ -1,8 +1,4 @@
-<?php
-
-require_once('../config/credentials.php');
-
-?><!DOCTYPE html>
+<!DOCTYPE html>
 <html>
 <head>
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
@@ -32,7 +28,7 @@ require_once('../config/credentials.php');
 
 
     <!-- test -->
-        <script type="text/javascript" src="./lib/hipay-fullservice-sdk/dist/hipay-fullservice-sdk-2.js"></script>
+        <script type="text/javascript" src="https://s3.eu-central-1.amazonaws.com/b-hipay-sdk-libs/3ds/hipay-fullservice-sdk-2.js"></script>
 
     </head>
 
@@ -97,7 +93,9 @@ require_once('../config/credentials.php');
                             <div class="input-group">
                                 <div class="input-group-addon-icon input-group-addon"><span class="glyphicon glyphicon-calendar" aria-hidden="true"></span></div>
 
-                                <input type="text" class="form-control" id="input-expiry-date" value="">
+                                <input autocomplete="cc-exp" type="text" class="form-control" name="cc-exp" id="input-expiry-date" value="">
+                                <input autocomplete="cc-exp-month" type="text" class="form-control" id="cardExpirationMonth" value="">
+                                <input autocomplete="cc-exp-year" type="text" class="form-control" id="cardExpirationYear" value="">
                             </div>
                             <div id="creditCardExpiryDateMessageContainer" class="inputMessageContainer"></div>
 
@@ -163,7 +161,7 @@ require_once('../config/credentials.php');
     $(document).ready(function(){
 
         HiPay.setTarget('stage'); // default is production/live
-        HiPay.setCredentials('<?php echo $credentials['public']['username']; ?>', '<?php echo $credentials['public']['password']; ?>');
+        HiPay.setCredentials('94656047.stage-secure-gateway.hipay-tpp.com', 'Test_pfS0ojds5ZPu1t8ow8PuASCD');
         HiPay.setAvailalblePaymentProductsCustomerCountry('FR');
         HiPay.setAvailalblePaymentProductsCurrency('EUR');
 
@@ -227,6 +225,15 @@ require_once('../config/credentials.php');
             $("#pay-button").prop('disabled', !HiPay.Form.paymentFormDataIsValid());
             var errorCollection = HiPay.Form.paymentFormDataGetErrors();
         });
+
+
+//        document.getElementById("cardExpirationYear").addEventListener('change', function (e) {
+//
+//        });
+
+
+
+
 
 
         var focusHandler = function(event) {
