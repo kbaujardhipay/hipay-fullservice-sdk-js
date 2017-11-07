@@ -25,7 +25,7 @@ RUN usermod -u 1000 www-data
 
 # add credentials php
 COPY ./bin/conf/credentials.php /var/www/htdocs/example/config/credentials.php
-COPY ./dist /var/www/htdocs/example/public/lib/hipay-fullservice-sdk/dist
+COPY ./dist /var/www/htdocs/example/public/lib/hipay-fullservice-sdk
 
 # run entrypoint
 COPY ./bin/conf /tmp
