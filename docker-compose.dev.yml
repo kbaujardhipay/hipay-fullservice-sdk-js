@@ -4,5 +4,3 @@ web:
    - "8884:80"
   volumes:
     - .:/var/www/htdocs/
-    
-#    - /var/www/htdocs/example/vendor

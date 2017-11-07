@@ -32,7 +32,7 @@ require_once('../config/credentials.php');
 
 
     <!-- test -->
-        <script type="text/javascript" src="./lib/hipay-fullservice-sdk/dist/hipay-fullservice-sdk-2.js"></script>
+        <script type="text/javascript" src="./lib/hipay-fullservice-sdk/hipay-fullservice-sdk-2.js"></script>
 
     </head>
 

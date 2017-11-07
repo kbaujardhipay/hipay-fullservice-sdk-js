@@ -13,9 +13,9 @@ ls -al
 
 npm install
 #cd ..
-
-sudo chown -R www-data:www-data /var/www/htdocs/example/public
-sudo chmod -R a+rw /var/www/htdocs/example/public
+cp -R ./dist /var/www/htdocs/example/public/lib/hipay-fullservice-sdk
+chown -R www-data:www-data /var/www/htdocs/example/public
+chmod -R a+rw /var/www/htdocs/example/public
 
 ################################################################################
 # IF CONTAINER IS KILLED, REMOVE PID
