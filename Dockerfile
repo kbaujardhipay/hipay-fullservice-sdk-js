@@ -2,10 +2,11 @@ FROM php:7.0-apache
 
 COPY . /var/www/htdocs
 
-RUN apt-get update && apt-get install -y \
+RUN apt-get update && apt-get install -y --fix-missing \
 	git \
 	unzip \
 	npm
+
 
 WORKDIR /var/www/htdocs/example
 
