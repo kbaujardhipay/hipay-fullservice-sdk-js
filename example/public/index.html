@@ -1,8 +1,4 @@
-<?php
-
-require_once('../config/credentials.php');
-
-?><!DOCTYPE html>
+<!DOCTYPE html>
 <html>
 <head>
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
@@ -32,17 +28,17 @@ require_once('../config/credentials.php');
 
 
     <!-- test -->
-        <script type="text/javascript" src="./lib/vendor/hipay/hipay-fullservice-sdk-js/hipay-fullservice-sdk-2.js"></script>
+    <script type="text/javascript" src="https://s3.eu-central-1.amazonaws.com/b-hipay-sdk-libs/sdkjs/hipay-fullservice-sdk-2.js"></script>
 
-    </head>
+</head>
 
-    <body>
-    <div id="main" class="container">
+<body>
+<div id="main" class="container">
 
-        <div class="row">
-            <div class="col-sm-12 col-lg-7">
+    <div class="row">
+        <div class="col-sm-12 col-lg-7">
 
-                <!-- Main component for a primary marketing message or call to action -->
+            <!-- Main component for a primary marketing message or call to action -->
             <div class="scontainer" id ="infos-txt" class="">
                 <h1 class="main-title" id="price">HiPay Direct Post Tokenization Simulator</h1>
                 <p id="order">Submit the form in oder to tokenize the credit card details using the HiPay Fullservice SDK for JavaScript (payment details won't hit the server). You will see the HiPay Fullservice platform response below.</p>
@@ -97,9 +93,11 @@ require_once('../config/credentials.php');
                             <div class="input-group">
                                 <div class="input-group-addon-icon input-group-addon"><span class="glyphicon glyphicon-calendar" aria-hidden="true"></span></div>
 
-                                <input type="text" class="form-control" id="input-expiry-date" value="">
-                                <input type="tel" autocomplete="off" autocorrect="off" autocapitalize="none" spellcheck="false" class="expirationDate" data-braintree-name="expirationDate" name="expiration" id="expiration" maxlength="9" placeholder="MM/YY">
-                            </div>
+                                <input type="tel" class="form-control" id="input-expiry-date" value="">
+                                <input tabindex="-1" style="position: absolute; left: -999em; width:1px" type="tel" class="form-control" id="expiration-month" value="">
+                                <input tabindex="-1" style="position: absolute; left: -999em;width:1px" type="tel" class="form-control" id="expiration-year" value="">
+
+                                </div>
                             <div id="creditCardExpiryDateMessageContainer" class="inputMessageContainer"></div>
 
                         </div>
@@ -161,150 +159,9 @@ require_once('../config/credentials.php');
 </div>
 
 <script type="text/javascript">
-    $(document).ready(function(){
-
-        HiPay.setTarget('stage'); // default is production/live
-        HiPay.setCredentials('<?php echo $credentials['public']['username']; ?>', '<?php echo $credentials['public']['password']; ?>');
-        HiPay.setAvailalblePaymentProductsCustomerCountry('FR');
-        HiPay.setAvailalblePaymentProductsCurrency('EUR');
-
-//        HiPay.enabledPaymentProducts(['toto', 'maestro']);
 
 
 
-        // message CVV
-        document.getElementById('container-cvv-help-message').innerHTML = HiPay.Form.CVVHelpText();
-        // img CVV
-        var myImgCVV = document.getElementById("cvv-img");
-        var cvvInfo = HiPay.getCVVInformation();
-        myImgCVV.src = "./img/cvv-type/cvv_"+cvvInfo['length']+".png";
-
-
-        var token = null;
-
-        $('#link').click(function() {
-            $('#input-card').prop('value', '4111111111111111');
-            $('#input-cvv').prop('value', '123');
-            $('#input-month').prop('value', '12');
-            $('#input-year').prop('value', '2020');
-            $('#input-name').prop('value', 'John Doe');
-        });
-
-        $("#charge-button").click(function() {
-
-            $("#charge-button").text("Loading…");
-            $("#charge-button").prop("disabled", true);
-
-            $.ajax({
-                url : 'order.php?token='+token,
-                type : 'GET',
-                dataType : 'html',
-                success : function(html, status){
-                    $('#order').html(html);
-                    $('#code').html('');
-                    $("#charge-button").hide();
-                },
-
-                error : function(result, status, error){
-                    $('#order').html(result.responseText);
-                    $('#code').html('');
-                    $("#charge-button").text("Try again to create a charge…");
-                    $("#charge-button").prop("disabled", false);
-                },
-            });
-
-        });
-
-        $("#pay-button").prop('disabled', !HiPay.Form.paymentFormDataIsValid());
-        HiPay.Form.change(function() {
-            // Information on card CVV
-            // message CVV
-            document.getElementById('container-cvv-help-message').innerHTML = HiPay.Form.CVVHelpText();
-            // img CVV
-            var myImgCVV = document.getElementById("cvv-img");
-            var cvvInfo = HiPay.getCVVInformation();
-            myImgCVV.src = "./img/cvv-type/cvv_"+cvvInfo['length']+".png";
-
-            $("#pay-button").prop('disabled', !HiPay.Form.paymentFormDataIsValid());
-            var errorCollection = HiPay.Form.paymentFormDataGetErrors();
-        });
-
-
-        var focusHandler = function(event) {
-            var type = event.target.nodeName.toLowerCase();
-            if(type == 'input' || type == 'textarea') {
-                //Do something
-            }
-        };
-
-        function focusHandler(){
-
-            console.log("test");
-        }
-        document.body.addEventListener('focus', focusHandler, true); //Non-IE
-        document.body.onfocusin = focusHandler; //IE
-
-        $("#pay-button").click(function() {
-
-//            $("#form :input").prop("disabled", true);
-            $("#form :button").prop("disabled", true);
-            $("#error").text("");
-
-            $("#pay-button").text("Loading…");
-
-            var params = {
-                card_number: $('#input-card')[0].value,
-                card_expiry_date: $('#input-expiry-date')[0].value,
-                card_holder: $('#input-name')[0].value,
-                cvv: $('#input-cvv')[0].value,
-                multi_use: '0',
-                generate_request_id: '0'
-            };
-
-
-//            HiPay.setTarget('stage'); // default is production/live
-//            HiPay.setCredentials('<?php //echo $credentials['public']['username']; ?>//', '<?php //echo $credentials['public']['password']; ?>//');
-
-
-            HiPay.Form.tokenizePaymentFormData()
-                .then(function(cardToken) {
-                    token = cardToken.token;
-                    alert(token);
-                    $("#pay-button").text("Tokenize");
-                    $("#order").text("The token has been created using the JavaScript SDK (client side).");
-
-                    $('#code').text(JSON.stringify(cardToken, null, 4));
-                    $('#link-area').text('');
-
-                    $("#charge-button").show();
-                })
-                .catch(function(error){
-//                    alert(error);
-                    if (error.code === HiPay.ErrorReason.APIIncorrectCredentials) { // égal à 1012003
-                        console.log("Invalid crédentials");
-                    }
-
-                    if (error.code === HiPay.ErrorReason.InvalidCardToken) { // égal à 1012003
-                        console.log("Token passé invalide…");
-                    }
-
-                    $("#pay-button").text("Tokenize");
-                    $("#form :input").prop("disabled", false);
-                    $("#form :button").prop("disabled", false);
-
-
-                    if (error.errorCollection != undefined && error.errorCollection.length > 0) {
-                        for (var i = 0; i < error.errorCollection.length; i++) {
-                            var errorParameters = error.errorCollection[i];
-                            $("#error").append(errorParameters.message);
-                        }
-                    }
-
-                });
-            return false;
-        });
-
-    });
 </script>
 
 

@@ -7046,6 +7046,8 @@ var HiPay = (function (HiPay) {
         cardType: 'card-type',
         cardHolder: 'input-name',
         cardExpiryDate: 'input-expiry-date',
+        cardExpirationMonth: 'expiration-month',
+        cardExpirationYear: 'expiration-year',
         cardCVV: 'input-cvv'
     };
 
@@ -7208,8 +7210,8 @@ var HiPay = (function (HiPay) {
     function _focusNextElement() {
 
         // var focussableElements = 'a:not([disabled]), button:not([disabled]), input[type=text]:not([disabled]), [tabindex]:not([disabled]):not([tabindex="-1"])';
-        var focussableElements = 'button:not([disabled]), input:not([disabled]), [tabindex]:not([disabled]):not([tabindex="-1"])';
-
+        var focussableElements = 'button:not([disabled]), input:not([disabled]), [tabindex]:not([disabled]):not([tabindex="-1"]), input:not([tabindex="-1"])';
+console.log(document.activeElement);
         // if (document.activeElement && document.activeElement.form) {
         if (document.activeElement) {
 
@@ -7219,8 +7221,27 @@ var HiPay = (function (HiPay) {
                     return element.offsetWidth > 0 || element.offsetHeight > 0 || element === document.activeElement
                 });
 
+            console.log(focussable);
             var index = focussable.indexOf(document.activeElement);
-            focussable[index + 1].focus();
+
+            notfind = true;
+            var indexNumber = 1;
+            while (notfind) {
+
+                console.log("notfind");
+                console.log(notfind);
+                console.log(indexNumber);
+               var elementToFocus = focussable[index + indexNumber];
+                console.log(elementToFocus.tabindex);
+                console.log(elementToFocus.tabindex == "-1");
+               if (elementToFocus.tabindex == "-1") {
+                   indexNumber = indexNumber + 1;
+               } else {
+                   notfind = false;
+               }
+            }
+            console.log( focussable[index + indexNumber]);
+            focussable[index + indexNumber].focus();
         }
     };
 
@@ -7719,9 +7740,10 @@ var HiPay = (function (HiPay) {
             var validatorCreditCardExpiryDate = serviceCreditCard.validatorCreditCardExpiryDate([]);
 
 
+var lengthCardExpiry = 4 + _separatorMonthYear.length;
+            alert(lengthCardExpiry);
 
-
-            if ( 7 == document.getElementById(_idInputMapper.cardExpiryDate).value.length && validatorCreditCardExpiryDate.isValid( document.getElementById(_idInputMapper.cardExpiryDate).value) === true ) {
+            if ( lengthCardExpiry == document.getElementById(_idInputMapper.cardExpiryDate).value.length && validatorCreditCardExpiryDate.isValid( document.getElementById(_idInputMapper.cardExpiryDate).value) === true ) {
 
 
                 // element.focus();
@@ -9287,20 +9309,25 @@ console.log(_idProductAPIMapper[_availableAndEnabledPaymentProductsCollection[in
                     evt.preventDefault ? evt.preventDefault() : (evt.returnValue = false);
 
                     _instanceServiceCreditCard = new _serviceCreditCard();
+                    document.getElementById(_idInputMapper['cardNumber']).focus();
+                    // document.getElementById(_idInputMapper['cardNumber']).value = "";
+                    // document.getElementById(_idInputMapper['cardExpiryDate']).value = "";
                     _instanceServiceCreditCard.initCreditCardNumber("",document.getElementById(_idInputMapper['cardNumber']).value);
 
 
-                    var expDateFormat = document.getElementById("cardExpirationMonth").value + ' / ' + document.getElementById("cardExpirationYear").value.substr(2,4);
-alert(expDateFormat);
+
+
+                    // var expDateFormat = document.getElementById("cardExpirationMonth").value + ' / ' + document.getElementById("cardExpirationYear").value.substr(2,4);
+// alert(expDateFormat);
 
                     _callbackEventFormChange();
                 };
 
 
                 if (document.getElementById(_idInputMapper['cardNumber']).attachEvent) {
-                    document.getElementById(_idInputMapper['cardNumber']).attachEvent("oninput", handlerInput);
+                    document.getElementById(_idInputMapper['cardNumber']).attachEvent("onchange", handlerInput);
                 } else {
-                    document.getElementById(_idInputMapper['cardNumber']).addEventListener ("input", handlerInput, false);  // all browsers and IE9+
+                    document.getElementById(_idInputMapper['cardNumber']).addEventListener ("change", handlerInput, false);  // all browsers and IE9+
                 }
 
 
@@ -9495,49 +9522,101 @@ alert(expDateFormat);
                 // });
             }
 
-            // else if(propt == 'cardExpirationMonth' || propt == 'cardExpirationMonth') {
-            //     var handlerInput = function(e) {
-            //
-            //
-            //         //
-            //
-            //         var evt = e || window.event;
-            //         //
-            //         // var pastedText = "";
-            //         // if (window.clipboardData) {
-            //         //     pastedText = window.clipboardData.getData('Text');
-            //         //
-            //         // } else if(evt.clipboardData && evt.clipboardData.getData) {
-            //         //     pastedText = e.clipboardData.getData('text/plain');
-            //         // }
-            //         //
-            //         evt.preventDefault ? evt.preventDefault() : (evt.returnValue = false);
-            //
-            //
-            //         var expDateFormat = document.getElementById("cardExpirationMonth").value + ' / ' + document.getElementById("cardExpirationYear").value.substr(2,4);
-            //
-            //
-            //         _instanceServiceCreditCard = new _serviceCreditCard();
-            //         _instanceServiceCreditCard.initCreditCardExpiryDate("",expDateFormat);
-            //
-            //
-            //         alert(document.getElementById(_idInputMapper['cardExpirationMonth']).value);
-            //         alert(document.getElementById(_idInputMapper['cardExpirationYear']).value);
-            //         alert(expDateFormat);
-            //         alert(document.getElementById(_idInputMapper['cardExpiryDate']).value);
-            //
-            //
-            //         _callbackEventFormChange();
-            //     };
-            //
-            //
-            //     if (document.getElementById(_idInputMapper['cardNumber']).attachEvent) {
-            //         document.getElementById(_idInputMapper['cardNumber']).attachEvent("oninput", handlerInput);
-            //     } else {
-            //         document.getElementById(_idInputMapper['cardNumber']).addEventListener ("input", handlerInput, false);  // all browsers and IE9+
-            //     }
-            // }
+            else if(propt == 'cardExpirationMonth') {
+
+
+                var handlerScanExpiry = function(e) {
+
+
+                    //
+
+                    var evt = e || window.event;
+                    //
+                    // var pastedText = "";
+                    // if (window.clipboardData) {
+                    //     pastedText = window.clipboardData.getData('Text');
+                    //
+                    // } else if(evt.clipboardData && evt.clipboardData.getData) {
+                    //     pastedText = e.clipboardData.getData('text/plain');
+                    // }
+                    //
+                    // evt.preventDefault ? evt.preventDefault() : (evt.returnValue = false);
+
+
+                    if (document.getElementById(_idInputMapper['cardExpirationMonth']).value != "" && document.getElementById(_idInputMapper['cardExpirationYear']).value != "") {
+                        var expDateFormat = document.getElementById(_idInputMapper['cardExpirationMonth']).value + ' / ' + document.getElementById(_idInputMapper['cardExpirationYear']).value.substr(2, 4);
+
+
+                        _instanceServiceCreditCard = new _serviceCreditCard();
+                        document.getElementById(_idInputMapper['cardExpiryDate']).focus();
+                        document.getElementById(_idInputMapper['cardExpiryDate']).value = "";
+
+
+                        _instanceServiceCreditCard.initCreditCardExpiryDate("", expDateFormat);
+                        document.getElementById(_idInputMapper['cardExpirationMonth']).value = "";
+                        document.getElementById(_idInputMapper['cardExpirationYear']).value = "";
+                        _callbackEventFormChange();
+                    }
+                };
+
+
+                if (document.getElementById(_idInputMapper['cardExpirationMonth']).attachEvent) {
+                    document.getElementById(_idInputMapper['cardExpirationMonth']).attachEvent("onchange", handlerScanExpiry);
+                } else {
+                    document.getElementById(_idInputMapper['cardExpirationMonth']).addEventListener ("change", handlerScanExpiry, false);  // all browsers and IE9+
+                }
+
+            } else if(propt == 'cardExpirationYear') {
+
+                var handlerScanExpiry = function(e) {
+
+
+                    //
+
+                    var evt = e || window.event;
+                    //
+                    // var pastedText = "";
+                    // if (window.clipboardData) {
+                    //     pastedText = window.clipboardData.getData('Text');
+                    //
+                    // } else if(evt.clipboardData && evt.clipboardData.getData) {
+                    //     pastedText = e.clipboardData.getData('text/plain');
+                    // }
+                    //
+                    // evt.preventDefault ? evt.preventDefault() : (evt.returnValue = false);
+
+
+                    if (document.getElementById(_idInputMapper['cardExpirationMonth']).value != "" && document.getElementById(_idInputMapper['cardExpirationYear']).value != "") {
+                        var expDateFormat = document.getElementById(_idInputMapper['cardExpirationMonth']).value + ' / ' + document.getElementById(_idInputMapper['cardExpirationYear']).value.substr(2, 4);
+
+
+                        _instanceServiceCreditCard = new _serviceCreditCard();
+                        document.getElementById(_idInputMapper['cardExpiryDate']).focus();
+                        document.getElementById(_idInputMapper['cardExpiryDate']).value = "";
+
+                        _instanceServiceCreditCard.initCreditCardExpiryDate("", expDateFormat);
+                        document.getElementById(_idInputMapper['cardExpirationMonth']).value = "";
+                        document.getElementById(_idInputMapper['cardExpirationYear']).value = "";
+
+
+                        _callbackEventFormChange();
+                    }
+                };
+
+
+
+                if (document.getElementById(_idInputMapper['cardExpirationYear']).attachEvent) {
+                    document.getElementById(_idInputMapper['cardExpirationYear']).attachEvent("onchange", handlerScanExpiry);
+                } else {
+                    document.getElementById(_idInputMapper['cardExpirationYear']).addEventListener ("change", handlerScanExpiry, false);  // all browsers and IE9+
+                }
+            }
             else {
+
+
+
+
+
             }
 
             // document.getElementById(_idInputMapper[propt]).addEventListener('blur', function (e) {

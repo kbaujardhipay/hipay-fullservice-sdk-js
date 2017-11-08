@@ -37,12 +37,12 @@ module.exports = function(grunt) {
         dist2: {
             src: ['src/base64.js','src/json3.js', 'node_modules/bluebird/js/browser/bluebird.js', 'node_modules/fetch-polyfill/fetch.js', 'src/hipay-fullservice-sdk.js'],
             dest: 'dist/hipay-fullservice-sdk-2.js'
-        },
-
-        dist3: {
-            src: ['src/base64.js','src/json3.js', 'node_modules/bluebird/js/browser/bluebird.js', 'node_modules/fetch-polyfill/fetch.js', 'src/hipay-fullservice-sdk.js'],
-            dest: 'example/public/lib/vendor/hipay/hipay-fullservice-sdk-js/hipay-fullservice-sdk-2.js'
         }
+
+        // dist3: {
+        //     src: ['src/base64.js','src/json3.js', 'node_modules/bluebird/js/browser/bluebird.js', 'node_modules/fetch-polyfill/fetch.js', 'src/hipay-fullservice-sdk.js'],
+        //     dest: 'example/public/lib/vendor/hipay/hipay-fullservice-sdk-js/hipay-fullservice-sdk-2.js'
+        // }
  // dist2: {
  //            src: ['src/base64.js','src/json3.js','node_modules/axios/dist/axios.js', 'src/hipay-fullservice-sdk.js'],
  //            dest: 'dist/hipay-fullservice-sdk-2.js'
