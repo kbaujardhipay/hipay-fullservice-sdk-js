@@ -15,13 +15,14 @@ RUN curl -sS https://getcomposer.org/installer | php \
         # \
         # && ln -s /usr/local/bin/composer.phar /usr/local/bin/composer
 
-WORKDIR /var/www/htdocs
+
 
 RUN sed -i -e 's@/var/www/html@/var/www/htdocs/example/public@' /etc/apache2/apache2.conf
 RUN sed -i -e 's@/var/www/html@/var/www/htdocs/example/public@' /etc/apache2/sites-available/000-default.conf
 RUN a2enmod rewrite
 RUN usermod -u 1000 www-data
 
+WORKDIR /var/www/htdocs
 
 # add credentials php
 COPY ./bin/conf/credentials.php /var/www/htdocs/example/config/credentials.php

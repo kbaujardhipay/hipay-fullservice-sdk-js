@@ -7046,12 +7046,13 @@ var HiPay = (function (HiPay) {
         cardType: 'card-type',
         cardHolder: 'input-name',
         cardExpiryDate: 'input-expiry-date',
-        cardExpirationMonth: 'cardExpirationMonth',
-        cardExpirationYear: 'cardExpirationYear',
-        // expiryMonth: 'input-month',
-        // expiryYear: 'input-year',
         cardCVV: 'input-cvv'
     };
+
+    // cardExpirationMonth: 'cardExpirationMonth',
+    //     cardExpirationYear: 'cardExpirationYear',
+    // expiryMonth: 'input-month',
+    // expiryYear: 'input-year',
 
 
     var _idProductAPIMapper = {
@@ -9000,10 +9001,10 @@ console.log(_idProductAPIMapper[_availableAndEnabledPaymentProductsCollection[in
         for (var indexInput in _idInputMapper) {
             if (indexInput != "cardType") {
 
-                if (document.getElementById(_idInputMapper[indexInput]).classList.contains('error-card-form')) {
+                if (document.getElementById(_idInputMapper[indexInput]) != null && document.getElementById(_idInputMapper[indexInput]).classList.contains('error-card-form')) {
                     document.getElementById(_idInputMapper[indexInput]).classList.remove('error-card-form');
                 }
-                if (!document.getElementById(_idInputMapper[indexInput]).classList.contains('default-card-form')) {
+                if (document.getElementById(_idInputMapper[indexInput]) != null && !document.getElementById(_idInputMapper[indexInput]).classList.contains('default-card-form')) {
                     document.getElementById(_idInputMapper[indexInput]).classList.add('default-card-form');
                 }
                 // document.getElementById(_idInputMapper[indexInput]).setAttribute('style', 'color:' + _colorInput["default"] + ' !important');
@@ -9013,11 +9014,11 @@ console.log(_idProductAPIMapper[_availableAndEnabledPaymentProductsCollection[in
         var errors = HiPay.Form.paymentFormDataGetErrors();
 
         for (var indexError in errors) {
-            if (!document.getElementById(_idInputMapper[indexInput]).classList.contains('error-card-form')) {
+            if (document.getElementById(_idInputMapper[indexInput]) != null && !document.getElementById(_idInputMapper[indexInput]).classList.contains('error-card-form')) {
                 // The box that we clicked has a class of bad so let's remove it and add the good class
                 document.getElementById(_idInputMapper[indexError]).classList.add('error-card-form');
             }
-            if (document.getElementById(_idInputMapper[indexError]).classList.contains('default-card-form')) {
+            if (document.getElementById(_idInputMapper[indexInput]) != null && document.getElementById(_idInputMapper[indexError]).classList.contains('default-card-form')) {
                 document.getElementById(_idInputMapper[indexError]).classList.remove('default-card-form');
             }
 
@@ -9037,7 +9038,11 @@ console.log(_idProductAPIMapper[_availableAndEnabledPaymentProductsCollection[in
     var _addListenerMulti = function (idElement, s, fn) {
         var eventList = s.split(' ');
         for(var eventIndex = 0; eventIndex < eventList.length; eventIndex++) {
-            document.getElementById(idElement).addEventListener(eventList[eventIndex], function (e) {fn();},false);
+            if (document.getElementById(idElement) != null) {
+                document.getElementById(idElement).addEventListener(eventList[eventIndex], function (e) {
+                    fn();
+                }, false);
+            }
         }
     };
 
@@ -9488,55 +9493,57 @@ alert(expDateFormat);
                 //     _instanceServiceCreditCard = new _serviceCreditCard();
                 //     var validatorCreditCardCVV = _instanceServiceCreditCard.validatorCreditCardCVV();
                 // });
-            } else if(propt == 'cardExpirationMonth' || propt == 'cardExpirationMonth') {
-                var handlerInput = function(e) {
-
-
-                    //
-
-                    var evt = e || window.event;
-                    //
-                    // var pastedText = "";
-                    // if (window.clipboardData) {
-                    //     pastedText = window.clipboardData.getData('Text');
-                    //
-                    // } else if(evt.clipboardData && evt.clipboardData.getData) {
-                    //     pastedText = e.clipboardData.getData('text/plain');
-                    // }
-                    //
-                    evt.preventDefault ? evt.preventDefault() : (evt.returnValue = false);
-
-
-                    var expDateFormat = document.getElementById("cardExpirationMonth").value + ' / ' + document.getElementById("cardExpirationYear").value.substr(2,4);
-
-
-                    _instanceServiceCreditCard = new _serviceCreditCard();
-                    _instanceServiceCreditCard.initCreditCardExpiryDate("",expDateFormat);
-
-
-                    alert(document.getElementById(_idInputMapper['cardExpirationMonth']).value);
-                    alert(document.getElementById(_idInputMapper['cardExpirationYear']).value);
-                    alert(expDateFormat);
-                    alert(document.getElementById(_idInputMapper['cardExpiryDate']).value);
-
-
-                    _callbackEventFormChange();
-                };
-
-
-                if (document.getElementById(_idInputMapper['cardNumber']).attachEvent) {
-                    document.getElementById(_idInputMapper['cardNumber']).attachEvent("oninput", handlerInput);
-                } else {
-                    document.getElementById(_idInputMapper['cardNumber']).addEventListener ("input", handlerInput, false);  // all browsers and IE9+
-                }
             }
+
+            // else if(propt == 'cardExpirationMonth' || propt == 'cardExpirationMonth') {
+            //     var handlerInput = function(e) {
+            //
+            //
+            //         //
+            //
+            //         var evt = e || window.event;
+            //         //
+            //         // var pastedText = "";
+            //         // if (window.clipboardData) {
+            //         //     pastedText = window.clipboardData.getData('Text');
+            //         //
+            //         // } else if(evt.clipboardData && evt.clipboardData.getData) {
+            //         //     pastedText = e.clipboardData.getData('text/plain');
+            //         // }
+            //         //
+            //         evt.preventDefault ? evt.preventDefault() : (evt.returnValue = false);
+            //
+            //
+            //         var expDateFormat = document.getElementById("cardExpirationMonth").value + ' / ' + document.getElementById("cardExpirationYear").value.substr(2,4);
+            //
+            //
+            //         _instanceServiceCreditCard = new _serviceCreditCard();
+            //         _instanceServiceCreditCard.initCreditCardExpiryDate("",expDateFormat);
+            //
+            //
+            //         alert(document.getElementById(_idInputMapper['cardExpirationMonth']).value);
+            //         alert(document.getElementById(_idInputMapper['cardExpirationYear']).value);
+            //         alert(expDateFormat);
+            //         alert(document.getElementById(_idInputMapper['cardExpiryDate']).value);
+            //
+            //
+            //         _callbackEventFormChange();
+            //     };
+            //
+            //
+            //     if (document.getElementById(_idInputMapper['cardNumber']).attachEvent) {
+            //         document.getElementById(_idInputMapper['cardNumber']).attachEvent("oninput", handlerInput);
+            //     } else {
+            //         document.getElementById(_idInputMapper['cardNumber']).addEventListener ("input", handlerInput, false);  // all browsers and IE9+
+            //     }
+            // }
             else {
             }
 
-            document.getElementById(_idInputMapper[propt]).addEventListener('blur', function (e) {
-                _callbackEventFormChange();
-
-            });
+            // document.getElementById(_idInputMapper[propt]).addEventListener('blur', function (e) {
+            //     _callbackEventFormChange();
+            //
+            // });
             _initListenEvent(_idInputMapper[propt]);
 
         }
@@ -9955,9 +9962,15 @@ alert(expDateFormat);
      */
     HiPay.Token = function (responseJSON) {
         var payload;
+
+        if (typeof responseJSON !== 'undefined') {
+            payload = responseJSON;
+        }
         if (typeof responseJSON.data !== 'undefined') {
             payload = responseJSON.data;
         }
+
+
         if (typeof payload === 'object') {
             _processObjectPayload(this, $.extend({}, payload, {
                 token: payload.token
@@ -10401,6 +10414,7 @@ alert(expDateFormat);
                 body: JSON.stringify( requestParams )
             })
                 .then(function (response) {
+                    alert(response);
                     return response.json();
                 })
                 .then(function (result) {
@@ -10445,6 +10459,122 @@ alert(expDateFormat);
                         });
 
                 });
+
+
+
+
+
+
+            // return fetch(endpoint, {
+            //     method: 'POST',
+            //     headers: config['headers'],
+            //     body: JSON.stringify( requestParams )
+            // }).then(function (response) {
+            //     console.log(response);
+            //     return response.json();
+            // }).then(function (result) {
+            //     console.log("result");
+            //     console.log(result);
+            //     console.log(result['code']);
+            //     if (typeof result['code'] != 'undefined') {
+            //         console.log("error");
+            //
+            //         reject(new _APIError(result));
+            //     }
+            //     else {
+            //         console.log("result2");
+            //         console.log(result);
+            //         var cardToken = new HiPay.Token(result);
+            //         console.log("cardToken");
+            //         console.log(cardToken);
+            //         // cardToken.constructor.populateProperties(cardToken,result);
+            //         _disableAllInput();
+            //         console.log("cardToken");
+            //         console.log(cardToken);
+            //         resolve(cardToken);
+            //
+            //     }
+            // }).catch(function (error) {
+                // retry call
+                // fetch(endpoint, {
+                //     method: 'POST',
+                //     headers: config['headers'],
+                //     body: JSON.stringify( requestParams )
+                // })
+                //     .then(function (response) {
+                //         return response.json();
+                //     })
+                //     .then(function (result) {
+                //         if( typeof result['code'] != 'undefined' )  {
+                //             reject(new _APIError(result));
+                //         }
+                //         else {
+                //             var cardToken = new HiPay.Token(result);
+                //             cardToken.constructor.populateProperties(cardToken,result);
+                //             _disableAllInput();
+                //             resolve(cardToken);
+                //
+                //         }
+                //
+                //     })
+                //     .catch(function (error) {
+                //         reject(new _APIError(error));
+                //
+                //     });
+
+            // });
+            // });
+
+            // .then(function (result) {
+            //     alert("result");
+            //     alert(result);
+            //     if( typeof result['code'] != 'undefined' )  {
+            //         reject(new _APIError(result));
+            //     }
+            //     else {
+            //         var cardToken = new HiPay.Token(result);
+            //         cardToken.constructor.populateProperties(cardToken,result);
+            //         _disableAllInput();
+            //         resolve(cardToken);
+            //
+            //     }
+            //
+            // })
+            // .catch(function (error) {
+            //     // retry call
+            //     fetch(endpoint, {
+            //         method: 'POST',
+            //         headers: config['headers'],
+            //         body: JSON.stringify( requestParams )
+            //     })
+            //         .then(function (response) {
+            //             return response.json();
+            //         })
+            //         .then(function (result) {
+            //             if( typeof result['code'] != 'undefined' )  {
+            //                 reject(new _APIError(result));
+            //             }
+            //             else {
+            //                 var cardToken = new HiPay.Token(result);
+            //                 console.log(cardToken);
+            //                 // cardToken.constructor.populateProperties(cardToken,result);
+            //
+            //                 _disableAllInput();
+            //                 resolve(cardToken);
+            //
+            //             }
+            //
+            //         })
+            //         .catch(function (error) {
+            //             reject(new _APIError(error));
+            //
+            //         });
+            //
+            // });
+
+
+
+
 
         });
 

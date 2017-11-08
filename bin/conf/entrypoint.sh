@@ -1,21 +1,17 @@
 #!/bin/bash
 
-cd /var/www/htdocs/example/public/lib
-#php -r "copy('https://getcomposer.org/installer', 'composer-setup.php');"
-#php -r "if (hash_file('SHA384', 'composer-setup.php') === '$(curl -q https://composer.github.io/installer.sig)') { echo 'Installer verified' . PHP_EOL; } else { echo 'Installer corrupt' . PHP_EOL;}"
-#php composer-setup.php
-#php -r "unlink('composer-setup.php');"
+cd /var/www/htdocs/example
 
 composer.phar self-update
 composer.phar install
-cd vendor
-ls -al
 
 npm install
-#cd ..
-cp -R ./dist /var/www/htdocs/example/public/lib/hipay-fullservice-sdk
+
 chown -R www-data:www-data /var/www/htdocs/example/public
 chmod -R a+rw /var/www/htdocs/example/public
+
+cp -R /var/www/htdocs/dist /var/www/htdocs/example/public/lib/vendor/hipay/hipay-fullservice-sdk-js
+mv /var/www/htdocs/example/node_modules /var/www/htdocs/example/public/lib/vendor/node_modules
 
 ################################################################################
 # IF CONTAINER IS KILLED, REMOVE PID
@@ -25,8 +21,6 @@ rm -f /var/run/apache2/apache2.pid
 fi
 
 exec apache2-foreground
-
-
 
 
 echo ""

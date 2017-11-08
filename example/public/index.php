@@ -11,18 +11,18 @@ require_once('../config/credentials.php');
 
     <title>HiPay Fullservice Tokenization</title>
 
-    <link rel="stylesheet" href="./lib/node_modules/bootstrap/dist/css/bootstrap.css">
-    <link rel="stylesheet" href="./lib/node_modules/bootstrap/dist/css/bootstrap-theme.css">
+    <link rel="stylesheet" href="./lib/vendor/node_modules/bootstrap/dist/css/bootstrap.css">
+    <link rel="stylesheet" href="./lib/vendor/node_modules/bootstrap/dist/css/bootstrap-theme.css">
 
     <link href="./css/example.css" media="screen" rel="stylesheet" type="text/css">
     <link href="./css/custom.css" media="screen" rel="stylesheet" type="text/css">
 
-    <script type="text/javascript" src="./lib/node_modules/jquery/dist/jquery.js"></script>
-    <script type="text/javascript" src="./lib/node_modules/bootstrap/dist/js/bootstrap.js"></script>
+    <script type="text/javascript" src="./lib/vendor/node_modules/jquery/dist/jquery.js"></script>
+    <script type="text/javascript" src="./lib/vendor/node_modules/bootstrap/dist/js/bootstrap.js"></script>
 
     <!-- HTML5 shim, for IE6-8 support of HTML5 elements -->
     <!--[if lt IE 9]>
-    <script src="./lib/node_modules/lt-ie-9/lt-ie-9.min.js"></script>
+    <script src="./lib/vendor/node_modules/lt-ie-9/lt-ie-9.min.js"></script>
     <link href="../assets/old_bws.css" media="screen" rel="stylesheet" type="text/css">
 
     <![endif]-->
@@ -32,7 +32,7 @@ require_once('../config/credentials.php');
 
 
     <!-- test -->
-        <script type="text/javascript" src="./lib/hipay-fullservice-sdk/hipay-fullservice-sdk-2.js"></script>
+        <script type="text/javascript" src="./lib/vendor/hipay/hipay-fullservice-sdk-js/hipay-fullservice-sdk-2.js"></script>
 
     </head>
 
@@ -222,7 +222,7 @@ require_once('../config/credentials.php');
             // img CVV
             var myImgCVV = document.getElementById("cvv-img");
             var cvvInfo = HiPay.getCVVInformation();
-            myImgCVV.src = "./cvv-type/cvv_"+cvvInfo['length']+".png";
+            myImgCVV.src = "./img/cvv-type/cvv_"+cvvInfo['length']+".png";
 
             $("#pay-button").prop('disabled', !HiPay.Form.paymentFormDataIsValid());
             var errorCollection = HiPay.Form.paymentFormDataGetErrors();
@@ -268,6 +268,7 @@ require_once('../config/credentials.php');
             HiPay.Form.tokenizePaymentFormData()
                 .then(function(cardToken) {
                     token = cardToken.token;
+                    alert(token);
                     $("#pay-button").text("Tokenize");
                     $("#order").text("The token has been created using the JavaScript SDK (client side).");
 
@@ -277,6 +278,7 @@ require_once('../config/credentials.php');
                     $("#charge-button").show();
                 })
                 .catch(function(error){
+//                    alert(error);
                     if (error.code === HiPay.ErrorReason.APIIncorrectCredentials) { // égal à 1012003
                         console.log("Invalid crédentials");
                     }
