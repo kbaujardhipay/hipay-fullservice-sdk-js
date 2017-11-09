@@ -2,7 +2,7 @@
  * Created by jkurc on 12/06/17.
  */
 
-var vendorPagePath = 'http://localhost/vendor-page/test3ds';
+var vendorPagePath = 'http://localhost:8080';
 
 var lastPostedData;
 
@@ -25,6 +25,21 @@ if(!casper.cli.get('type')) {
 } else if(casper.cli.get('type') == "min") {
     casper.options.clientScripts.push("dist/hipay-fullservice-sdk.min.js");
 }
+
+
+
+casper.test.begin('Fill credit card number', 1, function(test) {
+    casper.start('http://localhost:3000/');
+    casper.wait(500, function(){
+        this.fill('form', {
+            'credir-card' : 'santa',
+            'password' : 'xmas'
+
+        }, false);
+    });
+
+});
+
 
 // casper.options.verbose      = true;
 // casper.options.logLevel     = "debug";

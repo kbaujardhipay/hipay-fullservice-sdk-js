@@ -23,9 +23,38 @@ module.exports = function(grunt) {
         uglify: {
             my_target: {
                 files: {
-                    'dist/hipay-fullservice-sdk.min.js': ['dist/hipay-fullservice-sdk.js']
+                    'dist/hipay-fullservice-sdk-2.min.js': ['dist/hipay-fullservice-sdk-2.js']
                 }
             }
+        },
+        casperjs: {
+            casper_test:
+            {
+                options: {
+                    async: {
+                        parallel: false
+                    },
+                    silent: false
+                },
+                files: {
+                    src:['tests/casperjs/*.js']
+                }
+            },
+            casper_test_min:
+            {
+
+                options: {
+                    casperjsOptions: ['--type=min'],
+                    async: {
+                        parallel: false
+                    },
+                    silent: false
+                },
+                files: {
+                    src:['tests/casperjs/*.js']
+                }
+            }
+
         },
         yuidoc: {
             compile: {
@@ -44,8 +73,14 @@ module.exports = function(grunt) {
 
     });
     grunt.loadNpmTasks('grunt-contrib-yuidoc');
+    grunt.loadNpmTasks('grunt-casperjs');
+
     grunt.registerTask('default', ['sync', 'clean', 'concat', 'uglify']);
     grunt.registerTask('dist', ['concat:dist1']);
     grunt.registerTask('doc', ['default', 'yuidoc']);
+    grunt.registerTask('test', ['casperjs:casper_test']);
+
+    // yuidoc . --configfile yuidocs.json
+
 
 };
