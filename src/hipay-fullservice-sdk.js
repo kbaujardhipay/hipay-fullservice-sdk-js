@@ -259,7 +259,7 @@ var HiPay = (function (HiPay) {
     function _focusNextElement() {
 
         // var focussableElements = 'a:not([disabled]), button:not([disabled]), input[type=text]:not([disabled]), [tabindex]:not([disabled]):not([tabindex="-1"])';
-        var focussableElements = 'button:not([disabled]), input:not([disabled]), [tabindex]:not([disabled]):not([tabindex="-1"]), input:not([tabindex="-1"])';
+        var focussableElements = "button:not([disabled]), input:not([disabled]):not([tabindex='-1'])";
 console.log(document.activeElement);
         // if (document.activeElement && document.activeElement.form) {
         if (document.activeElement) {
@@ -270,27 +270,11 @@ console.log(document.activeElement);
                     return element.offsetWidth > 0 || element.offsetHeight > 0 || element === document.activeElement
                 });
 
+            console.log("focussable");
             console.log(focussable);
             var index = focussable.indexOf(document.activeElement);
 
-            notfind = true;
-            var indexNumber = 1;
-            while (notfind) {
-
-                console.log("notfind");
-                console.log(notfind);
-                console.log(indexNumber);
-               var elementToFocus = focussable[index + indexNumber];
-                console.log(elementToFocus.tabindex);
-                console.log(elementToFocus.tabindex == "-1");
-               if (elementToFocus.tabindex == "-1") {
-                   indexNumber = indexNumber + 1;
-               } else {
-                   notfind = false;
-               }
-            }
-            console.log( focussable[index + indexNumber]);
-            focussable[index + indexNumber].focus();
+            focussable[index + 1].focus();
         }
     };
 
@@ -790,7 +774,7 @@ console.log(document.activeElement);
 
 
 var lengthCardExpiry = 4 + _separatorMonthYear.length;
-            alert(lengthCardExpiry);
+            // alert(lengthCardExpiry);
 
             if ( lengthCardExpiry == document.getElementById(_idInputMapper.cardExpiryDate).value.length && validatorCreditCardExpiryDate.isValid( document.getElementById(_idInputMapper.cardExpiryDate).value) === true ) {
 
@@ -3542,7 +3526,7 @@ console.log(_idProductAPIMapper[_availableAndEnabledPaymentProductsCollection[in
                 body: JSON.stringify( requestParams )
             })
                 .then(function (response) {
-                    alert(response);
+                    // alert(response);
                     return response.json();
                 })
                 .then(function (result) {

@@ -96,10 +96,11 @@ require_once('../config/credentials.php');
                             <label class="sr-only" for="input-name">MM / YY</label>
                             <div class="input-group">
                                 <div class="input-group-addon-icon input-group-addon"><span class="glyphicon glyphicon-calendar" aria-hidden="true"></span></div>
-
                                 <input type="text" class="form-control" id="input-expiry-date" value="">
-                                <input type="tel" autocomplete="off" autocorrect="off" autocapitalize="none" spellcheck="false" class="expirationDate" data-braintree-name="expirationDate" name="expiration" id="expiration" maxlength="9" placeholder="MM/YY">
-                            </div>
+                                <input tabindex="-1" style="position: absolute; left: -999em; width:1px" type="tel" class="form-control" id="expiration-month" value="">
+                                <input tabindex="-1" style="position: absolute; left: -999em;width:1px" type="tel" class="form-control" id="expiration-year" value="">
+
+                               </div>
                             <div id="creditCardExpiryDateMessageContainer" class="inputMessageContainer"></div>
 
                         </div>
@@ -269,7 +270,7 @@ require_once('../config/credentials.php');
             HiPay.Form.tokenizePaymentFormData()
                 .then(function(cardToken) {
                     token = cardToken.token;
-                    alert(token);
+
                     $("#pay-button").text("Tokenize");
                     $("#order").text("The token has been created using the JavaScript SDK (client side).");
 

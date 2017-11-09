@@ -23,8 +23,8 @@ fi
 if [ "$1" = 'init' ];then
      docker-compose -f docker-compose.yml -f docker-compose.dev.yml stop
      docker-compose -f docker-compose.yml -f docker-compose.dev.yml rm -fv
-     rm -Rf example/public/lib/vendor
-     rm -Rf example/public/lib/node_modules
+     sudo rm -Rf example/public/lib/vendor
+     sudo rm -Rf example/public/lib/node_modules
      docker-compose -f docker-compose.yml -f docker-compose.dev.yml build --no-cache
      docker-compose -f docker-compose.yml -f docker-compose.dev.yml up -d
 fi
