@@ -2,7 +2,7 @@ FROM php:7.0-apache
 
 COPY . /var/www/htdocs
 
-RUN apt-get update && apt-get install -y --fix-missing \
+RUN apt-get update && apt-get install -y \
 	git \
 	unzip \
 	npm
