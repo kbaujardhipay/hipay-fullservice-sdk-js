@@ -10521,6 +10521,7 @@ console.log(_idProductAPIMapper[_availableAndEnabledPaymentProductsCollection[in
 
                     _instanceServiceCreditCard = new _serviceCreditCard();
                     document.getElementById(_idInputMapper['cardNumber']).focus();
+                    console.log("change card number");
                     // document.getElementById(_idInputMapper['cardNumber']).value = "";
                     // document.getElementById(_idInputMapper['cardExpiryDate']).value = "";
                     _instanceServiceCreditCard.initCreditCardNumber("",document.getElementById(_idInputMapper['cardNumber']).value);
@@ -10533,7 +10534,6 @@ console.log(_idProductAPIMapper[_availableAndEnabledPaymentProductsCollection[in
 
                     _callbackEventFormChange();
                 };
-
 
                 if (document.getElementById(_idInputMapper['cardNumber']).attachEvent) {
                     document.getElementById(_idInputMapper['cardNumber']).attachEvent("onchange", handlerInput);

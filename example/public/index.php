@@ -31,7 +31,7 @@ require_once('../config/credentials.php');
     <!--    <script type="text/javascript" src="../dist/hipay-fullservice-sdk-ie8.js"></script>-->
 
 
-    <!-- test -->
+
         <script type="text/javascript" src="./lib/vendor/hipay/hipay-fullservice-sdk-js/hipay-fullservice-sdk-2.js"></script>
 
     </head>
@@ -184,11 +184,14 @@ require_once('../config/credentials.php');
         var token = null;
 
         $('#link').click(function() {
-            $('#input-card').prop('value', '4111111111111111');
-            $('#input-cvv').prop('value', '123');
-            $('#input-month').prop('value', '12');
-            $('#input-year').prop('value', '2020');
-            $('#input-name').prop('value', 'John Doe');
+
+            $('#input-name').focus().val('John Doe');
+            $('#input-card').val('4111 1111 1111 1111');
+            $('#input-card').trigger("change");
+            $('#input-expiry-date').val('10 / 30').trigger('change');
+            $('#input-cvv').focus().val('123').trigger('change');
+            HiPay.Form.paymentFormDataIsValid();
+
         });
 
         $("#charge-button").click(function() {

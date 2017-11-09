@@ -1,0 +1,7 @@
+web:
+  container_name: totototo
+  ports:
+    - "80:80"
+  environment:
+    - WEB_PORT=80
+    - WEB_URL=http://totototo
