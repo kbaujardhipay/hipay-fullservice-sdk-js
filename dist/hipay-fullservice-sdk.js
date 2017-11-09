@@ -8438,7 +8438,6 @@ var HiPay = (function (HiPay) {
 
         // var focussableElements = 'a:not([disabled]), button:not([disabled]), input[type=text]:not([disabled]), [tabindex]:not([disabled]):not([tabindex="-1"])';
         var focussableElements = "button:not([disabled]), input:not([disabled]):not([tabindex='-1'])";
-console.log(document.activeElement);
         // if (document.activeElement && document.activeElement.form) {
         if (document.activeElement) {
 
@@ -8448,8 +8447,6 @@ console.log(document.activeElement);
                     return element.offsetWidth > 0 || element.offsetHeight > 0 || element === document.activeElement
                 });
 
-            console.log("focussable");
-            console.log(focussable);
             var index = focussable.indexOf(document.activeElement);
 
             focussable[index + 1].focus();
@@ -9039,10 +9036,7 @@ var lengthCardExpiry = 4 + _separatorMonthYear.length;
                     }
                 }
 
-                console.log("type card poipoipoipoipoipoipoipoipoipoipoipoipoi");
-console.log(serviceCreditCard.getCardTypeId());
                 if (serviceCreditCard.getCardTypeId() != undefined && _isEnabled(serviceCreditCard.getCardTypeId()) === false) {
-                    console.log("no type card poipoipoipoipoipoipoipoipoipoipoipoipoi");
                     isPotentiallyValid = false;
                 }
 
@@ -9087,7 +9081,7 @@ console.log(serviceCreditCard.getCardTypeId());
 
 
                     document.getElementById(_idInputMapper.cardType).setAttribute('style','display:none;');
-                    // console.log("not enabled");
+
 
                     return false;
                 }
@@ -9129,11 +9123,6 @@ console.log(serviceCreditCard.getCardTypeId());
                     return true;
                 } else {
                     for (indexEnableProduct in _availableAndEnabledPaymentProductsCollection) {
-                        console.log('toto');
-                        console.log(_availableAndEnabledPaymentProductsCollection[indexEnableProduct]);
-console.log(_idProductAPIMapper[_availableAndEnabledPaymentProductsCollection[indexEnableProduct]]);
-                        console.log("cardTypeId");
-                        console.log(cardTypeId);
                         if (_idProductAPIMapper[_availableAndEnabledPaymentProductsCollection[indexEnableProduct]] == cardTypeId) {
                             return true;
                         }
@@ -10127,14 +10116,13 @@ console.log(_idProductAPIMapper[_availableAndEnabledPaymentProductsCollection[in
                 if (startB >= 0 && endB > 0 && startB < endB) {
                     newTempStringAfter = newTempStringAfter.substring(0, startB) + stringPaste + newTempStringAfter.substring(endB, newTempStringAfter.length);
                 } else if (startB >= 0) {
-                    console.log('position 0');
+
                     newTempStringAfter = newTempStringAfter.substring(0, startB) + "" + stringPaste + newTempStringAfter.substring(startB, newTempStringAfter.length);
                     endA = stringPaste.length;
                 }
                 var startBFormat = startB + stringPaste.length;
 
-                console.log("newTempStringAfter");
-                console.log(startBFormat);
+
                 if (newTempStringAfter.length >= 4) {
                     newTempStringAfter =newTempStringAfter.substring(0,4);
                 }
@@ -10521,7 +10509,7 @@ console.log(_idProductAPIMapper[_availableAndEnabledPaymentProductsCollection[in
 
                     _instanceServiceCreditCard = new _serviceCreditCard();
                     document.getElementById(_idInputMapper['cardNumber']).focus();
-                    console.log("change card number");
+
                     // document.getElementById(_idInputMapper['cardNumber']).value = "";
                     // document.getElementById(_idInputMapper['cardExpiryDate']).value = "";
                     _instanceServiceCreditCard.initCreditCardNumber("",document.getElementById(_idInputMapper['cardNumber']).value);
@@ -11750,122 +11738,6 @@ console.log(_idProductAPIMapper[_availableAndEnabledPaymentProductsCollection[in
 
                 });
 
-
-
-
-
-
-            // return fetch(endpoint, {
-            //     method: 'POST',
-            //     headers: config['headers'],
-            //     body: JSON.stringify( requestParams )
-            // }).then(function (response) {
-            //     console.log(response);
-            //     return response.json();
-            // }).then(function (result) {
-            //     console.log("result");
-            //     console.log(result);
-            //     console.log(result['code']);
-            //     if (typeof result['code'] != 'undefined') {
-            //         console.log("error");
-            //
-            //         reject(new _APIError(result));
-            //     }
-            //     else {
-            //         console.log("result2");
-            //         console.log(result);
-            //         var cardToken = new HiPay.Token(result);
-            //         console.log("cardToken");
-            //         console.log(cardToken);
-            //         // cardToken.constructor.populateProperties(cardToken,result);
-            //         _disableAllInput();
-            //         console.log("cardToken");
-            //         console.log(cardToken);
-            //         resolve(cardToken);
-            //
-            //     }
-            // }).catch(function (error) {
-                // retry call
-                // fetch(endpoint, {
-                //     method: 'POST',
-                //     headers: config['headers'],
-                //     body: JSON.stringify( requestParams )
-                // })
-                //     .then(function (response) {
-                //         return response.json();
-                //     })
-                //     .then(function (result) {
-                //         if( typeof result['code'] != 'undefined' )  {
-                //             reject(new _APIError(result));
-                //         }
-                //         else {
-                //             var cardToken = new HiPay.Token(result);
-                //             cardToken.constructor.populateProperties(cardToken,result);
-                //             _disableAllInput();
-                //             resolve(cardToken);
-                //
-                //         }
-                //
-                //     })
-                //     .catch(function (error) {
-                //         reject(new _APIError(error));
-                //
-                //     });
-
-            // });
-            // });
-
-            // .then(function (result) {
-            //     alert("result");
-            //     alert(result);
-            //     if( typeof result['code'] != 'undefined' )  {
-            //         reject(new _APIError(result));
-            //     }
-            //     else {
-            //         var cardToken = new HiPay.Token(result);
-            //         cardToken.constructor.populateProperties(cardToken,result);
-            //         _disableAllInput();
-            //         resolve(cardToken);
-            //
-            //     }
-            //
-            // })
-            // .catch(function (error) {
-            //     // retry call
-            //     fetch(endpoint, {
-            //         method: 'POST',
-            //         headers: config['headers'],
-            //         body: JSON.stringify( requestParams )
-            //     })
-            //         .then(function (response) {
-            //             return response.json();
-            //         })
-            //         .then(function (result) {
-            //             if( typeof result['code'] != 'undefined' )  {
-            //                 reject(new _APIError(result));
-            //             }
-            //             else {
-            //                 var cardToken = new HiPay.Token(result);
-            //                 console.log(cardToken);
-            //                 // cardToken.constructor.populateProperties(cardToken,result);
-            //
-            //                 _disableAllInput();
-            //                 resolve(cardToken);
-            //
-            //             }
-            //
-            //         })
-            //         .catch(function (error) {
-            //             reject(new _APIError(error));
-            //
-            //         });
-            //
-            // });
-
-
-
-
-
         });
 
     };
@@ -11874,7 +11746,6 @@ console.log(_idProductAPIMapper[_availableAndEnabledPaymentProductsCollection[in
 var _initAvailableAndEnabledPaymentProductsCollection = function() {
     var _listEnabledPaymentProducts = [];
     _availableAndEnabledPaymentProductsCollection = [];
-console.log('start available');
 
     if (_availablePaymentProductsCollection.length > 0) {
         if (_customPaymentProducts.length > 0) {
@@ -11916,8 +11787,6 @@ var _getAvailablePaymentProducts = function() {
         endpoint = 'http://localhost:8080/example/dev-api-token.php';
     }
 
-console.log("_getAvailablePaymentProducts");
-console.log(HiPay.username);
     // endpoint = endpoint + "?eci=7&payment_product=visa&payment_product_category_list=credit-card&customer_country=FR&currency=EUR";
     endpoint = endpoint + "?eci=7&customer_country="+_availablePaymentProductsCustomerCountry+"&currency=" + _availablePaymentProductsCurrency;
     // endpoint = endpoint + "accept_url=hipay%3A%2F%2Fhipay-fullservice%2Fgateway%2Forders%2FDEMO_59f08c099ca87%2Faccept&amount=60.0&authentication_indicator=0&cancel_url=hipay%3A%2F%2Fhipay-fullservice%2Fgateway%2Forders%2FDEMO_59f08c099ca87%2Fcancel&city=Paris&country=FR&currency=EUR&decline_url=hipay%3A%2F%2Fhipay-fullservice%2Fgateway%2Forders%2FDEMO_59f08c099ca87%2Fdecline&description=Un%20beau%20v%C3%AAtement.&display_selector=0&eci=7&email=client%40domain.com&exception_url=hipay%3A%2F%2Fhipay-fullservice%2Fgateway%2Forders%2FDEMO_59f08c099ca87%2Fexception&firstname=Martin&gender=U&language=en_US&lastname=Dupont&long_description=Un%20tr%C3%A8s%20beau%20v%C3%AAtement%20en%20soie%20de%20couleur%20bleue.&multi_use=1&orderid=DEMO_59f08c099ca87&payment_product_category_list=ewallet%2Cdebit-card%2Crealtime-banking%2Ccredit-card&pending_url=hipay%3A%2F%2Fhipay-fullservice%2Fgateway%2Forders%2FDEMO_59f08c099ca87%2Fpending&recipientinfo=Employee&shipping=1.56&state=France&streetaddress2=Immeuble%20de%20droite&streetaddress=6%20Place%20du%20Colonel%20Bourgoin&tax=2.67&zipcode=75012";
@@ -11927,7 +11796,6 @@ console.log(HiPay.username);
         throw new _Error('missing_public_key');
     }
 
-    console.log(authEncoded);
     var config = {
         headers: {
             'Authorization': 'Basic ' + authEncoded,
@@ -11952,11 +11820,9 @@ console.log(HiPay.username);
         headers: config['headers']
         // body: JSON.stringify( requestParams )
     }).then(function (response) {
-        console.log(response);
+
         return response.json();
     }).then(function (availablePaymentProductsCollection) {
-        console.log("availablePaymentProductsCollection toto");
-        console.log(availablePaymentProductsCollection);
         _availablePaymentProductsCollection = availablePaymentProductsCollection;
         _loadPaymentProduct = false;
     })
@@ -11970,9 +11836,6 @@ console.log(HiPay.username);
 };
 
     var _initListPaymentMethod = function() {
-
-        console.log("init payment");
-
         _getAvailablePaymentProducts();
 
 
