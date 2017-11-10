@@ -66,10 +66,16 @@ module.exports = function(grunt) {
                     paths: 'dist/',
                     themedir: 'node_modules/yuidoc-lucid-theme',
                     helpers: ["node_modules/yuidoc-lucid-theme/helpers/helpers.js"],
-                    outdir: 'docs'
+                    outdir: './example/public/docs'
                 }
             }
+        }, 'gh-pages': {
+            options: {
+                base: 'docs'
+            },
+            src: "**"
         }
+
 
     });
     grunt.loadNpmTasks('grunt-contrib-yuidoc');
@@ -78,6 +84,9 @@ module.exports = function(grunt) {
     grunt.registerTask('default', ['sync', 'clean', 'concat', 'uglify']);
     grunt.registerTask('dist', ['concat:dist1']);
     grunt.registerTask('doc', ['default', 'yuidoc']);
+    grunt.registerTask('deploy-doc', ['doc', 'gh-pages']);
+
+
     grunt.registerTask('test', ['casperjs:casper_test']);
 
     // yuidoc . --configfile yuidocs.json
