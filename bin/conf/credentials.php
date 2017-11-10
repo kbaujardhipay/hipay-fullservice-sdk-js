@@ -30,8 +30,8 @@ $credentials = [
    * and at least check the "Tokenization" grant.
    */
   'public' => [
-    'username' => '{HIPAY_JS_USERNAME_TEST}',
-    'password' => '{HIPAY_JS_PASSWORD_TEST}',
+    'username' => '{HIPAY_JS_USERNAME_PUBLIC}',
+    'password' => '{HIPAY_JS_PASSWORD_PUBLIC}',
   ],
 
   /* PRIVATE CREDENTIALS
@@ -40,8 +40,8 @@ $credentials = [
    * and at least check "Process an order through the API" 
    */
   'private' => [
-    'username' => '{HIPAY_JS_USERNAME_PRIVATE_TEST}',
-    'password' => '{HIPAY_JS_USERNAME_PRIVATE_TEST}',
+    'username' => '{HIPAY_JS_USERNAME_PRIVATE}',
+    'password' => '{HIPAY_JS_PASSWORD_PRIVATE}',
   ]
 
 ];
