@@ -40,8 +40,8 @@ $credentials = [
    * and at least check "Process an order through the API" 
    */
   'private' => [
-    'username' => '',
-    'password' => '',
+    'username' => '{HIPAY_JS_USERNAME_PRIVATE_TEST}',
+    'password' => '{HIPAY_JS_USERNAME_PRIVATE_TEST}',
   ]
 
 ];
