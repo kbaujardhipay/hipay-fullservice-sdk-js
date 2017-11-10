@@ -1,15 +1,11 @@
 {
   "name": "hipay-fullservice-sdk-js",
   "description": "The HiPay Enterprise JavaScript SDK for tokenization allows you to tokenize credit or debit cards using the HiPay Enterprise payment platform, directly from the web browser. This method (called Direct Post in the PCI Council terminology) enables you to offer a unified payment workflow to your customers while remaining PCI compliant.",
-  "version": "3.5.0",
+  "version": "2.0",
   "url": "http://yuilibrary.com/",
   "options": {
-    "linkNatives": "true",
-    "nocode": true,
-    "attributesEmit": "true",
-    "selleck": "true",
-    "ignorePaths": [ "simpleyui" ],
-    "paths": "*/js",
+    "exclude": "example,dist",
+    "paths": "./src",
     "outdir": "./example/public/docs",
     "markdown": "default"
   }
