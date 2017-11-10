@@ -2434,7 +2434,6 @@ var HiPay = (function (HiPay) {
 
     /**
      * Is valid form data.
-     *
      * @method HiPay.Form.paymentFormDataIsValid
      * @return {Boolean} Form is or is not valid
      *
