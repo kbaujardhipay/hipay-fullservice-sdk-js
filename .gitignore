@@ -11,7 +11,7 @@ example/public/lib/vendor/*
 example/public/lib/node_modules
 
 example/composer\.phar
-example/credentials.php
+example/config/credentials.php
 
 \.idea/
 
