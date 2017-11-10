@@ -27,22 +27,70 @@
  *
  * <br/>
  *
- * ## Setting customer country to get available payment product of the selected country in ISO 3166-1 alpha-2
+ * ## Setting customer country to get available payment product of the selected ISO 3166-1 alpha-2 country code.
  * ```
- * HiPay.setAvailalblePaymentProductsCustomerCountry('COUNTRY_ISO3166-1_alpha-2');
+ * HiPay.setAvailalblePaymentProductsCustomerCountry(COUNTRY_ISO3166-1_alpha-2);
  * example :
  * HiPay.setAvailalblePaymentProductsCustomerCountry('FR');
  * ```
  *
  * <br/>
  *
- * ## Setting currency to get available payment product of the selected currency in ISO 4217
+ * ## Setting currency to get available payment product of the selected ISO 4217 currency code
  * ```
- *  HiPay.setAvailalblePaymentProductsCurrency('CURRENCY_ISO_4217');
+ *  HiPay.setAvailalblePaymentProductsCurrency(CURRENCY_ISO_4217);
  *  example :
  *  HiPay.setAvailalblePaymentProductsCurrency('EUR);
  * ```
  * <br/>
+ *
+ * ## Payment products list enabled
+ * ```
+ *  HiPay.enabledPaymentProducts({Array payment product});
+ *  example :
+ *  HiPay.enabledPaymentProducts(['visa', 'maestro']);
+ * ```
+ * <br/>
+ *
+ * ## Set locale
+ * ```
+ *  HiPay.Form.setLocale({LOCALE_CODE});
+ *  fr_FR or en_EN
+ *  example :
+ *  HiPay.enabledPaymentProducts('fr_FR');
+ * ```
+ * <br/>
+ *
+ * ## Helper to display information about the 3 or 4 digits security code that customer have to mention in the payment form.
+ * The translation of this message is base on the language set with the method : HiPay.Form.setLocale();
+ * ```
+ *  HiPay.Form.CVVHelpText();
+ *
+ * ```
+ * <br/>
+ *
+ *  ## Helper to display information about the 3 or 4 digits security code that customer have to mention in the payment form. It contains type and length of the card security code.
+ *
+ * ```
+ *  HiPay.getCVVInformation();
+ *
+ * ```
+ * <br/>
+ *
+ * ## Payment form is valid. Return true if payment form is valid or false if not.
+ * ```
+ *  HiPay.Form.paymentFormDataIsValid();
+ *
+ * ```
+ * <br/>
+ *
+ * ## Payment form error. Return a list of error if the payment form is not valid.
+ * ```
+ *  HiPay.Form.paymentFormDataGetErrors();
+ *
+ * ```
+ * <br/>
+ *
  *
  * @class HiPay
  * @param {HiPay} HiPay itself.
@@ -404,8 +452,8 @@ var HiPay = (function (HiPay) {
                 }
             },
 
-            /**
-             * The target type stage or production to make API calls in stage or production.
+            /*
+             * The target type stage or production to make HiPay API calls in stage or production environment.
              *
              * @property target
              * @default "production"
@@ -416,7 +464,7 @@ var HiPay = (function (HiPay) {
 
             target: {enumerable: true, writable: true, value:'production'},
 
-            /**
+            /*
              * The username. You must provide this value in order to be able to make API calls.
              *
              * @property username
@@ -425,14 +473,14 @@ var HiPay = (function (HiPay) {
 
             username: {enumerable: false, writable: true},
 
-            /**
+            /*
              * The user public key. You must provide this value in order to be able to make API calls.
              *
-             * @property publicKey
+             * @property password
              * @type string
              */
 
-            publicKey: {enumerable: false, writable: true}
+            password: {enumerable: false, writable: true}
         });
     }
 
@@ -2742,7 +2790,7 @@ var HiPay = (function (HiPay) {
     };
 
     /**
-     * Set environment type of the SDK (stage or production) to make API calls in stage or production.
+     * Set environment type (stage or production) to make HiPay API calls in stage or production environment.
      *
      * @method HiPay.setTarget
      * @param target
@@ -2763,15 +2811,15 @@ var HiPay = (function (HiPay) {
     };
 
     /**
-     * Set credentials (username and public key of your HiPay API account)
+     * Set credentials (username and password of your public HiPay Api credentials). Use only HiPay credentials with public accessibility.
      *
      * @method HiPay.setCredentials
      * @param username
-     * @param publicKey
+     * @param password
      */
-    HiPay.setCredentials = function(username, publicKey) {
+    HiPay.setCredentials = function(username, password) {
         HiPay.username = username;
-        HiPay.publicKey = publicKey;
+        HiPay.password = password;
 
         _initListPaymentMethod();
     };
@@ -2786,8 +2834,10 @@ var HiPay = (function (HiPay) {
     var _availableAndEnabledPaymentProductsCollection = [];
 
     /**
+     * ISO 3166-1 alpha-2 country code
      *
-     * @param countryISO2
+     * @method  HiPay.setAvailalblePaymentProductsCustomerCountry
+     * @param {String} countryISO2
      */
     HiPay.setAvailalblePaymentProductsCustomerCountry = function(countryISO2) {
         _availablePaymentProductsCustomerCountry = countryISO2;
@@ -2795,17 +2845,24 @@ var HiPay = (function (HiPay) {
     }
 
     /**
+     * ISO 4217 currency code
      *
-     * @param currency
+     * @method HiPay.setAvailalblePaymentProductsCurrency
+     * @param {String} currencyISO4217
      */
-    HiPay.setAvailalblePaymentProductsCurrency = function(currency) {
-        _availablePaymentProductsCurrency = currency;
+    HiPay.setAvailalblePaymentProductsCurrency = function(currencyISO4217) {
+        _availablePaymentProductsCurrency = currencyISO4217;
         _initListPaymentMethod();
     }
 
     /**
+     * Payment products list enabled in the payment form. If a payment product is not enabled in your HiPay account, it will be ignore.
+     * visa, mastercard, diners, american-express, maestro
      *
-     * @param collectionPaymentProducts
+     * @method HiPay.enabledPaymentProducts
+     * @param {Array} collectionPaymentProducts
+     * @example
+     *      HiPay.enabledPaymentProducts(['visa', 'maestro']);
      */
     HiPay.enabledPaymentProducts = function(collectionPaymentProducts) {
         _customPaymentProducts = collectionPaymentProducts;
@@ -2890,20 +2947,20 @@ var HiPay = (function (HiPay) {
      * @private
      */
     var _performAPICall = function (endpoint, requestParams, returnPromise, checkKey) {
-        if ((typeof checkKey === 'undefined' || checkKey) && (typeof HiPay.publicKey === 'undefined' || typeof HiPay.username === 'undefined')) {
+        if ((typeof checkKey === 'undefined' || checkKey) && (typeof HiPay.password === 'undefined' || typeof HiPay.username === 'undefined')) {
             throw new _Error('missing_public_key', 'You have to provide a HiPay username and public key in order to perform API calls.');
             // {"code":'+APIInvalidCardToken+',
         }
 
         try{
-            var authEncoded = window.btoa(HiPay.username + ':' + HiPay.publicKey);
+            var authEncoded = window.btoa(HiPay.username + ':' + HiPay.password);
         }catch(e) {
             throw new _Error('missing_public_key');
         }
 
         // Ne fonctionne pas avec IE 10 ?
         if ('XDomainRequest' in window && window.XDomainRequest !== null && isIE() != 10) {
-            requestParams['Authorization'] = 'Basic ' + window.btoa(HiPay.username + ':' + HiPay.publicKey);
+            requestParams['Authorization'] = 'Basic ' + window.btoa(HiPay.username + ':' + HiPay.password);
         }
 
         var config = {
@@ -3252,7 +3309,7 @@ var HiPay = (function (HiPay) {
     var _getAvailablePaymentProducts = function() {
 
 
-        if (!HiPay.getTarget() || !HiPay.username || !HiPay.publicKey || !_availablePaymentProductsCustomerCountry || !_availablePaymentProductsCurrency) {
+        if (!HiPay.getTarget() || !HiPay.username || !HiPay.password || !_availablePaymentProductsCustomerCountry || !_availablePaymentProductsCurrency) {
             return;
         }
 
@@ -3267,7 +3324,7 @@ var HiPay = (function (HiPay) {
         endpoint = endpoint + "?eci=7&customer_country="+_availablePaymentProductsCustomerCountry+"&currency=" + _availablePaymentProductsCurrency;
         // endpoint = endpoint + "accept_url=hipay%3A%2F%2Fhipay-fullservice%2Fgateway%2Forders%2FDEMO_59f08c099ca87%2Faccept&amount=60.0&authentication_indicator=0&cancel_url=hipay%3A%2F%2Fhipay-fullservice%2Fgateway%2Forders%2FDEMO_59f08c099ca87%2Fcancel&city=Paris&country=FR&currency=EUR&decline_url=hipay%3A%2F%2Fhipay-fullservice%2Fgateway%2Forders%2FDEMO_59f08c099ca87%2Fdecline&description=Un%20beau%20v%C3%AAtement.&display_selector=0&eci=7&email=client%40domain.com&exception_url=hipay%3A%2F%2Fhipay-fullservice%2Fgateway%2Forders%2FDEMO_59f08c099ca87%2Fexception&firstname=Martin&gender=U&language=en_US&lastname=Dupont&long_description=Un%20tr%C3%A8s%20beau%20v%C3%AAtement%20en%20soie%20de%20couleur%20bleue.&multi_use=1&orderid=DEMO_59f08c099ca87&payment_product_category_list=ewallet%2Cdebit-card%2Crealtime-banking%2Ccredit-card&pending_url=hipay%3A%2F%2Fhipay-fullservice%2Fgateway%2Forders%2FDEMO_59f08c099ca87%2Fpending&recipientinfo=Employee&shipping=1.56&state=France&streetaddress2=Immeuble%20de%20droite&streetaddress=6%20Place%20du%20Colonel%20Bourgoin&tax=2.67&zipcode=75012";
         try{
-            var authEncoded = window.btoa(HiPay.username+':'+HiPay.publicKey);
+            var authEncoded = window.btoa(HiPay.username+':'+HiPay.password);
         }catch(e) {
             throw new _Error('missing_public_key');
         }
@@ -3513,7 +3570,7 @@ var HiPay = (function (HiPay) {
             }
 
             var config = {
-                headers: {'Authorization': 'Basic ' + window.btoa(HiPay.username + ':' + HiPay.publicKey)}
+                headers: {'Authorization': 'Basic ' + window.btoa(HiPay.username + ':' + HiPay.password)}
             };
 
             return _performAPICall(endpoint, params, returnPromise);
