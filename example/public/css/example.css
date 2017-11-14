@@ -184,7 +184,7 @@ span#card-type {
     font-size: 14px;
 }
 
-#card-type {
+.card-type-custom {
     position:absolute;
     z-index:50;
     bottom:3px;

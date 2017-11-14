@@ -66,11 +66,11 @@ require_once('../config/credentials.php');
                 <div class="row">
                     <div class="col-lg-12">
                         <div class="form-group">
-                            <label class="sr-only" for="input-name">Prénom Nom</label>
+                            <label class="sr-only" for="input-name-custom">Prénom Nom</label>
                             <div class="input-group">
                                 <div class="input-group-addon-icon input-group-addon"><span class="glyphicon glyphicon-user" aria-hidden="true"></span></div>
 
-                                <input type="text" class="form-control" id="input-name" placeholder="" value="">
+                                <input type="text" class="form-control" id="input-name-custom" autocomplete="cc-name" x-autocompletetype="cc-name" placeholder="" value="" data-hipay-id="card-holder">
                             </div>
                         </div>
                     </div>
@@ -78,10 +78,10 @@ require_once('../config/credentials.php');
                 <div class="row">
                     <div class="col-lg-12">
                         <div class="form-group">
-                            <label class="sr-only" for="input-card">Card number</label>
+                            <label class="sr-only" for="input-card-custom">Card number</label>
                             <div class="input-group">
                                 <div class="input-group-addon-icon input-group-addon"><span class="glyphicon glyphicon-credit-card" aria-hidden="true"></span></div>
-                                <input type="tel" class="form-control" id="input-card"  placeholder="" autocomplete="off" pattern="\d*" name="cardNumber" value="">
+                                <input type="tel" class="form-control" id="input-card-custom" autocomplete="cc-number" x-autocompletetype="cc-number" placeholder="" pattern="\d*" name="cardNumber" value="" data-hipay-id="card-number">
                             </div>
                             <div id="creditCardNumberMessageContainer" class="inputMessageContainer"></div>
                         </div>
@@ -93,12 +93,12 @@ require_once('../config/credentials.php');
                 <div class="row">
                     <div class="col-lg-12">
                         <div class="form-group">
-                            <label class="sr-only" for="input-name">MM / YY</label>
+                            <label class="sr-only" for="input-expiry-date">MM / YY</label>
                             <div class="input-group">
                                 <div class="input-group-addon-icon input-group-addon"><span class="glyphicon glyphicon-calendar" aria-hidden="true"></span></div>
-                                <input type="text" class="form-control" id="input-expiry-date" value="">
-                                <input tabindex="-1" style="position: absolute; left: -999em; width:1px" type="tel" class="form-control" id="expiration-month" value="">
-                                <input tabindex="-1" style="position: absolute; left: -999em;width:1px" type="tel" class="form-control" id="expiration-year" value="">
+                                <input type="text" class="form-control" id="input-expiry-date" value="" data-hipay-id="card-expiry-date">
+                                <input tabindex="-1" style="position: absolute; left: -999em; width:1px" type="tel" class="form-control" id="expiration-month" value="" data-hipay-id="card-expiry-month">
+                                <input tabindex="-1" style="position: absolute; left: -999em;width:1px" type="tel" class="form-control" id="expiration-year" value="" data-hipay-id="card-expiry-year">
 
                                </div>
                             <div id="creditCardExpiryDateMessageContainer" class="inputMessageContainer"></div>
@@ -114,7 +114,7 @@ require_once('../config/credentials.php');
                             <label class="sr-only" for="input-cvv">123</label>
                             <div id="container-cvv" class="input-group">
                                 <div class="input-group-addon-icon input-group-addon"><span class="glyphicon glyphicon-lock" aria-hidden="true"></span></div>
-                                <input class="form-control" id="input-cvv" placeholder="123" maxlength="3" value="">
+                                <input class="form-control" id="input-cvv" placeholder="123" maxlength="3" value="" data-hipay-id="card-cvv">
                                 <span id="cvv-button" class="input-group-addon"><button type="button" data-toggle="modal" data-target="#cvv-modal">?</button></span>
                             </div>
                             <div id="creditCardCVVMessageContainer" class="inputMessageContainer"></div>
@@ -169,7 +169,8 @@ require_once('../config/credentials.php');
         HiPay.setAvailalblePaymentProductsCustomerCountry('FR');
         HiPay.setAvailalblePaymentProductsCurrency('EUR');
 
-//        HiPay.enabledPaymentProducts(['toto', 'maestro']);
+
+//        HiPay.enabledPaymentProducts(['visa', 'maestro']);
 
 
 
@@ -208,13 +209,12 @@ require_once('../config/credentials.php');
                     $('#code').html('');
                     $("#charge-button").hide();
                 },
-
                 error : function(result, status, error){
                     $('#order').html(result.responseText);
                     $('#code').html('');
                     $("#charge-button").text("Try again to create a charge…");
                     $("#charge-button").prop("disabled", false);
-                },
+                }
             });
 
         });
@@ -282,29 +282,29 @@ require_once('../config/credentials.php');
 
                     $("#charge-button").show();
                 })
-                .catch(function(error){
-//                    alert(error);
-                    if (error.code === HiPay.ErrorReason.APIIncorrectCredentials) { // égal à 1012003
-                        console.log("Invalid crédentials");
-                    }
-
-                    if (error.code === HiPay.ErrorReason.InvalidCardToken) { // égal à 1012003
-                        console.log("Token passé invalide…");
-                    }
-
-                    $("#pay-button").text("Tokenize");
-                    $("#form :input").prop("disabled", false);
-                    $("#form :button").prop("disabled", false);
-
-
-                    if (error.errorCollection != undefined && error.errorCollection.length > 0) {
-                        for (var i = 0; i < error.errorCollection.length; i++) {
-                            var errorParameters = error.errorCollection[i];
-                            $("#error").append(errorParameters.message);
-                        }
-                    }
-
-                });
+//                .catch(function(error){
+////                    alert(error);
+//                    if (error.code === HiPay.ErrorReason.APIIncorrectCredentials) { // égal à 1012003
+//                        console.log("Invalid crédentials");
+//                    }
+//
+//                    if (error.code === HiPay.ErrorReason.InvalidCardToken) { // égal à 1012003
+//                        console.log("Token passé invalide…");
+//                    }
+//
+//                    $("#pay-button").text("Tokenize");
+//                    $("#form :input").prop("disabled", false);
+//                    $("#form :button").prop("disabled", false);
+//
+//
+//                    if (error.errorCollection != undefined && error.errorCollection.length > 0) {
+//                        for (var i = 0; i < error.errorCollection.length; i++) {
+//                            var errorParameters = error.errorCollection[i];
+//                            $("#error").append(errorParameters.message);
+//                        }
+//                    }
+//
+//                });
             return false;
         });
 

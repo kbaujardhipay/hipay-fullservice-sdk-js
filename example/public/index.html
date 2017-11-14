@@ -74,10 +74,10 @@
                 <div class="row">
                     <div class="col-lg-12">
                         <div class="form-group">
-                            <label class="sr-only" for="input-card">Card number</label>
+                            <label class="sr-only" for="input-card-custom">Card number</label>
                             <div class="input-group">
                                 <div class="input-group-addon-icon input-group-addon"><span class="glyphicon glyphicon-credit-card" aria-hidden="true"></span></div>
-                                <input type="tel" class="form-control" id="input-card"  placeholder="" autocomplete="off" pattern="\d*" name="cardNumber" value="">
+                                <input type="tel" class="form-control" id="input-card-custom"  placeholder="" autocomplete="off" pattern="\d*" name="cardNumber" value="">
                             </div>
                             <div id="creditCardNumberMessageContainer" class="inputMessageContainer"></div>
                         </div>
@@ -159,7 +159,16 @@
 </div>
 
 <script type="text/javascript">
+    window.onload = function() {
 
+        HiPay.Form.updateFieldsId({
+            cardNumber: 'input-card-custom',
+            cardType: 'card-type-custom',
+            cardHolder: 'input-name-custom',
+            cardExpirationYear: 'expiration-year',
+            cardCVV: 'input-cvv'
+        });
+    };
 
 
 </script>
