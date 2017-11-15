@@ -8063,12 +8063,6 @@ var HiPay = (function (HiPay) {
                 var creditCardNumber = _selectElementValueWithHipayId(_idInputMapper['cardNumber']);
                 for (var indexFormatCVV = 0; indexFormatCVV < arrayFormatCVV.length; indexFormatCVV++) {
 
-
-                    console.log("creditCardNumber");
-                    console.log(creditCardNumber == "");
-                    console.log(indexFormatCVV);
-                    console.log(arrayFormatCVV);
-                    console.log(arrayFormatCVV[indexFormatCVV]);
                     if (creditCardNumber != "" && typeof arrayFormatCVV[indexFormatCVV]  != "undefined" && creditCardNumber.indexOf(arrayFormatCVV[indexFormatCVV]) === 0) {
                         serviceCreditCard.creditCardCVVLengthMax = 4;
                     }
@@ -8134,7 +8128,7 @@ var HiPay = (function (HiPay) {
             }
 
             if (_selectElementWithHipayId(_idInputMapper['cardType'])) {
-                _selectElementWithHipayId(_idInputMapper['cardType']).src = "";
+                _selectElementWithHipayId(_idInputMapper['cardType']).src = "a";
                 _selectElementWithHipayId(_idInputMapper['cardType']).setAttribute('style', 'display:none;');
             }
             for (var propt in _cardFormatDefinition) {
@@ -8147,11 +8141,13 @@ var HiPay = (function (HiPay) {
                             var startNumber = _cardFormatDefinition[propt]["ranges"][i]["first"] + j;
                             if (creditCardNumber.indexOf(startNumber) === 0) {
                                 serviceCreditCard.idType = propt;
+
                                  if (_selectElementWithHipayId(_idInputMapper['cardType'])) {
 
                                     _selectElementWithHipayId(_idInputMapper['cardType']).src = "./img/type/" + _cardImg[propt];
                                     _selectElementWithHipayId(_idInputMapper['cardType']).setAttribute('style', 'display:block;');
-                                }
+                                     _updatePlaceholderCVV(serviceCreditCard.idType);
+                                 }
 
                                 serviceCreditCard.cardFormatArray = _cardFormatDefinition[propt]["format"];
                                 /* length */
@@ -8170,9 +8166,12 @@ var HiPay = (function (HiPay) {
 
                         if (creditCardNumber.indexOf(_cardFormatDefinition[propt]["ranges"][i]["first"]) === 0) {
                            serviceCreditCard.idType = propt;
+
+
                             if (_selectElementWithHipayId(_idInputMapper['cardType'])) {
                                 _selectElementWithHipayId(_idInputMapper['cardType']).src = "./img/type/" + _cardImg[propt];
                                 _selectElementWithHipayId(_idInputMapper['cardType']).setAttribute('style', 'display:block;');
+                                _updatePlaceholderCVV(serviceCreditCard.idType);
                             }
 
                             serviceCreditCard.cardFormatArray = _cardFormatDefinition[propt]["format"];
@@ -9230,6 +9229,87 @@ var HiPay = (function (HiPay) {
         return serviceCreditCard;
     }
 
+
+    var _addClassOnElement = function(elements, myClass) {
+
+        // if there are no elements, we're done
+        if (!elements) { return; }
+
+        // if we have a selector, get the chosen elements
+        if (typeof(elements) === 'string') {
+            elements = document.querySelectorAll(elements);
+        }
+
+        // if we have a single DOM element, make it an array to simplify behavior
+        else if (elements.tagName) { elements=[elements]; }
+
+        // add class to all chosen elements
+        for (var i=0; i<elements.length; i++) {
+
+            // if class is not already found
+            if ( (' '+elements[i].className+' ').indexOf(' '+myClass+' ') < 0 ) {
+
+                // add class
+                elements[i].className += ' ' + myClass;
+            }
+        }
+    };
+
+
+    var _removeClassOnElement = function(elements, myClass) {
+
+        // if there are no elements, we're done
+        if (!elements) { return; }
+
+        // if we have a selector, get the chosen elements
+        if (typeof(elements) === 'string') {
+            elements = document.querySelectorAll(elements);
+        }
+
+        // if we have a single DOM element, make it an array to simplify behavior
+        else if (elements.tagName) { elements=[elements]; }
+
+        // create pattern to find class name
+        var reg = new RegExp('(^| )'+myClass+'($| )','g');
+
+        // remove class from all chosen elements
+        for (var i=0; i<elements.length; i++) {
+            elements[i].className = elements[i].className.replace(reg,' ');
+        }
+    };
+
+    var _containsClassOnElement = function(elements, myClass) {
+
+        // if there are no elements, we're done
+        if (!elements) { return; }
+
+        // if we have a selector, get the chosen elements
+        if (typeof(elements) === 'string') {
+            elements = document.querySelectorAll(elements);
+        }
+
+        // if we have a single DOM element, make it an array to simplify behavior
+        else if (elements.tagName) { elements=[elements]; }
+
+        // add class to all chosen elements
+        var containsClass = false;
+        for (var i=0; i<elements.length; i++) {
+
+            // if class is not already found
+            if ( (' '+elements[i].className+' ').indexOf(' '+myClass+' ') > 0 ) {
+
+                // add class
+                containsClass = true;
+            }
+        }
+        return containsClass;
+    }
+
+
+
+
+
+
     /**
      *
      */
@@ -9247,30 +9327,51 @@ var HiPay = (function (HiPay) {
 
         // _callbackEventFormChange();
         for (var indexInput in _idInputMapper) {
-            if (indexInput != "cardType") {
+            if (indexInput != "cardType" && _selectElementWithHipayId(_idInputMapper[indexInput]) != null) {
+                if (_selectElementWithHipayId(_idInputMapper[indexInput]).classList.contains == "function") {
+                    if (_selectElementWithHipayId(_idInputMapper[indexInput]).classList.contains('error-card-form')) {
+                        _selectElementWithHipayId(_idInputMapper[indexInput]).classList.remove('error-card-form');
+                    }
+                    if (!_selectElementWithHipayId(_idInputMapper[indexInput]).classList.contains('default-card-form')) {
+                        _selectElementWithHipayId(_idInputMapper[indexInput]).classList.add('default-card-form');
+                    }
+                } else {
+                    if (_containsClassOnElement(_selectElementWithHipayId(_idInputMapper[indexInput]), 'error-card-form')) {
+                        _removeClassOnElement(_selectElementWithHipayId(_idInputMapper[indexInput]), 'error-card-form');
+                    }
+                    if (!_containsClassOnElement(_selectElementWithHipayId(_idInputMapper[indexInput]), 'default-card-form')) {
+                        _addClassOnElement(_selectElementWithHipayId(_idInputMapper[indexInput]), 'default-card-form');
+                    }
 
-                if (_selectElementWithHipayId(_idInputMapper[indexInput]) != null && _selectElementWithHipayId(_idInputMapper[indexInput]).classList.contains('error-card-form')) {
-                    _selectElementWithHipayId(_idInputMapper[indexInput]).classList.remove('error-card-form');
-                }
-                if (_selectElementWithHipayId(_idInputMapper[indexInput]) != null && !_selectElementWithHipayId(_idInputMapper[indexInput]).classList.contains('default-card-form')) {
-                    _selectElementWithHipayId(_idInputMapper[indexInput]).classList.add('default-card-form');
                 }
             }
         }
 
-        var errors = HiPay.Form.paymentFormDataGetErrors();
 
-        for (var indexError in errors) {
-            if (_selectElementWithHipayId(_idInputMapper[indexInput]) != null && !_selectElementWithHipayId(_idInputMapper[indexInput]).classList.contains('error-card-form')) {
-                // The box that we clicked has a class of bad so let's remove it and add the good class
-                _selectElementWithHipayId(_idInputMapper[indexError]).classList.add('error-card-form');
-            }
-            if (_selectElementWithHipayId(_idInputMapper[indexInput]) != null && _selectElementWithHipayId(_idInputMapper[indexError]).classList.contains('default-card-form')) {
-                _selectElementWithHipayId(_idInputMapper[indexError]).classList.remove('default-card-form');
+            var errors = HiPay.Form.paymentFormDataGetErrors();
+
+            for (var indexError in errors) {
+                if (_selectElementWithHipayId(_idInputMapper[indexInput]) != null) {
+                    if (_selectElementWithHipayId(_idInputMapper[indexError]).classList.contains == "function") {
+                        if (!_selectElementWithHipayId(_idInputMapper[indexError]).classList.contains('error-card-form')) {
+                            _selectElementWithHipayId(_idInputMapper[indexError]).classList.add('error-card-form');
+                        }
+                        if (_selectElementWithHipayId(_idInputMapper[indexError]).classList.contains('default-card-form')) {
+                            _selectElementWithHipayId(_idInputMapper[indexError]).classList.remove('default-card-form');
+                        }
+                    } else {
+                        if (!_containsClassOnElement(_selectElementWithHipayId(_idInputMapper[indexError]), 'error-card-form')) {
+                            _addClassOnElement(_selectElementWithHipayId(_idInputMapper[indexError]), 'error-card-form');
+                        }
+                        if (_containsClassOnElement(_selectElementWithHipayId(_idInputMapper[indexError]), 'default-card-form')) {
+                            _removeClassOnElement(_selectElementWithHipayId(_idInputMapper[indexError]), 'default-card-form');
+                        }
+
+                    }
+
+                }
             }
 
-            // _selectElementWithHipayId(_idInputMapper[indexError]).setAttribute('style', 'color:#ff0000 !important');
-        }
     };
 
     /**
@@ -9298,7 +9399,20 @@ var HiPay = (function (HiPay) {
         if (idHiPay == null || typeof idHiPay == "undefined") {
             return;
         }
-        return document.querySelector("[data-hipay-id='"+idHiPay+"']");
+
+            var selectorString = "*[data-hipay-id='"+idHiPay+"']";
+
+        if (_testSelector(selectorString)) {
+            return document.querySelector(selectorString);
+        }
+        else {
+            if (document.querySelector( "input[data-hipay-id='"+idHiPay+"']")) {
+                return document.querySelector( "input[data-hipay-id='"+idHiPay+"']")
+            } else if(document.querySelector( "img[data-hipay-id='"+idHiPay+"']")) {
+                document.querySelector( "img[data-hipay-id='"+idHiPay+"']")
+            }
+        }
+
     };
 
     var _selectElementValueWithHipayId = function(idHiPay) {
@@ -9342,7 +9456,7 @@ var HiPay = (function (HiPay) {
                         break;
                     case 'cardCVV':
 
-                        if (cardType === _idProductAPIMapper['american-express']) {
+                        if (_selectElementValueWithHipayId(_idInputMapper["cardType"]) === _idProductAPIMapper['american-express']) {
                             _selectElementWithHipayId(_idInputMapper[propt]).placeholder = _getLocaleTranslationWithId("FORM_PLACEHOLDER_CARD_CVV_AMEX");
                         } else {
                             _selectElementWithHipayId(_idInputMapper[propt]).placeholder = _getLocaleTranslationWithId("FORM_PLACEHOLDER_CARD_CVV");
@@ -9353,6 +9467,15 @@ var HiPay = (function (HiPay) {
             }
         }
     };
+
+    var _updatePlaceholderCVV = function(cardTypeId) {
+
+        if (cardTypeId && cardTypeId === _idProductAPIMapper['american-express']) {
+            _selectElementWithHipayId(_idInputMapper["cardCVV"]).placeholder = _getLocaleTranslationWithId("FORM_PLACEHOLDER_CARD_CVV_AMEX");
+        } else {
+            _selectElementWithHipayId(_idInputMapper["cardCVV"]).placeholder = _getLocaleTranslationWithId("FORM_PLACEHOLDER_CARD_CVV");
+        }
+    }
 
     var _eventHandlersFields = {};
 
@@ -9623,7 +9746,7 @@ var HiPay = (function (HiPay) {
         imgType.className = 'card-type-custom';
         // imgType.id = _idInputMapper['cardType'];
         imgType.setAttribute('data-hipay-id', _idInputMapper['cardType']);
-        imgType.src = "";
+        imgType.src = "b";
         imgType.setAttribute('style','display:none;');
 
         my_elem.parentNode.insertBefore(imgType, my_elem.nextSibling);
@@ -10312,6 +10435,8 @@ var HiPay = (function (HiPay) {
 
     function _disableAllInput() {
         for(var propt in _idInputMapper){
+
+
             _selectElementWithHipayId(_idInputMapper[propt]).disabled = true;
         }
     }

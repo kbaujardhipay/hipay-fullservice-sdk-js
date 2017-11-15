@@ -88,28 +88,6 @@ span#card-type {
 }
 
 
-/*.form-control {*/
-    /*!*color: #005a94 !important;*!*/
-    /*color: red !important;*/
-    /*font-weight: bold;*/
-/*}*/
-
-/*input[type="text"][disabled][placeholder] {*/
-    /*color: pink !important;*/
-/*}*/
-
-
-
-/*::-webkit-input-placeholder { !* WebKit browsers *!*/
-    /*color: #005a94 !important;*/
-/*}*/
-
-/*.inputdisable::-webkit-input-placeholder {*/
-    /*color: #333333;*/
-/*}*/
-
-
-
 .input-group-addon-icon {
     color: #005a94 !important;
 }
