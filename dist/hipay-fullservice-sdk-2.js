@@ -1,975 +1,3 @@
-/*
- * ! https://github.com/davidchambers/Base64.js
- */
-;(function () {
-
-    var object = typeof exports != 'undefined' ? exports : this; // #8: web
-    // workers
-    var chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/=';
-
-    function InvalidCharacterError(message) {
-        this.message = message;
-    }
-    InvalidCharacterError.prototype = new Error;
-    InvalidCharacterError.prototype.name = 'InvalidCharacterError';
-
-    // encoder
-    // [https://gist.github.com/999166] by [https://github.com/nignag]
-    object.btoa || (
-        object.btoa = function (input) {
-            for (
-                // initialize result and counter
-                var block, charCode, idx = 0, map = chars, output = '';
-                // if the next input index does not exist:
-                // change the mapping table to "="
-                // check if d has no fractional digits
-                input.charAt(idx | 0) || (map = '=', idx % 1);
-                // "8 - idx % 1 * 8" generates the sequence 2, 4, 6, 8
-                output += map.charAt(63 & block >> 8 - idx % 1 * 8)
-            ) {
-                charCode = input.charCodeAt(idx += 3/4);
-                if (charCode > 0xFF) {
-                    throw new InvalidCharacterError("'btoa' failed: The string to be encoded contains characters outside of the Latin1 range.");
-                }
-                block = block << 8 | charCode;
-            }
-            return output;
-        });
-
-    // decoder
-    // [https://gist.github.com/1020396] by [https://github.com/atk]
-    object.atob || (
-        object.atob = function (input) {
-            input = input.replace(/=+$/, '')
-            if (input.length % 4 == 1) {
-                throw new InvalidCharacterError("'atob' failed: The string to be decoded is not correctly encoded.");
-            }
-            for (
-                // initialize result and counters
-                var bc = 0, bs, buffer, idx = 0, output = '';
-                // get next character
-                buffer = input.charAt(idx++);
-                // character found in table? initialize bit storage and add its ascii
-                // value;
-                ~buffer && (bs = bc % 4 ? bs * 64 + buffer : buffer,
-                    // and if not first of each 4 characters,
-                    // convert the first 8 bits to one ascii character
-                bc++ % 4) ? output += String.fromCharCode(255 & bs >> (-2 * bc & 6)) : 0
-            ) {
-                // try to find character in table (0-63, not found => -1)
-                buffer = chars.indexOf(buffer);
-            }
-            return output;
-        });
-
-}());
-;
-/**
- * Created by jkurc on 28/07/17.
- */
-/*! JSON v3.3.2 | http://bestiejs.github.io/json3 | Copyright 2012-2014, Kit Cambridge | http://kit.mit-license.org */
-;(function () {
-    // Detect the `define` function exposed by asynchronous module loaders. The
-    // strict `define` check is necessary for compatibility with `r.js`.
-    var isLoader = typeof define === "function" && define.amd;
-
-    // A set of types used to distinguish objects from primitives.
-    var objectTypes = {
-        "function": true,
-        "object": true
-    };
-
-    // Detect the `exports` object exposed by CommonJS implementations.
-    var freeExports = objectTypes[typeof exports] && exports && !exports.nodeType && exports;
-
-    // Use the `global` object exposed by Node (including Browserify via
-    // `insert-module-globals`), Narwhal, and Ringo as the default context,
-    // and the `window` object in browsers. Rhino exports a `global` function
-    // instead.
-    var root = objectTypes[typeof window] && window || this,
-        freeGlobal = freeExports && objectTypes[typeof module] && module && !module.nodeType && typeof global == "object" && global;
-
-    if (freeGlobal && (freeGlobal["global"] === freeGlobal || freeGlobal["window"] === freeGlobal || freeGlobal["self"] === freeGlobal)) {
-        root = freeGlobal;
-    }
-
-    // Public: Initializes JSON 3 using the given `context` object, attaching the
-    // `stringify` and `parse` functions to the specified `exports` object.
-    function runInContext(context, exports) {
-        context || (context = root["Object"]());
-        exports || (exports = root["Object"]());
-
-        // Native constructor aliases.
-        var Number = context["Number"] || root["Number"],
-            String = context["String"] || root["String"],
-            Object = context["Object"] || root["Object"],
-            Date = context["Date"] || root["Date"],
-            SyntaxError = context["SyntaxError"] || root["SyntaxError"],
-            TypeError = context["TypeError"] || root["TypeError"],
-            Math = context["Math"] || root["Math"],
-            nativeJSON = context["JSON"] || root["JSON"];
-
-        // Delegate to the native `stringify` and `parse` implementations.
-        if (typeof nativeJSON == "object" && nativeJSON) {
-            exports.stringify = nativeJSON.stringify;
-            exports.parse = nativeJSON.parse;
-        }
-
-        // Convenience aliases.
-        var objectProto = Object.prototype,
-            getClass = objectProto.toString,
-            isProperty, forEach, undef;
-
-        // Test the `Date#getUTC*` methods. Based on work by @Yaffle.
-        var isExtended = new Date(-3509827334573292);
-        try {
-            // The `getUTCFullYear`, `Month`, and `Date` methods return nonsensical
-            // results for certain dates in Opera >= 10.53.
-            isExtended = isExtended.getUTCFullYear() == -109252 && isExtended.getUTCMonth() === 0 && isExtended.getUTCDate() === 1 &&
-                // Safari < 2.0.2 stores the internal millisecond time value correctly,
-                // but clips the values returned by the date methods to the range of
-                // signed 32-bit integers ([-2 ** 31, 2 ** 31 - 1]).
-                isExtended.getUTCHours() == 10 && isExtended.getUTCMinutes() == 37 && isExtended.getUTCSeconds() == 6 && isExtended.getUTCMilliseconds() == 708;
-        } catch (exception) {}
-
-        // Internal: Determines whether the native `JSON.stringify` and `parse`
-        // implementations are spec-compliant. Based on work by Ken Snyder.
-        function has(name) {
-            if (has[name] !== undef) {
-                // Return cached feature test result.
-                return has[name];
-            }
-            var isSupported;
-            if (name == "bug-string-char-index") {
-                // IE <= 7 doesn't support accessing string characters using square
-                // bracket notation. IE 8 only supports this for primitives.
-                isSupported = "a"[0] != "a";
-            } else if (name == "json") {
-                // Indicates whether both `JSON.stringify` and `JSON.parse` are
-                // supported.
-                isSupported = has("json-stringify") && has("json-parse");
-            } else {
-                var value, serialized = '{"a":[1,true,false,null,"\\u0000\\b\\n\\f\\r\\t"]}';
-                // Test `JSON.stringify`.
-                if (name == "json-stringify") {
-                    var stringify = exports.stringify, stringifySupported = typeof stringify == "function" && isExtended;
-                    if (stringifySupported) {
-                        // A test function object with a custom `toJSON` method.
-                        (value = function () {
-                            return 1;
-                        }).toJSON = value;
-                        try {
-                            stringifySupported =
-                                // Firefox 3.1b1 and b2 serialize string, number, and boolean
-                                // primitives as object literals.
-                                stringify(0) === "0" &&
-                                // FF 3.1b1, b2, and JSON 2 serialize wrapped primitives as object
-                                // literals.
-                                stringify(new Number()) === "0" &&
-                                stringify(new String()) == '""' &&
-                                // FF 3.1b1, 2 throw an error if the value is `null`, `undefined`, or
-                                // does not define a canonical JSON representation (this applies to
-                                // objects with `toJSON` properties as well, *unless* they are nested
-                                // within an object or array).
-                                stringify(getClass) === undef &&
-                                // IE 8 serializes `undefined` as `"undefined"`. Safari <= 5.1.7 and
-                                // FF 3.1b3 pass this test.
-                                stringify(undef) === undef &&
-                                // Safari <= 5.1.7 and FF 3.1b3 throw `Error`s and `TypeError`s,
-                                // respectively, if the value is omitted entirely.
-                                stringify() === undef &&
-                                // FF 3.1b1, 2 throw an error if the given value is not a number,
-                                // string, array, object, Boolean, or `null` literal. This applies to
-                                // objects with custom `toJSON` methods as well, unless they are nested
-                                // inside object or array literals. YUI 3.0.0b1 ignores custom `toJSON`
-                                // methods entirely.
-                                stringify(value) === "1" &&
-                                stringify([value]) == "[1]" &&
-                                // Prototype <= 1.6.1 serializes `[undefined]` as `"[]"` instead of
-                                // `"[null]"`.
-                                stringify([undef]) == "[null]" &&
-                                // YUI 3.0.0b1 fails to serialize `null` literals.
-                                stringify(null) == "null" &&
-                                // FF 3.1b1, 2 halts serialization if an array contains a function:
-                                // `[1, true, getClass, 1]` serializes as "[1,true,],". FF 3.1b3
-                                // elides non-JSON values from objects and arrays, unless they
-                                // define custom `toJSON` methods.
-                                stringify([undef, getClass, null]) == "[null,null,null]" &&
-                                // Simple serialization test. FF 3.1b1 uses Unicode escape sequences
-                                // where character escape codes are expected (e.g., `\b` => `\u0008`).
-                                stringify({ "a": [value, true, false, null, "\x00\b\n\f\r\t"] }) == serialized &&
-                                // FF 3.1b1 and b2 ignore the `filter` and `width` arguments.
-                                stringify(null, value) === "1" &&
-                                stringify([1, 2], null, 1) == "[\n 1,\n 2\n]" &&
-                                // JSON 2, Prototype <= 1.7, and older WebKit builds incorrectly
-                                // serialize extended years.
-                                stringify(new Date(-8.64e15)) == '"-271821-04-20T00:00:00.000Z"' &&
-                                // The milliseconds are optional in ES 5, but required in 5.1.
-                                stringify(new Date(8.64e15)) == '"+275760-09-13T00:00:00.000Z"' &&
-                                // Firefox <= 11.0 incorrectly serializes years prior to 0 as negative
-                                // four-digit years instead of six-digit years. Credits: @Yaffle.
-                                stringify(new Date(-621987552e5)) == '"-000001-01-01T00:00:00.000Z"' &&
-                                // Safari <= 5.1.5 and Opera >= 10.53 incorrectly serialize millisecond
-                                // values less than 1000. Credits: @Yaffle.
-                                stringify(new Date(-1)) == '"1969-12-31T23:59:59.999Z"';
-                        } catch (exception) {
-                            stringifySupported = false;
-                        }
-                    }
-                    isSupported = stringifySupported;
-                }
-                // Test `JSON.parse`.
-                if (name == "json-parse") {
-                    var parse = exports.parse;
-                    if (typeof parse == "function") {
-                        try {
-                            // FF 3.1b1, b2 will throw an exception if a bare literal is provided.
-                            // Conforming implementations should also coerce the initial argument to
-                            // a string prior to parsing.
-                            if (parse("0") === 0 && !parse(false)) {
-                                // Simple parsing test.
-                                value = parse(serialized);
-                                var parseSupported = value["a"].length == 5 && value["a"][0] === 1;
-                                if (parseSupported) {
-                                    try {
-                                        // Safari <= 5.1.2 and FF 3.1b1 allow unescaped tabs in strings.
-                                        parseSupported = !parse('"\t"');
-                                    } catch (exception) {}
-                                    if (parseSupported) {
-                                        try {
-                                            // FF 4.0 and 4.0.1 allow leading `+` signs and leading
-                                            // decimal points. FF 4.0, 4.0.1, and IE 9-10 also allow
-                                            // certain octal literals.
-                                            parseSupported = parse("01") !== 1;
-                                        } catch (exception) {}
-                                    }
-                                    if (parseSupported) {
-                                        try {
-                                            // FF 4.0, 4.0.1, and Rhino 1.7R3-R4 allow trailing decimal
-                                            // points. These environments, along with FF 3.1b1 and 2,
-                                            // also allow trailing commas in JSON objects and arrays.
-                                            parseSupported = parse("1.") !== 1;
-                                        } catch (exception) {}
-                                    }
-                                }
-                            }
-                        } catch (exception) {
-                            parseSupported = false;
-                        }
-                    }
-                    isSupported = parseSupported;
-                }
-            }
-            return has[name] = !!isSupported;
-        }
-
-        if (!has("json")) {
-            // Common `[[Class]]` name aliases.
-            var functionClass = "[object Function]",
-                dateClass = "[object Date]",
-                numberClass = "[object Number]",
-                stringClass = "[object String]",
-                arrayClass = "[object Array]",
-                booleanClass = "[object Boolean]";
-
-            // Detect incomplete support for accessing string characters by index.
-            var charIndexBuggy = has("bug-string-char-index");
-
-            // Define additional utility methods if the `Date` methods are buggy.
-            if (!isExtended) {
-                var floor = Math.floor;
-                // A mapping between the months of the year and the number of days between
-                // January 1st and the first of the respective month.
-                var Months = [0, 31, 59, 90, 120, 151, 181, 212, 243, 273, 304, 334];
-                // Internal: Calculates the number of days between the Unix epoch and the
-                // first day of the given month.
-                var getDay = function (year, month) {
-                    return Months[month] + 365 * (year - 1970) + floor((year - 1969 + (month = +(month > 1))) / 4) - floor((year - 1901 + month) / 100) + floor((year - 1601 + month) / 400);
-                };
-            }
-
-            // Internal: Determines if a property is a direct property of the given
-            // object. Delegates to the native `Object#hasOwnProperty` method.
-            if (!(isProperty = objectProto.hasOwnProperty)) {
-                isProperty = function (property) {
-                    var members = {}, constructor;
-                    if ((members.__proto__ = null, members.__proto__ = {
-                            // The *proto* property cannot be set multiple times in recent
-                            // versions of Firefox and SeaMonkey.
-                            "toString": 1
-                        }, members).toString != getClass) {
-                        // Safari <= 2.0.3 doesn't implement `Object#hasOwnProperty`, but
-                        // supports the mutable *proto* property.
-                        isProperty = function (property) {
-                            // Capture and break the object's prototype chain (see section 8.6.2
-                            // of the ES 5.1 spec). The parenthesized expression prevents an
-                            // unsafe transformation by the Closure Compiler.
-                            var original = this.__proto__, result = property in (this.__proto__ = null, this);
-                            // Restore the original prototype chain.
-                            this.__proto__ = original;
-                            return result;
-                        };
-                    } else {
-                        // Capture a reference to the top-level `Object` constructor.
-                        constructor = members.constructor;
-                        // Use the `constructor` property to simulate `Object#hasOwnProperty` in
-                        // other environments.
-                        isProperty = function (property) {
-                            var parent = (this.constructor || constructor).prototype;
-                            return property in this && !(property in parent && this[property] === parent[property]);
-                        };
-                    }
-                    members = null;
-                    return isProperty.call(this, property);
-                };
-            }
-
-            // Internal: Normalizes the `for...in` iteration algorithm across
-            // environments. Each enumerated key is yielded to a `callback` function.
-            forEach = function (object, callback) {
-                var size = 0, Properties, members, property;
-
-                // Tests for bugs in the current environment's `for...in` algorithm. The
-                // `valueOf` property inherits the non-enumerable flag from
-                // `Object.prototype` in older versions of IE, Netscape, and Mozilla.
-                (Properties = function () {
-                    this.valueOf = 0;
-                }).prototype.valueOf = 0;
-
-                // Iterate over a new instance of the `Properties` class.
-                members = new Properties();
-                for (property in members) {
-                    // Ignore all properties inherited from `Object.prototype`.
-                    if (isProperty.call(members, property)) {
-                        size++;
-                    }
-                }
-                Properties = members = null;
-
-                // Normalize the iteration algorithm.
-                if (!size) {
-                    // A list of non-enumerable properties inherited from `Object.prototype`.
-                    members = ["valueOf", "toString", "toLocaleString", "propertyIsEnumerable", "isPrototypeOf", "hasOwnProperty", "constructor"];
-                    // IE <= 8, Mozilla 1.0, and Netscape 6.2 ignore shadowed non-enumerable
-                    // properties.
-                    forEach = function (object, callback) {
-                        var isFunction = getClass.call(object) == functionClass, property, length;
-                        var hasProperty = !isFunction && typeof object.constructor != "function" && objectTypes[typeof object.hasOwnProperty] && object.hasOwnProperty || isProperty;
-                        for (property in object) {
-                            // Gecko <= 1.0 enumerates the `prototype` property of functions under
-                            // certain conditions; IE does not.
-                            if (!(isFunction && property == "prototype") && hasProperty.call(object, property)) {
-                                callback(property);
-                            }
-                        }
-                        // Manually invoke the callback for each non-enumerable property.
-                        for (length = members.length; property = members[--length]; hasProperty.call(object, property) && callback(property));
-                    };
-                } else if (size == 2) {
-                    // Safari <= 2.0.4 enumerates shadowed properties twice.
-                    forEach = function (object, callback) {
-                        // Create a set of iterated properties.
-                        var members = {}, isFunction = getClass.call(object) == functionClass, property;
-                        for (property in object) {
-                            // Store each property name to prevent double enumeration. The
-                            // `prototype` property of functions is not enumerated due to cross-
-                            // environment inconsistencies.
-                            if (!(isFunction && property == "prototype") && !isProperty.call(members, property) && (members[property] = 1) && isProperty.call(object, property)) {
-                                callback(property);
-                            }
-                        }
-                    };
-                } else {
-                    // No bugs detected; use the standard `for...in` algorithm.
-                    forEach = function (object, callback) {
-                        var isFunction = getClass.call(object) == functionClass, property, isConstructor;
-                        for (property in object) {
-                            if (!(isFunction && property == "prototype") && isProperty.call(object, property) && !(isConstructor = property === "constructor")) {
-                                callback(property);
-                            }
-                        }
-                        // Manually invoke the callback for the `constructor` property due to
-                        // cross-environment inconsistencies.
-                        if (isConstructor || isProperty.call(object, (property = "constructor"))) {
-                            callback(property);
-                        }
-                    };
-                }
-                return forEach(object, callback);
-            };
-
-            // Public: Serializes a JavaScript `value` as a JSON string. The optional
-            // `filter` argument may specify either a function that alters how object and
-            // array members are serialized, or an array of strings and numbers that
-            // indicates which properties should be serialized. The optional `width`
-            // argument may be either a string or number that specifies the indentation
-            // level of the output.
-            if (!has("json-stringify")) {
-                // Internal: A map of control characters and their escaped equivalents.
-                var Escapes = {
-                    92: "\\\\",
-                    34: '\\"',
-                    8: "\\b",
-                    12: "\\f",
-                    10: "\\n",
-                    13: "\\r",
-                    9: "\\t"
-                };
-
-                // Internal: Converts `value` into a zero-padded string such that its
-                // length is at least equal to `width`. The `width` must be <= 6.
-                var leadingZeroes = "000000";
-                var toPaddedString = function (width, value) {
-                    // The `|| 0` expression is necessary to work around a bug in
-                    // Opera <= 7.54u2 where `0 == -0`, but `String(-0) !== "0"`.
-                    return (leadingZeroes + (value || 0)).slice(-width);
-                };
-
-                // Internal: Double-quotes a string `value`, replacing all ASCII control
-                // characters (characters with code unit values between 0 and 31) with
-                // their escaped equivalents. This is an implementation of the
-                // `Quote(value)` operation defined in ES 5.1 section 15.12.3.
-                var unicodePrefix = "\\u00";
-                var quote = function (value) {
-                    var result = '"', index = 0, length = value.length, useCharIndex = !charIndexBuggy || length > 10;
-                    var symbols = useCharIndex && (charIndexBuggy ? value.split("") : value);
-                    for (; index < length; index++) {
-                        var charCode = value.charCodeAt(index);
-                        // If the character is a control character, append its Unicode or
-                        // shorthand escape sequence; otherwise, append the character as-is.
-                        switch (charCode) {
-                            case 8: case 9: case 10: case 12: case 13: case 34: case 92:
-                            result += Escapes[charCode];
-                            break;
-                            default:
-                                if (charCode < 32) {
-                                    result += unicodePrefix + toPaddedString(2, charCode.toString(16));
-                                    break;
-                                }
-                                result += useCharIndex ? symbols[index] : value.charAt(index);
-                        }
-                    }
-                    return result + '"';
-                };
-
-                // Internal: Recursively serializes an object. Implements the
-                // `Str(key, holder)`, `JO(value)`, and `JA(value)` operations.
-                var serialize = function (property, object, callback, properties, whitespace, indentation, stack) {
-                    var value, className, year, month, date, time, hours, minutes, seconds, milliseconds, results, element, index, length, prefix, result;
-                    try {
-                        // Necessary for host object support.
-                        value = object[property];
-                    } catch (exception) {}
-                    if (typeof value == "object" && value) {
-                        className = getClass.call(value);
-                        if (className == dateClass && !isProperty.call(value, "toJSON")) {
-                            if (value > -1 / 0 && value < 1 / 0) {
-                                // Dates are serialized according to the `Date#toJSON` method
-                                // specified in ES 5.1 section 15.9.5.44. See section 15.9.1.15
-                                // for the ISO 8601 date time string format.
-                                if (getDay) {
-                                    // Manually compute the year, month, date, hours, minutes,
-                                    // seconds, and milliseconds if the `getUTC*` methods are
-                                    // buggy. Adapted from @Yaffle's `date-shim` project.
-                                    date = floor(value / 864e5);
-                                    for (year = floor(date / 365.2425) + 1970 - 1; getDay(year + 1, 0) <= date; year++);
-                                    for (month = floor((date - getDay(year, 0)) / 30.42); getDay(year, month + 1) <= date; month++);
-                                    date = 1 + date - getDay(year, month);
-                                    // The `time` value specifies the time within the day (see ES
-                                    // 5.1 section 15.9.1.2). The formula `(A % B + B) % B` is used
-                                    // to compute `A modulo B`, as the `%` operator does not
-                                    // correspond to the `modulo` operation for negative numbers.
-                                    time = (value % 864e5 + 864e5) % 864e5;
-                                    // The hours, minutes, seconds, and milliseconds are obtained by
-                                    // decomposing the time within the day. See section 15.9.1.10.
-                                    hours = floor(time / 36e5) % 24;
-                                    minutes = floor(time / 6e4) % 60;
-                                    seconds = floor(time / 1e3) % 60;
-                                    milliseconds = time % 1e3;
-                                } else {
-                                    year = value.getUTCFullYear();
-                                    month = value.getUTCMonth();
-                                    date = value.getUTCDate();
-                                    hours = value.getUTCHours();
-                                    minutes = value.getUTCMinutes();
-                                    seconds = value.getUTCSeconds();
-                                    milliseconds = value.getUTCMilliseconds();
-                                }
-                                // Serialize extended years correctly.
-                                value = (year <= 0 || year >= 1e4 ? (year < 0 ? "-" : "+") + toPaddedString(6, year < 0 ? -year : year) : toPaddedString(4, year)) +
-                                    "-" + toPaddedString(2, month + 1) + "-" + toPaddedString(2, date) +
-                                    // Months, dates, hours, minutes, and seconds should have two
-                                    // digits; milliseconds should have three.
-                                    "T" + toPaddedString(2, hours) + ":" + toPaddedString(2, minutes) + ":" + toPaddedString(2, seconds) +
-                                    // Milliseconds are optional in ES 5.0, but required in 5.1.
-                                    "." + toPaddedString(3, milliseconds) + "Z";
-                            } else {
-                                value = null;
-                            }
-                        } else if (typeof value.toJSON == "function" && ((className != numberClass && className != stringClass && className != arrayClass) || isProperty.call(value, "toJSON"))) {
-                            // Prototype <= 1.6.1 adds non-standard `toJSON` methods to the
-                            // `Number`, `String`, `Date`, and `Array` prototypes. JSON 3
-                            // ignores all `toJSON` methods on these objects unless they are
-                            // defined directly on an instance.
-                            value = value.toJSON(property);
-                        }
-                    }
-                    if (callback) {
-                        // If a replacement function was provided, call it to obtain the value
-                        // for serialization.
-                        value = callback.call(object, property, value);
-                    }
-                    if (value === null) {
-                        return "null";
-                    }
-                    className = getClass.call(value);
-                    if (className == booleanClass) {
-                        // Booleans are represented literally.
-                        return "" + value;
-                    } else if (className == numberClass) {
-                        // JSON numbers must be finite. `Infinity` and `NaN` are serialized as
-                        // `"null"`.
-                        return value > -1 / 0 && value < 1 / 0 ? "" + value : "null";
-                    } else if (className == stringClass) {
-                        // Strings are double-quoted and escaped.
-                        return quote("" + value);
-                    }
-                    // Recursively serialize objects and arrays.
-                    if (typeof value == "object") {
-                        // Check for cyclic structures. This is a linear search; performance
-                        // is inversely proportional to the number of unique nested objects.
-                        for (length = stack.length; length--;) {
-                            if (stack[length] === value) {
-                                // Cyclic structures cannot be serialized by `JSON.stringify`.
-                                throw TypeError();
-                            }
-                        }
-                        // Add the object to the stack of traversed objects.
-                        stack.push(value);
-                        results = [];
-                        // Save the current indentation level and indent one additional level.
-                        prefix = indentation;
-                        indentation += whitespace;
-                        if (className == arrayClass) {
-                            // Recursively serialize array elements.
-                            for (index = 0, length = value.length; index < length; index++) {
-                                element = serialize(index, value, callback, properties, whitespace, indentation, stack);
-                                results.push(element === undef ? "null" : element);
-                            }
-                            result = results.length ? (whitespace ? "[\n" + indentation + results.join(",\n" + indentation) + "\n" + prefix + "]" : ("[" + results.join(",") + "]")) : "[]";
-                        } else {
-                            // Recursively serialize object members. Members are selected from
-                            // either a user-specified list of property names, or the object
-                            // itself.
-                            forEach(properties || value, function (property) {
-                                var element = serialize(property, value, callback, properties, whitespace, indentation, stack);
-                                if (element !== undef) {
-                                    // According to ES 5.1 section 15.12.3: "If `gap` {whitespace}
-                                    // is not the empty string, let `member` {quote(property) + ":"}
-                                    // be the concatenation of `member` and the `space` character."
-                                    // The "`space` character" refers to the literal space
-                                    // character, not the `space` {width} argument provided to
-                                    // `JSON.stringify`.
-                                    results.push(quote(property) + ":" + (whitespace ? " " : "") + element);
-                                }
-                            });
-                            result = results.length ? (whitespace ? "{\n" + indentation + results.join(",\n" + indentation) + "\n" + prefix + "}" : ("{" + results.join(",") + "}")) : "{}";
-                        }
-                        // Remove the object from the traversed object stack.
-                        stack.pop();
-                        return result;
-                    }
-                };
-
-                // Public: `JSON.stringify`. See ES 5.1 section 15.12.3.
-                exports.stringify = function (source, filter, width) {
-                    var whitespace, callback, properties, className;
-                    if (objectTypes[typeof filter] && filter) {
-                        if ((className = getClass.call(filter)) == functionClass) {
-                            callback = filter;
-                        } else if (className == arrayClass) {
-                            // Convert the property names array into a makeshift set.
-                            properties = {};
-                            for (var index = 0, length = filter.length, value; index < length; value = filter[index++], ((className = getClass.call(value)), className == stringClass || className == numberClass) && (properties[value] = 1));
-                        }
-                    }
-                    if (width) {
-                        if ((className = getClass.call(width)) == numberClass) {
-                            // Convert the `width` to an integer and create a string containing
-                            // `width` number of space characters.
-                            if ((width -= width % 1) > 0) {
-                                for (whitespace = "", width > 10 && (width = 10); whitespace.length < width; whitespace += " ");
-                            }
-                        } else if (className == stringClass) {
-                            whitespace = width.length <= 10 ? width : width.slice(0, 10);
-                        }
-                    }
-                    // Opera <= 7.54u2 discards the values associated with empty string keys
-                    // (`""`) only if they are used directly within an object member list
-                    // (e.g., `!("" in { "": 1})`).
-                    return serialize("", (value = {}, value[""] = source, value), callback, properties, whitespace, "", []);
-                };
-            }
-
-            // Public: Parses a JSON source string.
-            if (!has("json-parse")) {
-                var fromCharCode = String.fromCharCode;
-
-                // Internal: A map of escaped control characters and their unescaped
-                // equivalents.
-                var Unescapes = {
-                    92: "\\",
-                    34: '"',
-                    47: "/",
-                    98: "\b",
-                    116: "\t",
-                    110: "\n",
-                    102: "\f",
-                    114: "\r"
-                };
-
-                // Internal: Stores the parser state.
-                var Index, Source;
-
-                // Internal: Resets the parser state and throws a `SyntaxError`.
-                var abort = function () {
-                    Index = Source = null;
-                    throw SyntaxError();
-                };
-
-                // Internal: Returns the next token, or `"$"` if the parser has reached
-                // the end of the source string. A token may be a string, number, `null`
-                // literal, or Boolean literal.
-                var lex = function () {
-                    var source = Source, length = source.length, value, begin, position, isSigned, charCode;
-                    while (Index < length) {
-                        charCode = source.charCodeAt(Index);
-                        switch (charCode) {
-                            case 9: case 10: case 13: case 32:
-                            // Skip whitespace tokens, including tabs, carriage returns, line
-                            // feeds, and space characters.
-                            Index++;
-                            break;
-                            case 123: case 125: case 91: case 93: case 58: case 44:
-                            // Parse a punctuator token (`{`, `}`, `[`, `]`, `:`, or `,`) at
-                            // the current position.
-                            value = charIndexBuggy ? source.charAt(Index) : source[Index];
-                            Index++;
-                            return value;
-                            case 34:
-                                // `"` delimits a JSON string; advance to the next character and
-                                // begin parsing the string. String tokens are prefixed with the
-                                // sentinel `@` character to distinguish them from punctuators and
-                                // end-of-string tokens.
-                                for (value = "@", Index++; Index < length;) {
-                                    charCode = source.charCodeAt(Index);
-                                    if (charCode < 32) {
-                                        // Unescaped ASCII control characters (those with a code unit
-                                        // less than the space character) are not permitted.
-                                        abort();
-                                    } else if (charCode == 92) {
-                                        // A reverse solidus (`\`) marks the beginning of an escaped
-                                        // control character (including `"`, `\`, and `/`) or Unicode
-                                        // escape sequence.
-                                        charCode = source.charCodeAt(++Index);
-                                        switch (charCode) {
-                                            case 92: case 34: case 47: case 98: case 116: case 110: case 102: case 114:
-                                            // Revive escaped control characters.
-                                            value += Unescapes[charCode];
-                                            Index++;
-                                            break;
-                                            case 117:
-                                                // `\u` marks the beginning of a Unicode escape sequence.
-                                                // Advance to the first character and validate the
-                                                // four-digit code point.
-                                                begin = ++Index;
-                                                for (position = Index + 4; Index < position; Index++) {
-                                                    charCode = source.charCodeAt(Index);
-                                                    // A valid sequence comprises four hexdigits (case-
-                                                    // insensitive) that form a single hexadecimal value.
-                                                    if (!(charCode >= 48 && charCode <= 57 || charCode >= 97 && charCode <= 102 || charCode >= 65 && charCode <= 70)) {
-                                                        // Invalid Unicode escape sequence.
-                                                        abort();
-                                                    }
-                                                }
-                                                // Revive the escaped character.
-                                                value += fromCharCode("0x" + source.slice(begin, Index));
-                                                break;
-                                            default:
-                                                // Invalid escape sequence.
-                                                abort();
-                                        }
-                                    } else {
-                                        if (charCode == 34) {
-                                            // An unescaped double-quote character marks the end of the
-                                            // string.
-                                            break;
-                                        }
-                                        charCode = source.charCodeAt(Index);
-                                        begin = Index;
-                                        // Optimize for the common case where a string is valid.
-                                        while (charCode >= 32 && charCode != 92 && charCode != 34) {
-                                            charCode = source.charCodeAt(++Index);
-                                        }
-                                        // Append the string as-is.
-                                        value += source.slice(begin, Index);
-                                    }
-                                }
-                                if (source.charCodeAt(Index) == 34) {
-                                    // Advance to the next character and return the revived string.
-                                    Index++;
-                                    return value;
-                                }
-                                // Unterminated string.
-                                abort();
-                            default:
-                                // Parse numbers and literals.
-                                begin = Index;
-                                // Advance past the negative sign, if one is specified.
-                                if (charCode == 45) {
-                                    isSigned = true;
-                                    charCode = source.charCodeAt(++Index);
-                                }
-                                // Parse an integer or floating-point value.
-                                if (charCode >= 48 && charCode <= 57) {
-                                    // Leading zeroes are interpreted as octal literals.
-                                    if (charCode == 48 && ((charCode = source.charCodeAt(Index + 1)), charCode >= 48 && charCode <= 57)) {
-                                        // Illegal octal literal.
-                                        abort();
-                                    }
-                                    isSigned = false;
-                                    // Parse the integer component.
-                                    for (; Index < length && ((charCode = source.charCodeAt(Index)), charCode >= 48 && charCode <= 57); Index++);
-                                    // Floats cannot contain a leading decimal point; however, this
-                                    // case is already accounted for by the parser.
-                                    if (source.charCodeAt(Index) == 46) {
-                                        position = ++Index;
-                                        // Parse the decimal component.
-                                        for (; position < length && ((charCode = source.charCodeAt(position)), charCode >= 48 && charCode <= 57); position++);
-                                        if (position == Index) {
-                                            // Illegal trailing decimal.
-                                            abort();
-                                        }
-                                        Index = position;
-                                    }
-                                    // Parse exponents. The `e` denoting the exponent is
-                                    // case-insensitive.
-                                    charCode = source.charCodeAt(Index);
-                                    if (charCode == 101 || charCode == 69) {
-                                        charCode = source.charCodeAt(++Index);
-                                        // Skip past the sign following the exponent, if one is
-                                        // specified.
-                                        if (charCode == 43 || charCode == 45) {
-                                            Index++;
-                                        }
-                                        // Parse the exponential component.
-                                        for (position = Index; position < length && ((charCode = source.charCodeAt(position)), charCode >= 48 && charCode <= 57); position++);
-                                        if (position == Index) {
-                                            // Illegal empty exponent.
-                                            abort();
-                                        }
-                                        Index = position;
-                                    }
-                                    // Coerce the parsed value to a JavaScript number.
-                                    return +source.slice(begin, Index);
-                                }
-                                // A negative sign may only precede numbers.
-                                if (isSigned) {
-                                    abort();
-                                }
-                                // `true`, `false`, and `null` literals.
-                                if (source.slice(Index, Index + 4) == "true") {
-                                    Index += 4;
-                                    return true;
-                                } else if (source.slice(Index, Index + 5) == "false") {
-                                    Index += 5;
-                                    return false;
-                                } else if (source.slice(Index, Index + 4) == "null") {
-                                    Index += 4;
-                                    return null;
-                                }
-                                // Unrecognized token.
-                                abort();
-                        }
-                    }
-                    // Return the sentinel `$` character if the parser has reached the end
-                    // of the source string.
-                    return "$";
-                };
-
-                // Internal: Parses a JSON `value` token.
-                var get = function (value) {
-                    var results, hasMembers;
-                    if (value == "$") {
-                        // Unexpected end of input.
-                        abort();
-                    }
-                    if (typeof value == "string") {
-                        if ((charIndexBuggy ? value.charAt(0) : value[0]) == "@") {
-                            // Remove the sentinel `@` character.
-                            return value.slice(1);
-                        }
-                        // Parse object and array literals.
-                        if (value == "[") {
-                            // Parses a JSON array, returning a new JavaScript array.
-                            results = [];
-                            for (;; hasMembers || (hasMembers = true)) {
-                                value = lex();
-                                // A closing square bracket marks the end of the array literal.
-                                if (value == "]") {
-                                    break;
-                                }
-                                // If the array literal contains elements, the current token
-                                // should be a comma separating the previous element from the
-                                // next.
-                                if (hasMembers) {
-                                    if (value == ",") {
-                                        value = lex();
-                                        if (value == "]") {
-                                            // Unexpected trailing `,` in array literal.
-                                            abort();
-                                        }
-                                    } else {
-                                        // A `,` must separate each array element.
-                                        abort();
-                                    }
-                                }
-                                // Elisions and leading commas are not permitted.
-                                if (value == ",") {
-                                    abort();
-                                }
-                                results.push(get(value));
-                            }
-                            return results;
-                        } else if (value == "{") {
-                            // Parses a JSON object, returning a new JavaScript object.
-                            results = {};
-                            for (;; hasMembers || (hasMembers = true)) {
-                                value = lex();
-                                // A closing curly brace marks the end of the object literal.
-                                if (value == "}") {
-                                    break;
-                                }
-                                // If the object literal contains members, the current token
-                                // should be a comma separator.
-                                if (hasMembers) {
-                                    if (value == ",") {
-                                        value = lex();
-                                        if (value == "}") {
-                                            // Unexpected trailing `,` in object literal.
-                                            abort();
-                                        }
-                                    } else {
-                                        // A `,` must separate each object member.
-                                        abort();
-                                    }
-                                }
-                                // Leading commas are not permitted, object property names must be
-                                // double-quoted strings, and a `:` must separate each property
-                                // name and value.
-                                if (value == "," || typeof value != "string" || (charIndexBuggy ? value.charAt(0) : value[0]) != "@" || lex() != ":") {
-                                    abort();
-                                }
-                                results[value.slice(1)] = get(lex());
-                            }
-                            return results;
-                        }
-                        // Unexpected token encountered.
-                        abort();
-                    }
-                    return value;
-                };
-
-                // Internal: Updates a traversed object member.
-                var update = function (source, property, callback) {
-                    var element = walk(source, property, callback);
-                    if (element === undef) {
-                        delete source[property];
-                    } else {
-                        source[property] = element;
-                    }
-                };
-
-                // Internal: Recursively traverses a parsed JSON object, invoking the
-                // `callback` function for each value. This is an implementation of the
-                // `Walk(holder, name)` operation defined in ES 5.1 section 15.12.2.
-                var walk = function (source, property, callback) {
-                    var value = source[property], length;
-                    if (typeof value == "object" && value) {
-                        // `forEach` can't be used to traverse an array in Opera <= 8.54
-                        // because its `Object#hasOwnProperty` implementation returns `false`
-                        // for array indices (e.g., `![1, 2, 3].hasOwnProperty("0")`).
-                        if (getClass.call(value) == arrayClass) {
-                            for (length = value.length; length--;) {
-                                update(value, length, callback);
-                            }
-                        } else {
-                            forEach(value, function (property) {
-                                update(value, property, callback);
-                            });
-                        }
-                    }
-                    return callback.call(source, property, value);
-                };
-
-                // Public: `JSON.parse`. See ES 5.1 section 15.12.2.
-                exports.parse = function (source, callback) {
-                    var result, value;
-                    Index = 0;
-                    Source = "" + source;
-                    result = get(lex());
-                    // If a JSON string contains multiple tokens, it is invalid.
-                    if (lex() != "$") {
-                        abort();
-                    }
-                    // Reset the parser state.
-                    Index = Source = null;
-                    return callback && getClass.call(callback) == functionClass ? walk((value = {}, value[""] = result, value), "", callback) : result;
-                };
-            }
-        }
-
-        exports["runInContext"] = runInContext;
-        return exports;
-    }
-
-    if (freeExports && !isLoader) {
-        // Export for CommonJS environments.
-        runInContext(root, freeExports);
-    } else {
-        // Export for web browsers and JavaScript engines.
-        var nativeJSON = root.JSON,
-            previousJSON = root["JSON3"],
-            isRestored = false;
-
-        var JSON3 = runInContext(root, (root["JSON3"] = {
-            // Public: Restores the original value of the global `JSON` object and
-            // returns a reference to the `JSON3` object.
-            "noConflict": function () {
-                if (!isRestored) {
-                    isRestored = true;
-                    root.JSON = nativeJSON;
-                    root["JSON3"] = previousJSON;
-                    nativeJSON = previousJSON = null;
-                }
-                return JSON3;
-            }
-        }));
-
-        root.JSON = {
-            "parse": JSON3.parse,
-            "stringify": JSON3.stringify
-        };
-    }
-
-    // Export for asynchronous module loaders.
-    if (isLoader) {
-        define(function () {
-            return JSON3;
-        });
-    }
-}).call(this);
-;
 /* @preserve
  * The MIT License (MIT)
  * 
@@ -995,7 +23,7 @@
  * 
  */
 /**
- * bluebird build version 3.5.0
+ * bluebird build version 3.5.1
  * Features enabled: core, race, call_get, generators, map, nodeify, promisify, props, reduce, settle, some, using, timers, filter, any, each
 */
 !function(e){if("object"==typeof exports&&"undefined"!=typeof module)module.exports=e();else if("function"==typeof define&&define.amd)define([],e);else{var f;"undefined"!=typeof window?f=window:"undefined"!=typeof global?f=global:"undefined"!=typeof self&&(f=self),f.Promise=e()}}(function(){var define,module,exports;return (function e(t,n,r){function s(o,u){if(!n[o]){if(!t[o]){var a=typeof _dereq_=="function"&&_dereq_;if(!u&&a)return a(o,!0);if(i)return i(o,!0);var f=new Error("Cannot find module '"+o+"'");throw f.code="MODULE_NOT_FOUND",f}var l=n[o]={exports:{}};t[o][0].call(l.exports,function(e){var n=t[o][1][e];return s(n?n:e)},l,l.exports,e,t,n,r)}return n[o].exports}var i=typeof _dereq_=="function"&&_dereq_;for(var o=0;o<r.length;o++)s(r[o]);return s})({1:[function(_dereq_,module,exports){
@@ -1678,7 +706,10 @@ Promise.prototype.suppressUnhandledRejections = function() {
 Promise.prototype._ensurePossibleRejectionHandled = function () {
     if ((this._bitField & 524288) !== 0) return;
     this._setRejectionIsUnhandled();
-    async.invokeLater(this._notifyUnhandledRejection, this, undefined);
+    var self = this;
+    setTimeout(function() {
+        self._notifyUnhandledRejection();
+    }, 1);
 };
 
 Promise.prototype._notifyUnhandledRejectionIsHandled = function () {
@@ -4468,7 +3499,7 @@ _dereq_("./synchronous_inspection")(Promise);
 _dereq_("./join")(
     Promise, PromiseArray, tryConvertToPromise, INTERNAL, async, getDomain);
 Promise.Promise = Promise;
-Promise.version = "3.5.0";
+Promise.version = "3.5.1";
 _dereq_('./map.js')(Promise, PromiseArray, apiRejection, tryConvertToPromise, INTERNAL, debug);
 _dereq_('./call_get.js')(Promise);
 _dereq_('./using.js')(Promise, apiRejection, tryConvertToPromise, createContext, INTERNAL, debug);
@@ -6432,10 +5463,11 @@ function safeToString(obj) {
 }
 
 function isError(obj) {
-    return obj !== null &&
+    return obj instanceof Error ||
+        (obj !== null &&
            typeof obj === "object" &&
            typeof obj.message === "string" &&
-           typeof obj.name === "string";
+           typeof obj.name === "string");
 }
 
 function markAsOriginatingFromRejection(e) {
@@ -6590,364 +5622,1788 @@ module.exports = ret;
 },{"./es5":13}]},{},[4])(4)
 });                    ;if (typeof window !== 'undefined' && window !== null) {                               window.P = window.Promise;                                                     } else if (typeof self !== 'undefined' && self !== null) {                             self.P = self.Promise;                                                         }
 ;
-(function() {
-  'use strict';
+/*! JSON v3.3.2 | http://bestiejs.github.io/json3 | Copyright 2012-2014, Kit Cambridge | http://kit.mit-license.org */
+;(function () {
+  // Detect the `define` function exposed by asynchronous module loaders. The
+  // strict `define` check is necessary for compatibility with `r.js`.
+  var isLoader = typeof define === "function" && define.amd;
 
-  if (self.fetch) {
-    return
+  // A set of types used to distinguish objects from primitives.
+  var objectTypes = {
+    "function": true,
+    "object": true
+  };
+
+  // Detect the `exports` object exposed by CommonJS implementations.
+  var freeExports = objectTypes[typeof exports] && exports && !exports.nodeType && exports;
+
+  // Use the `global` object exposed by Node (including Browserify via
+  // `insert-module-globals`), Narwhal, and Ringo as the default context,
+  // and the `window` object in browsers. Rhino exports a `global` function
+  // instead.
+  var root = objectTypes[typeof window] && window || this,
+      freeGlobal = freeExports && objectTypes[typeof module] && module && !module.nodeType && typeof global == "object" && global;
+
+  if (freeGlobal && (freeGlobal["global"] === freeGlobal || freeGlobal["window"] === freeGlobal || freeGlobal["self"] === freeGlobal)) {
+    root = freeGlobal;
   }
 
-  function normalizeName(name) {
-    if (typeof name !== 'string') {
-      name = name.toString();
+  // Public: Initializes JSON 3 using the given `context` object, attaching the
+  // `stringify` and `parse` functions to the specified `exports` object.
+  function runInContext(context, exports) {
+    context || (context = root["Object"]());
+    exports || (exports = root["Object"]());
+
+    // Native constructor aliases.
+    var Number = context["Number"] || root["Number"],
+        String = context["String"] || root["String"],
+        Object = context["Object"] || root["Object"],
+        Date = context["Date"] || root["Date"],
+        SyntaxError = context["SyntaxError"] || root["SyntaxError"],
+        TypeError = context["TypeError"] || root["TypeError"],
+        Math = context["Math"] || root["Math"],
+        nativeJSON = context["JSON"] || root["JSON"];
+
+    // Delegate to the native `stringify` and `parse` implementations.
+    if (typeof nativeJSON == "object" && nativeJSON) {
+      exports.stringify = nativeJSON.stringify;
+      exports.parse = nativeJSON.parse;
     }
-    if (/[^a-z0-9\-#$%&'*+.\^_`|~]/i.test(name)) {
-      throw new TypeError('Invalid character in header field name')
-    }
-    return name.toLowerCase()
-  }
 
-  function normalizeValue(value) {
-    if (typeof value !== 'string') {
-      value = value.toString();
-    }
-    return value
-  }
+    // Convenience aliases.
+    var objectProto = Object.prototype,
+        getClass = objectProto.toString,
+        isProperty, forEach, undef;
 
-  function Headers(headers) {
-    this.map = {}
+    // Test the `Date#getUTC*` methods. Based on work by @Yaffle.
+    var isExtended = new Date(-3509827334573292);
+    try {
+      // The `getUTCFullYear`, `Month`, and `Date` methods return nonsensical
+      // results for certain dates in Opera >= 10.53.
+      isExtended = isExtended.getUTCFullYear() == -109252 && isExtended.getUTCMonth() === 0 && isExtended.getUTCDate() === 1 &&
+        // Safari < 2.0.2 stores the internal millisecond time value correctly,
+        // but clips the values returned by the date methods to the range of
+        // signed 32-bit integers ([-2 ** 31, 2 ** 31 - 1]).
+        isExtended.getUTCHours() == 10 && isExtended.getUTCMinutes() == 37 && isExtended.getUTCSeconds() == 6 && isExtended.getUTCMilliseconds() == 708;
+    } catch (exception) {}
 
-    var self = this
-    if (headers instanceof Headers) {
-      headers.forEach(function(name, values) {
-        values.forEach(function(value) {
-          self.append(name, value)
-        })
-      })
-
-    } else if (headers) {
-      Object.getOwnPropertyNames(headers).forEach(function(name) {
-        self.append(name, headers[name])
-      })
-    }
-  }
-
-  Headers.prototype.append = function(name, value) {
-    name = normalizeName(name)
-    value = normalizeValue(value)
-    var list = this.map[name]
-    if (!list) {
-      list = []
-      this.map[name] = list
-    }
-    list.push(value)
-  }
-
-  Headers.prototype['delete'] = function(name) {
-    delete this.map[normalizeName(name)]
-  }
-
-  Headers.prototype.get = function(name) {
-    var values = this.map[normalizeName(name)]
-    return values ? values[0] : null
-  }
-
-  Headers.prototype.getAll = function(name) {
-    return this.map[normalizeName(name)] || []
-  }
-
-  Headers.prototype.has = function(name) {
-    return this.map.hasOwnProperty(normalizeName(name))
-  }
-
-  Headers.prototype.set = function(name, value) {
-    this.map[normalizeName(name)] = [normalizeValue(value)]
-  }
-
-  // Instead of iterable for now.
-  Headers.prototype.forEach = function(callback) {
-    var self = this
-    Object.getOwnPropertyNames(this.map).forEach(function(name) {
-      callback(name, self.map[name])
-    })
-  }
-
-  function consumed(body) {
-    if (body.bodyUsed) {
-      return fetch.Promise.reject(new TypeError('Already read'))
-    }
-    body.bodyUsed = true
-  }
-
-  function fileReaderReady(reader) {
-    return new fetch.Promise(function(resolve, reject) {
-      reader.onload = function() {
-        resolve(reader.result)
+    // Internal: Determines whether the native `JSON.stringify` and `parse`
+    // implementations are spec-compliant. Based on work by Ken Snyder.
+    function has(name) {
+      if (has[name] !== undef) {
+        // Return cached feature test result.
+        return has[name];
       }
-      reader.onerror = function() {
-        reject(reader.error)
-      }
-    })
-  }
-
-  function readBlobAsArrayBuffer(blob) {
-    var reader = new FileReader()
-    reader.readAsArrayBuffer(blob)
-    return fileReaderReady(reader)
-  }
-
-  function readBlobAsText(blob) {
-    var reader = new FileReader()
-    reader.readAsText(blob)
-    return fileReaderReady(reader)
-  }
-
-  var support = {
-    blob: 'FileReader' in self && 'Blob' in self && (function() {
-      try {
-        new Blob();
-        return true
-      } catch(e) {
-        return false
-      }
-    })(),
-    formData: 'FormData' in self
-  }
-
-  function Body() {
-    this.bodyUsed = false
-
-
-    this._initBody = function(body) {
-      this._bodyInit = body
-      if (typeof body === 'string') {
-        this._bodyText = body
-      } else if (support.blob && Blob.prototype.isPrototypeOf(body)) {
-        this._bodyBlob = body
-      } else if (support.formData && FormData.prototype.isPrototypeOf(body)) {
-        this._bodyFormData = body
-      } else if (!body) {
-        this._bodyText = ''
+      var isSupported;
+      if (name == "bug-string-char-index") {
+        // IE <= 7 doesn't support accessing string characters using square
+        // bracket notation. IE 8 only supports this for primitives.
+        isSupported = "a"[0] != "a";
+      } else if (name == "json") {
+        // Indicates whether both `JSON.stringify` and `JSON.parse` are
+        // supported.
+        isSupported = has("json-stringify") && has("json-parse");
       } else {
-        throw new Error('unsupported BodyInit type')
+        var value, serialized = '{"a":[1,true,false,null,"\\u0000\\b\\n\\f\\r\\t"]}';
+        // Test `JSON.stringify`.
+        if (name == "json-stringify") {
+          var stringify = exports.stringify, stringifySupported = typeof stringify == "function" && isExtended;
+          if (stringifySupported) {
+            // A test function object with a custom `toJSON` method.
+            (value = function () {
+              return 1;
+            }).toJSON = value;
+            try {
+              stringifySupported =
+                // Firefox 3.1b1 and b2 serialize string, number, and boolean
+                // primitives as object literals.
+                stringify(0) === "0" &&
+                // FF 3.1b1, b2, and JSON 2 serialize wrapped primitives as object
+                // literals.
+                stringify(new Number()) === "0" &&
+                stringify(new String()) == '""' &&
+                // FF 3.1b1, 2 throw an error if the value is `null`, `undefined`, or
+                // does not define a canonical JSON representation (this applies to
+                // objects with `toJSON` properties as well, *unless* they are nested
+                // within an object or array).
+                stringify(getClass) === undef &&
+                // IE 8 serializes `undefined` as `"undefined"`. Safari <= 5.1.7 and
+                // FF 3.1b3 pass this test.
+                stringify(undef) === undef &&
+                // Safari <= 5.1.7 and FF 3.1b3 throw `Error`s and `TypeError`s,
+                // respectively, if the value is omitted entirely.
+                stringify() === undef &&
+                // FF 3.1b1, 2 throw an error if the given value is not a number,
+                // string, array, object, Boolean, or `null` literal. This applies to
+                // objects with custom `toJSON` methods as well, unless they are nested
+                // inside object or array literals. YUI 3.0.0b1 ignores custom `toJSON`
+                // methods entirely.
+                stringify(value) === "1" &&
+                stringify([value]) == "[1]" &&
+                // Prototype <= 1.6.1 serializes `[undefined]` as `"[]"` instead of
+                // `"[null]"`.
+                stringify([undef]) == "[null]" &&
+                // YUI 3.0.0b1 fails to serialize `null` literals.
+                stringify(null) == "null" &&
+                // FF 3.1b1, 2 halts serialization if an array contains a function:
+                // `[1, true, getClass, 1]` serializes as "[1,true,],". FF 3.1b3
+                // elides non-JSON values from objects and arrays, unless they
+                // define custom `toJSON` methods.
+                stringify([undef, getClass, null]) == "[null,null,null]" &&
+                // Simple serialization test. FF 3.1b1 uses Unicode escape sequences
+                // where character escape codes are expected (e.g., `\b` => `\u0008`).
+                stringify({ "a": [value, true, false, null, "\x00\b\n\f\r\t"] }) == serialized &&
+                // FF 3.1b1 and b2 ignore the `filter` and `width` arguments.
+                stringify(null, value) === "1" &&
+                stringify([1, 2], null, 1) == "[\n 1,\n 2\n]" &&
+                // JSON 2, Prototype <= 1.7, and older WebKit builds incorrectly
+                // serialize extended years.
+                stringify(new Date(-8.64e15)) == '"-271821-04-20T00:00:00.000Z"' &&
+                // The milliseconds are optional in ES 5, but required in 5.1.
+                stringify(new Date(8.64e15)) == '"+275760-09-13T00:00:00.000Z"' &&
+                // Firefox <= 11.0 incorrectly serializes years prior to 0 as negative
+                // four-digit years instead of six-digit years. Credits: @Yaffle.
+                stringify(new Date(-621987552e5)) == '"-000001-01-01T00:00:00.000Z"' &&
+                // Safari <= 5.1.5 and Opera >= 10.53 incorrectly serialize millisecond
+                // values less than 1000. Credits: @Yaffle.
+                stringify(new Date(-1)) == '"1969-12-31T23:59:59.999Z"';
+            } catch (exception) {
+              stringifySupported = false;
+            }
+          }
+          isSupported = stringifySupported;
+        }
+        // Test `JSON.parse`.
+        if (name == "json-parse") {
+          var parse = exports.parse;
+          if (typeof parse == "function") {
+            try {
+              // FF 3.1b1, b2 will throw an exception if a bare literal is provided.
+              // Conforming implementations should also coerce the initial argument to
+              // a string prior to parsing.
+              if (parse("0") === 0 && !parse(false)) {
+                // Simple parsing test.
+                value = parse(serialized);
+                var parseSupported = value["a"].length == 5 && value["a"][0] === 1;
+                if (parseSupported) {
+                  try {
+                    // Safari <= 5.1.2 and FF 3.1b1 allow unescaped tabs in strings.
+                    parseSupported = !parse('"\t"');
+                  } catch (exception) {}
+                  if (parseSupported) {
+                    try {
+                      // FF 4.0 and 4.0.1 allow leading `+` signs and leading
+                      // decimal points. FF 4.0, 4.0.1, and IE 9-10 also allow
+                      // certain octal literals.
+                      parseSupported = parse("01") !== 1;
+                    } catch (exception) {}
+                  }
+                  if (parseSupported) {
+                    try {
+                      // FF 4.0, 4.0.1, and Rhino 1.7R3-R4 allow trailing decimal
+                      // points. These environments, along with FF 3.1b1 and 2,
+                      // also allow trailing commas in JSON objects and arrays.
+                      parseSupported = parse("1.") !== 1;
+                    } catch (exception) {}
+                  }
+                }
+              }
+            } catch (exception) {
+              parseSupported = false;
+            }
+          }
+          isSupported = parseSupported;
+        }
       }
+      return has[name] = !!isSupported;
     }
 
-    if (support.blob) {
-      this.blob = function() {
-        var rejected = consumed(this)
-        if (rejected) {
-          return rejected
-        }
+    if (!has("json")) {
+      // Common `[[Class]]` name aliases.
+      var functionClass = "[object Function]",
+          dateClass = "[object Date]",
+          numberClass = "[object Number]",
+          stringClass = "[object String]",
+          arrayClass = "[object Array]",
+          booleanClass = "[object Boolean]";
 
-        if (this._bodyBlob) {
-          return fetch.Promise.resolve(this._bodyBlob)
-        } else if (this._bodyFormData) {
-          throw new Error('could not read FormData body as blob')
+      // Detect incomplete support for accessing string characters by index.
+      var charIndexBuggy = has("bug-string-char-index");
+
+      // Define additional utility methods if the `Date` methods are buggy.
+      if (!isExtended) {
+        var floor = Math.floor;
+        // A mapping between the months of the year and the number of days between
+        // January 1st and the first of the respective month.
+        var Months = [0, 31, 59, 90, 120, 151, 181, 212, 243, 273, 304, 334];
+        // Internal: Calculates the number of days between the Unix epoch and the
+        // first day of the given month.
+        var getDay = function (year, month) {
+          return Months[month] + 365 * (year - 1970) + floor((year - 1969 + (month = +(month > 1))) / 4) - floor((year - 1901 + month) / 100) + floor((year - 1601 + month) / 400);
+        };
+      }
+
+      // Internal: Determines if a property is a direct property of the given
+      // object. Delegates to the native `Object#hasOwnProperty` method.
+      if (!(isProperty = objectProto.hasOwnProperty)) {
+        isProperty = function (property) {
+          var members = {}, constructor;
+          if ((members.__proto__ = null, members.__proto__ = {
+            // The *proto* property cannot be set multiple times in recent
+            // versions of Firefox and SeaMonkey.
+            "toString": 1
+          }, members).toString != getClass) {
+            // Safari <= 2.0.3 doesn't implement `Object#hasOwnProperty`, but
+            // supports the mutable *proto* property.
+            isProperty = function (property) {
+              // Capture and break the object's prototype chain (see section 8.6.2
+              // of the ES 5.1 spec). The parenthesized expression prevents an
+              // unsafe transformation by the Closure Compiler.
+              var original = this.__proto__, result = property in (this.__proto__ = null, this);
+              // Restore the original prototype chain.
+              this.__proto__ = original;
+              return result;
+            };
+          } else {
+            // Capture a reference to the top-level `Object` constructor.
+            constructor = members.constructor;
+            // Use the `constructor` property to simulate `Object#hasOwnProperty` in
+            // other environments.
+            isProperty = function (property) {
+              var parent = (this.constructor || constructor).prototype;
+              return property in this && !(property in parent && this[property] === parent[property]);
+            };
+          }
+          members = null;
+          return isProperty.call(this, property);
+        };
+      }
+
+      // Internal: Normalizes the `for...in` iteration algorithm across
+      // environments. Each enumerated key is yielded to a `callback` function.
+      forEach = function (object, callback) {
+        var size = 0, Properties, members, property;
+
+        // Tests for bugs in the current environment's `for...in` algorithm. The
+        // `valueOf` property inherits the non-enumerable flag from
+        // `Object.prototype` in older versions of IE, Netscape, and Mozilla.
+        (Properties = function () {
+          this.valueOf = 0;
+        }).prototype.valueOf = 0;
+
+        // Iterate over a new instance of the `Properties` class.
+        members = new Properties();
+        for (property in members) {
+          // Ignore all properties inherited from `Object.prototype`.
+          if (isProperty.call(members, property)) {
+            size++;
+          }
+        }
+        Properties = members = null;
+
+        // Normalize the iteration algorithm.
+        if (!size) {
+          // A list of non-enumerable properties inherited from `Object.prototype`.
+          members = ["valueOf", "toString", "toLocaleString", "propertyIsEnumerable", "isPrototypeOf", "hasOwnProperty", "constructor"];
+          // IE <= 8, Mozilla 1.0, and Netscape 6.2 ignore shadowed non-enumerable
+          // properties.
+          forEach = function (object, callback) {
+            var isFunction = getClass.call(object) == functionClass, property, length;
+            var hasProperty = !isFunction && typeof object.constructor != "function" && objectTypes[typeof object.hasOwnProperty] && object.hasOwnProperty || isProperty;
+            for (property in object) {
+              // Gecko <= 1.0 enumerates the `prototype` property of functions under
+              // certain conditions; IE does not.
+              if (!(isFunction && property == "prototype") && hasProperty.call(object, property)) {
+                callback(property);
+              }
+            }
+            // Manually invoke the callback for each non-enumerable property.
+            for (length = members.length; property = members[--length]; hasProperty.call(object, property) && callback(property));
+          };
+        } else if (size == 2) {
+          // Safari <= 2.0.4 enumerates shadowed properties twice.
+          forEach = function (object, callback) {
+            // Create a set of iterated properties.
+            var members = {}, isFunction = getClass.call(object) == functionClass, property;
+            for (property in object) {
+              // Store each property name to prevent double enumeration. The
+              // `prototype` property of functions is not enumerated due to cross-
+              // environment inconsistencies.
+              if (!(isFunction && property == "prototype") && !isProperty.call(members, property) && (members[property] = 1) && isProperty.call(object, property)) {
+                callback(property);
+              }
+            }
+          };
         } else {
-          return fetch.Promise.resolve(new Blob([this._bodyText]))
+          // No bugs detected; use the standard `for...in` algorithm.
+          forEach = function (object, callback) {
+            var isFunction = getClass.call(object) == functionClass, property, isConstructor;
+            for (property in object) {
+              if (!(isFunction && property == "prototype") && isProperty.call(object, property) && !(isConstructor = property === "constructor")) {
+                callback(property);
+              }
+            }
+            // Manually invoke the callback for the `constructor` property due to
+            // cross-environment inconsistencies.
+            if (isConstructor || isProperty.call(object, (property = "constructor"))) {
+              callback(property);
+            }
+          };
         }
+        return forEach(object, callback);
+      };
+
+      // Public: Serializes a JavaScript `value` as a JSON string. The optional
+      // `filter` argument may specify either a function that alters how object and
+      // array members are serialized, or an array of strings and numbers that
+      // indicates which properties should be serialized. The optional `width`
+      // argument may be either a string or number that specifies the indentation
+      // level of the output.
+      if (!has("json-stringify")) {
+        // Internal: A map of control characters and their escaped equivalents.
+        var Escapes = {
+          92: "\\\\",
+          34: '\\"',
+          8: "\\b",
+          12: "\\f",
+          10: "\\n",
+          13: "\\r",
+          9: "\\t"
+        };
+
+        // Internal: Converts `value` into a zero-padded string such that its
+        // length is at least equal to `width`. The `width` must be <= 6.
+        var leadingZeroes = "000000";
+        var toPaddedString = function (width, value) {
+          // The `|| 0` expression is necessary to work around a bug in
+          // Opera <= 7.54u2 where `0 == -0`, but `String(-0) !== "0"`.
+          return (leadingZeroes + (value || 0)).slice(-width);
+        };
+
+        // Internal: Double-quotes a string `value`, replacing all ASCII control
+        // characters (characters with code unit values between 0 and 31) with
+        // their escaped equivalents. This is an implementation of the
+        // `Quote(value)` operation defined in ES 5.1 section 15.12.3.
+        var unicodePrefix = "\\u00";
+        var quote = function (value) {
+          var result = '"', index = 0, length = value.length, useCharIndex = !charIndexBuggy || length > 10;
+          var symbols = useCharIndex && (charIndexBuggy ? value.split("") : value);
+          for (; index < length; index++) {
+            var charCode = value.charCodeAt(index);
+            // If the character is a control character, append its Unicode or
+            // shorthand escape sequence; otherwise, append the character as-is.
+            switch (charCode) {
+              case 8: case 9: case 10: case 12: case 13: case 34: case 92:
+                result += Escapes[charCode];
+                break;
+              default:
+                if (charCode < 32) {
+                  result += unicodePrefix + toPaddedString(2, charCode.toString(16));
+                  break;
+                }
+                result += useCharIndex ? symbols[index] : value.charAt(index);
+            }
+          }
+          return result + '"';
+        };
+
+        // Internal: Recursively serializes an object. Implements the
+        // `Str(key, holder)`, `JO(value)`, and `JA(value)` operations.
+        var serialize = function (property, object, callback, properties, whitespace, indentation, stack) {
+          var value, className, year, month, date, time, hours, minutes, seconds, milliseconds, results, element, index, length, prefix, result;
+          try {
+            // Necessary for host object support.
+            value = object[property];
+          } catch (exception) {}
+          if (typeof value == "object" && value) {
+            className = getClass.call(value);
+            if (className == dateClass && !isProperty.call(value, "toJSON")) {
+              if (value > -1 / 0 && value < 1 / 0) {
+                // Dates are serialized according to the `Date#toJSON` method
+                // specified in ES 5.1 section 15.9.5.44. See section 15.9.1.15
+                // for the ISO 8601 date time string format.
+                if (getDay) {
+                  // Manually compute the year, month, date, hours, minutes,
+                  // seconds, and milliseconds if the `getUTC*` methods are
+                  // buggy. Adapted from @Yaffle's `date-shim` project.
+                  date = floor(value / 864e5);
+                  for (year = floor(date / 365.2425) + 1970 - 1; getDay(year + 1, 0) <= date; year++);
+                  for (month = floor((date - getDay(year, 0)) / 30.42); getDay(year, month + 1) <= date; month++);
+                  date = 1 + date - getDay(year, month);
+                  // The `time` value specifies the time within the day (see ES
+                  // 5.1 section 15.9.1.2). The formula `(A % B + B) % B` is used
+                  // to compute `A modulo B`, as the `%` operator does not
+                  // correspond to the `modulo` operation for negative numbers.
+                  time = (value % 864e5 + 864e5) % 864e5;
+                  // The hours, minutes, seconds, and milliseconds are obtained by
+                  // decomposing the time within the day. See section 15.9.1.10.
+                  hours = floor(time / 36e5) % 24;
+                  minutes = floor(time / 6e4) % 60;
+                  seconds = floor(time / 1e3) % 60;
+                  milliseconds = time % 1e3;
+                } else {
+                  year = value.getUTCFullYear();
+                  month = value.getUTCMonth();
+                  date = value.getUTCDate();
+                  hours = value.getUTCHours();
+                  minutes = value.getUTCMinutes();
+                  seconds = value.getUTCSeconds();
+                  milliseconds = value.getUTCMilliseconds();
+                }
+                // Serialize extended years correctly.
+                value = (year <= 0 || year >= 1e4 ? (year < 0 ? "-" : "+") + toPaddedString(6, year < 0 ? -year : year) : toPaddedString(4, year)) +
+                  "-" + toPaddedString(2, month + 1) + "-" + toPaddedString(2, date) +
+                  // Months, dates, hours, minutes, and seconds should have two
+                  // digits; milliseconds should have three.
+                  "T" + toPaddedString(2, hours) + ":" + toPaddedString(2, minutes) + ":" + toPaddedString(2, seconds) +
+                  // Milliseconds are optional in ES 5.0, but required in 5.1.
+                  "." + toPaddedString(3, milliseconds) + "Z";
+              } else {
+                value = null;
+              }
+            } else if (typeof value.toJSON == "function" && ((className != numberClass && className != stringClass && className != arrayClass) || isProperty.call(value, "toJSON"))) {
+              // Prototype <= 1.6.1 adds non-standard `toJSON` methods to the
+              // `Number`, `String`, `Date`, and `Array` prototypes. JSON 3
+              // ignores all `toJSON` methods on these objects unless they are
+              // defined directly on an instance.
+              value = value.toJSON(property);
+            }
+          }
+          if (callback) {
+            // If a replacement function was provided, call it to obtain the value
+            // for serialization.
+            value = callback.call(object, property, value);
+          }
+          if (value === null) {
+            return "null";
+          }
+          className = getClass.call(value);
+          if (className == booleanClass) {
+            // Booleans are represented literally.
+            return "" + value;
+          } else if (className == numberClass) {
+            // JSON numbers must be finite. `Infinity` and `NaN` are serialized as
+            // `"null"`.
+            return value > -1 / 0 && value < 1 / 0 ? "" + value : "null";
+          } else if (className == stringClass) {
+            // Strings are double-quoted and escaped.
+            return quote("" + value);
+          }
+          // Recursively serialize objects and arrays.
+          if (typeof value == "object") {
+            // Check for cyclic structures. This is a linear search; performance
+            // is inversely proportional to the number of unique nested objects.
+            for (length = stack.length; length--;) {
+              if (stack[length] === value) {
+                // Cyclic structures cannot be serialized by `JSON.stringify`.
+                throw TypeError();
+              }
+            }
+            // Add the object to the stack of traversed objects.
+            stack.push(value);
+            results = [];
+            // Save the current indentation level and indent one additional level.
+            prefix = indentation;
+            indentation += whitespace;
+            if (className == arrayClass) {
+              // Recursively serialize array elements.
+              for (index = 0, length = value.length; index < length; index++) {
+                element = serialize(index, value, callback, properties, whitespace, indentation, stack);
+                results.push(element === undef ? "null" : element);
+              }
+              result = results.length ? (whitespace ? "[\n" + indentation + results.join(",\n" + indentation) + "\n" + prefix + "]" : ("[" + results.join(",") + "]")) : "[]";
+            } else {
+              // Recursively serialize object members. Members are selected from
+              // either a user-specified list of property names, or the object
+              // itself.
+              forEach(properties || value, function (property) {
+                var element = serialize(property, value, callback, properties, whitespace, indentation, stack);
+                if (element !== undef) {
+                  // According to ES 5.1 section 15.12.3: "If `gap` {whitespace}
+                  // is not the empty string, let `member` {quote(property) + ":"}
+                  // be the concatenation of `member` and the `space` character."
+                  // The "`space` character" refers to the literal space
+                  // character, not the `space` {width} argument provided to
+                  // `JSON.stringify`.
+                  results.push(quote(property) + ":" + (whitespace ? " " : "") + element);
+                }
+              });
+              result = results.length ? (whitespace ? "{\n" + indentation + results.join(",\n" + indentation) + "\n" + prefix + "}" : ("{" + results.join(",") + "}")) : "{}";
+            }
+            // Remove the object from the traversed object stack.
+            stack.pop();
+            return result;
+          }
+        };
+
+        // Public: `JSON.stringify`. See ES 5.1 section 15.12.3.
+        exports.stringify = function (source, filter, width) {
+          var whitespace, callback, properties, className;
+          if (objectTypes[typeof filter] && filter) {
+            if ((className = getClass.call(filter)) == functionClass) {
+              callback = filter;
+            } else if (className == arrayClass) {
+              // Convert the property names array into a makeshift set.
+              properties = {};
+              for (var index = 0, length = filter.length, value; index < length; value = filter[index++], ((className = getClass.call(value)), className == stringClass || className == numberClass) && (properties[value] = 1));
+            }
+          }
+          if (width) {
+            if ((className = getClass.call(width)) == numberClass) {
+              // Convert the `width` to an integer and create a string containing
+              // `width` number of space characters.
+              if ((width -= width % 1) > 0) {
+                for (whitespace = "", width > 10 && (width = 10); whitespace.length < width; whitespace += " ");
+              }
+            } else if (className == stringClass) {
+              whitespace = width.length <= 10 ? width : width.slice(0, 10);
+            }
+          }
+          // Opera <= 7.54u2 discards the values associated with empty string keys
+          // (`""`) only if they are used directly within an object member list
+          // (e.g., `!("" in { "": 1})`).
+          return serialize("", (value = {}, value[""] = source, value), callback, properties, whitespace, "", []);
+        };
       }
 
-      this.arrayBuffer = function() {
-        return this.blob().then(readBlobAsArrayBuffer)
-      }
+      // Public: Parses a JSON source string.
+      if (!has("json-parse")) {
+        var fromCharCode = String.fromCharCode;
 
-      this.text = function() {
-        var rejected = consumed(this)
-        if (rejected) {
-          return rejected
-        }
+        // Internal: A map of escaped control characters and their unescaped
+        // equivalents.
+        var Unescapes = {
+          92: "\\",
+          34: '"',
+          47: "/",
+          98: "\b",
+          116: "\t",
+          110: "\n",
+          102: "\f",
+          114: "\r"
+        };
 
-        if (this._bodyBlob) {
-          return readBlobAsText(this._bodyBlob)
-        } else if (this._bodyFormData) {
-          throw new Error('could not read FormData body as text')
-        } else {
-          return fetch.Promise.resolve(this._bodyText)
-        }
-      }
-    } else {
-      this.text = function() {
-        var rejected = consumed(this)
-        return rejected ? rejected : fetch.Promise.resolve(this._bodyText)
+        // Internal: Stores the parser state.
+        var Index, Source;
+
+        // Internal: Resets the parser state and throws a `SyntaxError`.
+        var abort = function () {
+          Index = Source = null;
+          throw SyntaxError();
+        };
+
+        // Internal: Returns the next token, or `"$"` if the parser has reached
+        // the end of the source string. A token may be a string, number, `null`
+        // literal, or Boolean literal.
+        var lex = function () {
+          var source = Source, length = source.length, value, begin, position, isSigned, charCode;
+          while (Index < length) {
+            charCode = source.charCodeAt(Index);
+            switch (charCode) {
+              case 9: case 10: case 13: case 32:
+                // Skip whitespace tokens, including tabs, carriage returns, line
+                // feeds, and space characters.
+                Index++;
+                break;
+              case 123: case 125: case 91: case 93: case 58: case 44:
+                // Parse a punctuator token (`{`, `}`, `[`, `]`, `:`, or `,`) at
+                // the current position.
+                value = charIndexBuggy ? source.charAt(Index) : source[Index];
+                Index++;
+                return value;
+              case 34:
+                // `"` delimits a JSON string; advance to the next character and
+                // begin parsing the string. String tokens are prefixed with the
+                // sentinel `@` character to distinguish them from punctuators and
+                // end-of-string tokens.
+                for (value = "@", Index++; Index < length;) {
+                  charCode = source.charCodeAt(Index);
+                  if (charCode < 32) {
+                    // Unescaped ASCII control characters (those with a code unit
+                    // less than the space character) are not permitted.
+                    abort();
+                  } else if (charCode == 92) {
+                    // A reverse solidus (`\`) marks the beginning of an escaped
+                    // control character (including `"`, `\`, and `/`) or Unicode
+                    // escape sequence.
+                    charCode = source.charCodeAt(++Index);
+                    switch (charCode) {
+                      case 92: case 34: case 47: case 98: case 116: case 110: case 102: case 114:
+                        // Revive escaped control characters.
+                        value += Unescapes[charCode];
+                        Index++;
+                        break;
+                      case 117:
+                        // `\u` marks the beginning of a Unicode escape sequence.
+                        // Advance to the first character and validate the
+                        // four-digit code point.
+                        begin = ++Index;
+                        for (position = Index + 4; Index < position; Index++) {
+                          charCode = source.charCodeAt(Index);
+                          // A valid sequence comprises four hexdigits (case-
+                          // insensitive) that form a single hexadecimal value.
+                          if (!(charCode >= 48 && charCode <= 57 || charCode >= 97 && charCode <= 102 || charCode >= 65 && charCode <= 70)) {
+                            // Invalid Unicode escape sequence.
+                            abort();
+                          }
+                        }
+                        // Revive the escaped character.
+                        value += fromCharCode("0x" + source.slice(begin, Index));
+                        break;
+                      default:
+                        // Invalid escape sequence.
+                        abort();
+                    }
+                  } else {
+                    if (charCode == 34) {
+                      // An unescaped double-quote character marks the end of the
+                      // string.
+                      break;
+                    }
+                    charCode = source.charCodeAt(Index);
+                    begin = Index;
+                    // Optimize for the common case where a string is valid.
+                    while (charCode >= 32 && charCode != 92 && charCode != 34) {
+                      charCode = source.charCodeAt(++Index);
+                    }
+                    // Append the string as-is.
+                    value += source.slice(begin, Index);
+                  }
+                }
+                if (source.charCodeAt(Index) == 34) {
+                  // Advance to the next character and return the revived string.
+                  Index++;
+                  return value;
+                }
+                // Unterminated string.
+                abort();
+              default:
+                // Parse numbers and literals.
+                begin = Index;
+                // Advance past the negative sign, if one is specified.
+                if (charCode == 45) {
+                  isSigned = true;
+                  charCode = source.charCodeAt(++Index);
+                }
+                // Parse an integer or floating-point value.
+                if (charCode >= 48 && charCode <= 57) {
+                  // Leading zeroes are interpreted as octal literals.
+                  if (charCode == 48 && ((charCode = source.charCodeAt(Index + 1)), charCode >= 48 && charCode <= 57)) {
+                    // Illegal octal literal.
+                    abort();
+                  }
+                  isSigned = false;
+                  // Parse the integer component.
+                  for (; Index < length && ((charCode = source.charCodeAt(Index)), charCode >= 48 && charCode <= 57); Index++);
+                  // Floats cannot contain a leading decimal point; however, this
+                  // case is already accounted for by the parser.
+                  if (source.charCodeAt(Index) == 46) {
+                    position = ++Index;
+                    // Parse the decimal component.
+                    for (; position < length && ((charCode = source.charCodeAt(position)), charCode >= 48 && charCode <= 57); position++);
+                    if (position == Index) {
+                      // Illegal trailing decimal.
+                      abort();
+                    }
+                    Index = position;
+                  }
+                  // Parse exponents. The `e` denoting the exponent is
+                  // case-insensitive.
+                  charCode = source.charCodeAt(Index);
+                  if (charCode == 101 || charCode == 69) {
+                    charCode = source.charCodeAt(++Index);
+                    // Skip past the sign following the exponent, if one is
+                    // specified.
+                    if (charCode == 43 || charCode == 45) {
+                      Index++;
+                    }
+                    // Parse the exponential component.
+                    for (position = Index; position < length && ((charCode = source.charCodeAt(position)), charCode >= 48 && charCode <= 57); position++);
+                    if (position == Index) {
+                      // Illegal empty exponent.
+                      abort();
+                    }
+                    Index = position;
+                  }
+                  // Coerce the parsed value to a JavaScript number.
+                  return +source.slice(begin, Index);
+                }
+                // A negative sign may only precede numbers.
+                if (isSigned) {
+                  abort();
+                }
+                // `true`, `false`, and `null` literals.
+                if (source.slice(Index, Index + 4) == "true") {
+                  Index += 4;
+                  return true;
+                } else if (source.slice(Index, Index + 5) == "false") {
+                  Index += 5;
+                  return false;
+                } else if (source.slice(Index, Index + 4) == "null") {
+                  Index += 4;
+                  return null;
+                }
+                // Unrecognized token.
+                abort();
+            }
+          }
+          // Return the sentinel `$` character if the parser has reached the end
+          // of the source string.
+          return "$";
+        };
+
+        // Internal: Parses a JSON `value` token.
+        var get = function (value) {
+          var results, hasMembers;
+          if (value == "$") {
+            // Unexpected end of input.
+            abort();
+          }
+          if (typeof value == "string") {
+            if ((charIndexBuggy ? value.charAt(0) : value[0]) == "@") {
+              // Remove the sentinel `@` character.
+              return value.slice(1);
+            }
+            // Parse object and array literals.
+            if (value == "[") {
+              // Parses a JSON array, returning a new JavaScript array.
+              results = [];
+              for (;; hasMembers || (hasMembers = true)) {
+                value = lex();
+                // A closing square bracket marks the end of the array literal.
+                if (value == "]") {
+                  break;
+                }
+                // If the array literal contains elements, the current token
+                // should be a comma separating the previous element from the
+                // next.
+                if (hasMembers) {
+                  if (value == ",") {
+                    value = lex();
+                    if (value == "]") {
+                      // Unexpected trailing `,` in array literal.
+                      abort();
+                    }
+                  } else {
+                    // A `,` must separate each array element.
+                    abort();
+                  }
+                }
+                // Elisions and leading commas are not permitted.
+                if (value == ",") {
+                  abort();
+                }
+                results.push(get(value));
+              }
+              return results;
+            } else if (value == "{") {
+              // Parses a JSON object, returning a new JavaScript object.
+              results = {};
+              for (;; hasMembers || (hasMembers = true)) {
+                value = lex();
+                // A closing curly brace marks the end of the object literal.
+                if (value == "}") {
+                  break;
+                }
+                // If the object literal contains members, the current token
+                // should be a comma separator.
+                if (hasMembers) {
+                  if (value == ",") {
+                    value = lex();
+                    if (value == "}") {
+                      // Unexpected trailing `,` in object literal.
+                      abort();
+                    }
+                  } else {
+                    // A `,` must separate each object member.
+                    abort();
+                  }
+                }
+                // Leading commas are not permitted, object property names must be
+                // double-quoted strings, and a `:` must separate each property
+                // name and value.
+                if (value == "," || typeof value != "string" || (charIndexBuggy ? value.charAt(0) : value[0]) != "@" || lex() != ":") {
+                  abort();
+                }
+                results[value.slice(1)] = get(lex());
+              }
+              return results;
+            }
+            // Unexpected token encountered.
+            abort();
+          }
+          return value;
+        };
+
+        // Internal: Updates a traversed object member.
+        var update = function (source, property, callback) {
+          var element = walk(source, property, callback);
+          if (element === undef) {
+            delete source[property];
+          } else {
+            source[property] = element;
+          }
+        };
+
+        // Internal: Recursively traverses a parsed JSON object, invoking the
+        // `callback` function for each value. This is an implementation of the
+        // `Walk(holder, name)` operation defined in ES 5.1 section 15.12.2.
+        var walk = function (source, property, callback) {
+          var value = source[property], length;
+          if (typeof value == "object" && value) {
+            // `forEach` can't be used to traverse an array in Opera <= 8.54
+            // because its `Object#hasOwnProperty` implementation returns `false`
+            // for array indices (e.g., `![1, 2, 3].hasOwnProperty("0")`).
+            if (getClass.call(value) == arrayClass) {
+              for (length = value.length; length--;) {
+                update(value, length, callback);
+              }
+            } else {
+              forEach(value, function (property) {
+                update(value, property, callback);
+              });
+            }
+          }
+          return callback.call(source, property, value);
+        };
+
+        // Public: `JSON.parse`. See ES 5.1 section 15.12.2.
+        exports.parse = function (source, callback) {
+          var result, value;
+          Index = 0;
+          Source = "" + source;
+          result = get(lex());
+          // If a JSON string contains multiple tokens, it is invalid.
+          if (lex() != "$") {
+            abort();
+          }
+          // Reset the parser state.
+          Index = Source = null;
+          return callback && getClass.call(callback) == functionClass ? walk((value = {}, value[""] = result, value), "", callback) : result;
+        };
       }
     }
 
-    if (support.formData) {
-      this.formData = function() {
-        return this.text().then(decode)
-      }
-    }
-
-    this.json = function() {
-      return this.text().then(function (text) {
-          return JSON.parse(text);
-      });
-    }
-
-    return this
+    exports["runInContext"] = runInContext;
+    return exports;
   }
 
-  // HTTP methods whose capitalization should be normalized
-  var methods = ['DELETE', 'GET', 'HEAD', 'OPTIONS', 'POST', 'PUT']
+  if (freeExports && !isLoader) {
+    // Export for CommonJS environments.
+    runInContext(root, freeExports);
+  } else {
+    // Export for web browsers and JavaScript engines.
+    var nativeJSON = root.JSON,
+        previousJSON = root["JSON3"],
+        isRestored = false;
 
-  function normalizeMethod(method) {
-    var upcased = method.toUpperCase()
-    return (methods.indexOf(upcased) > -1) ? upcased : method
-  }
-
-  function Request(url, options) {
-    options = options || {}
-    this.url = url
-
-    this.credentials = options.credentials || 'omit'
-    this.headers = new Headers(options.headers)
-    this.method = normalizeMethod(options.method || 'GET')
-    this.mode = options.mode || null
-    this.referrer = null
-
-    if ((this.method === 'GET' || this.method === 'HEAD') && options.body) {
-      throw new TypeError('Body not allowed for GET or HEAD requests')
-    }
-    this._initBody(options.body)
-  }
-
-  function decode(body) {
-    var form = new FormData()
-    body.trim().split('&').forEach(function(bytes) {
-      if (bytes) {
-        var split = bytes.split('=')
-        var name = split.shift().replace(/\+/g, ' ')
-        var value = split.join('=').replace(/\+/g, ' ')
-        form.append(decodeURIComponent(name), decodeURIComponent(value))
-      }
-    })
-    return form
-  }
-
-  function headers(xhr) {
-    var head = new Headers()
-    var pairs = xhr.getAllResponseHeaders().trim().split('\n')
-    pairs.forEach(function(header) {
-      var split = header.trim().split(':')
-      var key = split.shift().trim()
-      var value = split.join(':').trim()
-      head.append(key, value)
-    })
-    return head
-  }
-
-  var noXhrPatch =
-    typeof window !== 'undefined' && !!window.ActiveXObject &&
-      !(window.XMLHttpRequest && (new XMLHttpRequest).dispatchEvent);
-
-  function getXhr() {
-    // from backbone.js 1.1.2
-    // https://github.com/jashkenas/backbone/blob/1.1.2/backbone.js#L1181
-    if (noXhrPatch && !(/^(get|post|head|put|delete|options)$/i.test(this.method))) {
-      this.usingActiveXhr = true;
-      return new ActiveXObject("Microsoft.XMLHTTP");
-    }
-    return new XMLHttpRequest();
-  }
-
-  Body.call(Request.prototype)
-
-  function Response(bodyInit, options) {
-    if (!options) {
-      options = {}
-    }
-
-    this._initBody(bodyInit)
-    this.type = 'default'
-    this.url = null
-    this.status = options.status
-    this.ok = this.status >= 200 && this.status < 300
-    this.statusText = options.statusText
-    this.headers = options.headers instanceof Headers ? options.headers : new Headers(options.headers)
-    this.url = options.url || ''
-  }
-
-  Body.call(Response.prototype)
-
-  self.Headers = Headers;
-  self.Request = Request;
-  self.Response = Response;
-
-  self.fetch = function(input, init) {
-    // TODO: Request constructor should accept input, init
-    var request
-    if (Request.prototype.isPrototypeOf(input) && !init) {
-      request = input
-    } else {
-      request = new Request(input, init)
-    }
-
-    return new fetch.Promise(function(resolve, reject) {
-      var xhr = getXhr();
-      if (request.credentials === 'cors') {
-        xhr.withCredentials = true;
-      }
-
-      function responseURL() {
-        if ('responseURL' in xhr) {
-          return xhr.responseURL
+    var JSON3 = runInContext(root, (root["JSON3"] = {
+      // Public: Restores the original value of the global `JSON` object and
+      // returns a reference to the `JSON3` object.
+      "noConflict": function () {
+        if (!isRestored) {
+          isRestored = true;
+          root.JSON = nativeJSON;
+          root["JSON3"] = previousJSON;
+          nativeJSON = previousJSON = null;
         }
-
-        // Avoid security warnings on getResponseHeader when not allowed by CORS
-        if (/^X-Request-URL:/m.test(xhr.getAllResponseHeaders())) {
-          return xhr.getResponseHeader('X-Request-URL')
-        }
-
-        return;
+        return JSON3;
       }
+    }));
 
-      function onload() {
-        if (xhr.readyState !== 4) {
-          return
-        }
-        var status = (xhr.status === 1223) ? 204 : xhr.status
-        if (status < 100 || status > 599) {
-          reject(new TypeError('Network request failed'))
-          return
-        }
-        var options = {
-          status: status,
-          statusText: xhr.statusText,
-          headers: headers(xhr),
-          url: responseURL()
-        }
-        var body = 'response' in xhr ? xhr.response : xhr.responseText;
-        resolve(new Response(body, options))
-      }
-      xhr.onreadystatechange = onload;
-      if (!self.usingActiveXhr) {
-        xhr.onload = onload;
-        xhr.onerror = function() {
-          reject(new TypeError('Network request failed'))
-        }
-      }
-
-      xhr.open(request.method, request.url, true)
-
-      if ('responseType' in xhr && support.blob) {
-        xhr.responseType = 'blob'
-      }
-
-      request.headers.forEach(function(name, values) {
-        values.forEach(function(value) {
-          xhr.setRequestHeader(name, value)
-        })
-      })
-
-      xhr.send(typeof request._bodyInit === 'undefined' ? null : request._bodyInit)
-    })
+    root.JSON = {
+      "parse": JSON3.parse,
+      "stringify": JSON3.stringify
+    };
   }
-  fetch.Promise = self.Promise; // you could change it to your favorite alternative
-  self.fetch.polyfill = true
-})();
 
+  // Export for asynchronous module loaders.
+  if (isLoader) {
+    define(function () {
+      return JSON3;
+    });
+  }
+}).call(this);
+
+;
+(function webpackUniversalModuleDefinition(root, factory) {
+	if(typeof exports === 'object' && typeof module === 'object')
+		module.exports = factory();
+	else if(typeof define === 'function' && define.amd)
+		define([], factory);
+	else if(typeof exports === 'object')
+		exports["fetch"] = factory();
+	else
+		root["fetch"] = factory();
+})(this, function() {
+return /******/ (function(modules) { // webpackBootstrap
+/******/ 	// The module cache
+/******/ 	var installedModules = {};
+
+/******/ 	// The require function
+/******/ 	function __webpack_require__(moduleId) {
+
+/******/ 		// Check if module is in cache
+/******/ 		if(installedModules[moduleId])
+/******/ 			return installedModules[moduleId].exports;
+
+/******/ 		// Create a new module (and put it into the cache)
+/******/ 		var module = installedModules[moduleId] = {
+/******/ 			exports: {},
+/******/ 			id: moduleId,
+/******/ 			loaded: false
+/******/ 		};
+
+/******/ 		// Execute the module function
+/******/ 		modules[moduleId].call(module.exports, module, module.exports, __webpack_require__);
+
+/******/ 		// Flag the module as loaded
+/******/ 		module.loaded = true;
+
+/******/ 		// Return the exports of the module
+/******/ 		return module.exports;
+/******/ 	}
+
+
+/******/ 	// expose the modules object (__webpack_modules__)
+/******/ 	__webpack_require__.m = modules;
+
+/******/ 	// expose the module cache
+/******/ 	__webpack_require__.c = installedModules;
+
+/******/ 	// __webpack_public_path__
+/******/ 	__webpack_require__.p = "";
+
+/******/ 	// Load entry module and return exports
+/******/ 	return __webpack_require__(0);
+/******/ })
+/************************************************************************/
+/******/ ([
+/* 0 */
+/***/ function(module, exports, __webpack_require__) {
+
+	var Request = __webpack_require__(1)
+	var Response = __webpack_require__(5)
+	var Headers = __webpack_require__(2)
+	var Transport = __webpack_require__(6)
+
+	if (![].forEach) {
+	    Array.prototype.forEach = function (fn, scope) {
+	        'use strict'
+	        var i, len
+	        for (i = 0, len = this.length; i < len; ++i) {
+	            if (i in this) {
+	                fn.call(scope, this[i], i, this)
+	            }
+	        }
+	    }
+	}
+	if (!'司徒正美'.trim) {
+	    var rtrim = /^[\s\uFEFF\xA0]+|[\s\uFEFF\xA0]+$/g
+	    String.prototype.trim = function () {
+	        return this.replace(rtrim, '')
+	    }
+	}
+	function headers(xhr) {
+	    var head = new Headers()
+	    if (xhr.getAllResponseHeaders) {
+	        var headerStr = xhr.getAllResponseHeaders() || ''
+	        if (/\S/.test(headerStr)) {
+	            //http://www.w3.org/TR/XMLHttpRequest/#the-getallresponseheaders-method
+	            var headerPairs = headerStr.split('\u000d\u000a');
+	            for (var i = 0; i < headerPairs.length; i++) {
+	                var headerPair = headerPairs[i];
+	                // Can't use split() here because it does the wrong thing
+	                // if the header value has the string ": " in it.
+	                var index = headerPair.indexOf('\u003a\u0020')
+	                if (index > 0) {
+	                    var key = headerPair.substring(0, index).trim()
+	                    var value = headerPair.substring(index + 2).trim()
+	                    head.append(key, value)
+	                }
+	            }
+	        }
+	    }
+	    return head
+	}
+	function fetch(input, init) {
+	    return new Promise(function (resolve, reject) {
+	        var request
+	        if (!init && (init instanceof Request)) {
+	            request = input
+	        } else {
+	            request = new Request(input, init)
+	        }
+	     
+
+	        var xhr = new Transport(request)
+	        function responseURL() {
+	            if ('responseURL' in xhr) {
+	                return xhr.responseURL
+	            }
+	            // Avoid security warnings on getResponseHeader when not allowed by CORS
+	            if (xhr.getResponseHeader && /^X-Request-URL:/m.test(xhr.getAllResponseHeaders())) {
+	                return xhr.getResponseHeader('X-Request-URL')
+	            }
+
+	            return
+	        }
+
+	        xhr.on('load', function (event) {
+	            var options = {
+	                status: event.status,
+	                statusText: event.statusText,
+	                headers: headers(event),
+	                url: responseURL()
+	            }
+	            var body = 'response' in event ? event.response : event.responseText
+	            resolve(new Response(body, options))
+	        })
+	        xhr.on('error', function () {
+	            reject(new TypeError('Network request failed'))
+	        })
+	        xhr.on('timeout', function () {
+	            reject(new TypeError('Network request timeout'))
+	        })
+
+	        xhr.open(request.method, request.url, true)
+
+	        request.headers.forEach(function (value, name) {
+	            xhr.setRequestHeader(name, value)
+	        })
+
+	        xhr.send(typeof request._body === 'undefined' ? null : request._body)
+	    })
+	}
+	function notFunc(a){
+	  return  !/\scode\]\s+\}$/.test(a)
+	}
+	if (notFunc(window.fetch)) {
+	    window.fetch = fetch
+	}
+	if (typeof avalon === 'function') {
+	    avalon.fetch = fetch
+	}
+	module.exports = fetch
+
+/***/ },
+/* 1 */
+/***/ function(module, exports, __webpack_require__) {
+
+	var Headers = __webpack_require__(2)
+	var Body = __webpack_require__(4)
+
+	function Request(input, options) {
+	    options = options || {}
+	    var body = options.body
+	    if (input instanceof Request) {
+	        if (input.bodyUsed) {
+	            throw new TypeError('Already read')
+	        }
+	        this.url = input.url
+	        this.credentials = input.credentials
+	        if (!options.headers) {
+	            var h = this.headers = new Headers(input.headers)
+	            if(!h.map['x-requested-with']){
+	                h.set('X-Requested-With', 'XMLHttpRequest')
+	            }
+	        }
+	        this.method = input.method
+	        this.mode = input.mode
+	        if (!body) {
+	            body = input._body
+	            input.bodyUsed = true
+	        }
+	    } else {
+	        this.url = input
+	    }
+
+	    this.credentials = options.credentials || this.credentials || 'omit'
+	    if (options.headers || !this.headers) {
+	        this.headers = new Headers(options.headers)
+	    }
+	    this.method = (options.method || this.method || 'GET').toUpperCase()
+	    this.mode = options.mode || this.mode || null
+	    this.referrer = null
+
+	    if ((this.method === 'GET' || this.method === 'HEAD') && body) {
+	        throw new TypeError('Body not allowed for GET or HEAD requests')
+	    }
+	    this._initBody(body)
+	}
+
+	Request.prototype.clone = function () {
+	    return new Request(this)
+	}
+
+	var F = function(){} 
+	F.prototype = Body.prototype 
+	Request.prototype = new F() 
+
+	module.exports = Request
+
+/***/ },
+/* 2 */
+/***/ function(module, exports, __webpack_require__) {
+
+	var support = __webpack_require__(3)
+
+	function Headers(headers) {
+	    this.map = {}
+	    if (headers instanceof Headers) {
+	        headers.forEach(function (value, name) {
+	            this.append(name, value)
+	        }, this)
+
+	    } else if (headers) {
+	        for (var name in headers) {
+	            if (headers.hasOwnProperty(name)) {
+	                this.append(name, headers[name])
+	            }
+	        }
+
+	    }
+	}
+
+	Headers.prototype.append = function (name, value) {
+	    name = normalizeName(name)
+	    value = normalizeValue(value)
+	    var list = this.map[name]
+	    if (!list) {
+	        list = []
+	        this.map[name] = list
+	    }
+	    list.push(value)
+	}
+
+	Headers.prototype['delete'] = function (name) {
+	    delete this.map[normalizeName(name)]
+	}
+
+	Headers.prototype.get = function (name) {
+	    var values = this.map[normalizeName(name)]
+	    return values ? values[0] : null
+	}
+
+	Headers.prototype.getAll = function (name) {
+	    return this.map[normalizeName(name)] || []
+	}
+
+	Headers.prototype.has = function (name) {
+	    return this.map.hasOwnProperty(normalizeName(name))
+	}
+
+	Headers.prototype.set = function (name, value) {
+	    this.map[normalizeName(name)] = [normalizeValue(value)]
+	}
+
+	Headers.prototype.forEach = function (callback, thisArg) {
+	    for (var name in this.map) {
+	        if (this.map.hasOwnProperty(name)) {
+	            this.map[name].forEach(function (value) {
+	                callback.call(thisArg, value, name, this)
+	            }, this)
+	        }
+	    }
+	}
+
+	Headers.prototype.keys = function () {
+	    var items = []
+	    this.forEach(function (value, name) {
+	        items.push(name)
+	    })
+	    return iteratorFor(items)
+	}
+
+	Headers.prototype.values = function () {
+	    var items = []
+	    this.forEach(function (value) {
+	        items.push(value)
+	    })
+	    return iteratorFor(items)
+	}
+
+	Headers.prototype.entries = function () {
+	    var items = []
+	    this.forEach(function (value, name) {
+	        items.push([name, value])
+	    })
+	    return iteratorFor(items)
+	}
+
+	  if (support.iterable) {
+	    Headers.prototype[Symbol.iterator] = Headers.prototype.entries
+	  }
+
+	function normalizeName(name) {
+	    if (typeof name !== 'string') {
+	        name = String(name)
+	    }
+	    if (/[^a-z0-9\-#$%&'*+.\^_`|~]/i.test(name)) {
+	        throw new TypeError('Invalid character in header field name')
+	    }
+	    return name.toLowerCase()
+	}
+
+	function normalizeValue(value) {
+	    if (typeof value !== 'string') {
+	        value = String(value)
+	    }
+	    return value
+	}
+
+	module.exports = Headers
+
+/***/ },
+/* 3 */
+/***/ function(module, exports) {
+
+	module.exports = {
+	    searchParams: 'URLSearchParams' in window,
+	    iterable: 'Symbol' in window && 'iterator' in window,
+	    blob: 'FileReader' in window && 'Blob' in window && (function () {
+	        try {
+	            new Blob()
+	            return true
+	        } catch (e) {
+	            return false
+	        }
+	    })(),
+	    formData: 'FormData' in window,
+	    arrayBuffer: 'ArrayBuffer' in window
+	}
+
+
+/***/ },
+/* 4 */
+/***/ function(module, exports, __webpack_require__) {
+
+	var support = __webpack_require__(3)
+
+	function Body() {
+	    this.bodyUsed = false
+	}
+	var p = Body.prototype
+
+	'text,blob,formData,json,arrayBuffer'.replace(/\w+/g, function (method) {
+	    p[method] = function () {
+	        return consumeBody(this).then(function (body) {
+	            return convertBody(body, method)
+	        })
+	    }
+	})
+
+	p._initBody = function (body) {
+	    this._body = body
+	    if (!this.headers.get('content-type')) {
+	        var a = bodyType(body)
+	        switch (a) {
+	            case 'text':
+	                this.headers.set('content-type', 'text/plain;charset=UTF-8')
+	                break
+	            case 'blob':
+	                if (body && body.type) {
+	                    this.headers.set('content-type', body.type)
+	                }
+	                break
+	            case 'searchParams':
+	                this.headers.set('content-type', 'application/x-www-form-urlencoded;charset=UTF-8')
+	                break
+	        }
+	    }
+	}
+
+	function consumeBody(body) {
+	    if (body.bodyUsed) {
+	        return Promise.reject(new TypeError('Already read'))
+	    } else {
+	        body.bodyUsed = true
+	        return Promise.resolve(body._body)
+	    }
+	}
+
+	function convertBody(body, to) {
+	    var from = bodyType(body)
+	    if (body === null || body === void 0 || !from || from === to) {
+	        return Promise.resolve(body)
+	    } else if (map[to] && map[to][from]) {
+	        return map[to][from](body)
+	    } else {
+	        return Promise.reject(new Error('Convertion from ' + from + ' to ' + to + ' not supported'))
+	    }
+	}
+
+
+	var map = {
+	    text: {
+	        json: function (body) {//json --> text
+	            return Promise.resolve(JSON.stringify(body))
+	        },
+	        blob: function (body) {//blob --> text
+	            return blob2text(body)
+	        },
+	        searchParams: function (body) {//searchParams --> text
+	            return Promise.resolve(body.toString())
+	        }
+	    },
+	    json: {
+	        text: function (body) {//text --> json
+	            return Promise.resolve(parseJSON(body))
+	        },
+	        blob: function (body) {//blob --> json
+	            return blob2text(body).then(parseJSON)
+	        }
+	    },
+	    formData: {
+	        text: function (body) {//text --> formData
+	            return text2formData(body)
+	        }
+	    },
+	    blob: {
+	        text: function (body) {//json --> blob
+	            return Promise.resolve(new Blob([body]))
+	        },
+	        json: function (body) {//json --> blob
+	            return Promise.resolve(new Blob([JSON.stringify(body)]))
+	        }
+	    },
+	    arrayBuffer: {
+	        blob: function (body) {
+	            return blob2ArrayBuffer(body)
+	        }
+	    }
+	}
+
+	function bodyType(body) {
+	    if (typeof body === 'string') {
+	        return 'text'
+	    } else if (support.blob && (body instanceof Blob)) {
+	        return 'blob'
+	    } else if (support.formData && (body instanceof FormData)) {
+	        return 'formData'
+	    } else if (support.searchParams && (body instanceof URLSearchParams)) {
+	        return 'searchParams'
+	    } else if (body && typeof body === 'object') {
+	        return 'json'
+	    } else {
+	        return null
+	    }
+	}
+
+
+	function reader2Promise(reader) {
+	    return new Promise(function (resolve, reject) {
+	        reader.onload = function () {
+	            resolve(reader.result)
+	        }
+	        reader.onerror = function () {
+	            reject(reader.error)
+	        }
+	    })
+	}
+	/*
+	 readAsBinaryString(File|Blob)
+	 readAsText(File|Blob [, encoding])
+	 readAsDataURL(File|Blob)
+	 readAsArrayBuffer(File|Blob)
+	 */
+	function text2formData(body) {
+	    var form = new FormData()
+	    body.trim().split('&').forEach(function (bytes) {
+	        if (bytes) {
+	            var split = bytes.split('=')
+	            var name = split.shift().replace(/\+/g, ' ')
+	            var value = split.join('=').replace(/\+/g, ' ')
+	            form.append(decodeURIComponent(name), decodeURIComponent(value))
+	        }
+	    })
+	    return Promise.resolve(form)
+	}
+
+	function blob2ArrayBuffer(blob) {
+	    var reader = new FileReader()
+	    reader.readAsArrayBuffer(blob)
+	    return reader2Promise(reader)
+	}
+
+	function blob2text(blob) {
+	    var reader = new FileReader()
+	    reader.readAsText(blob)
+	    return reader2Promise(reader)
+	}
+
+
+	function parseJSON(body) {
+	    try {
+	        return JSON.parse(body)
+	    } catch (ex) {
+	        throw 'Invalid JSON'
+	    }
+	}
+
+	module.exports = Body
+
+/***/ },
+/* 5 */
+/***/ function(module, exports, __webpack_require__) {
+
+	var Headers = __webpack_require__(2)
+	var Body = __webpack_require__(4)
+
+	function Response(bodyInit, options) {
+	    if (!options) {
+	        options = {}
+	    }
+
+	    this.type = 'default'
+
+	    this.status = options.status
+	    if (1223 === this.status) {
+	        this.status = 204
+	    }
+	    this.ok = this.status >= 200 && this.status < 300
+	    this.statusText = options.statusText
+	    this.headers = options.headers instanceof Headers ? options.headers : new Headers(options.headers)
+	    this.url = options.url || ''
+	    this._initBody(bodyInit)
+	}
+
+	var F = function(){} 
+	F.prototype = Body.prototype 
+	Response.prototype = new F() 
+
+	Response.prototype.clone = function () {
+	    return new Response(this._bodyInit, {
+	        status: this.status,
+	        statusText: this.statusText,
+	        headers: new Headers(this.headers),
+	        url: this.url
+	    })
+	}
+
+	Response.error = function () {
+	    var response = new Response(null, {status: 0, statusText: ''})
+	    response.type = 'error'
+	    return response
+	}
+
+	var redirectStatuses = [301, 302, 303, 307, 308]
+
+	Response.redirect = function (url, status) {
+	    if (redirectStatuses.indexOf(status) === -1) {
+	        throw new RangeError('Invalid status code')
+	    }
+
+	    return new Response(null, {status: status, headers: {location: url}})
+	}
+
+	module.exports = Response
+
+/***/ },
+/* 6 */
+/***/ function(module, exports, __webpack_require__) {
+
+	var AXO = __webpack_require__(7)
+	var JSONP = __webpack_require__(8)
+	var XDR = __webpack_require__(9)
+	var XHR = __webpack_require__(10)
+	var msie = 0
+	if (window.VBArray) {
+	    msie = document.documentMode || (window.XMLHttpRequest ? 7 : 6)
+	}
+
+	function Transport(request) {
+	    if (msie === 8 || msie === 9) {
+	        this.core = new XDR(request)
+	    } else if (!msie) {
+	        this.core = new XHR(request)
+	    } else if (msie <= 7) {
+	        if (request.credentials === 'include') {
+	            this.core = new JSONP(request)
+	        } else {
+	            this.core = new AXO(request)
+	        }
+	    }
+	}
+
+	var p = Transport.prototype
+	p.on = function (type, fn) {
+	    this.core.on(type, fn)
+	}
+
+	p.setRequestHeader = function (a, b) {
+	    if (this.core.setRequestHeader) {
+	        this.core.setRequestHeader(a, b)
+	    }
+	}
+
+	p.open = function (a, b, c, d, e) {
+	    if (this.core.open) {
+	        this.core.open(a, b, c, d, e)
+	    }
+	}
+
+	p.send = function (a) {
+	    if (this.core.send) {
+	        this.core.send(a)
+	    }
+	}
+
+	p.abort = function () {
+	    if (this.core.abort) {
+	        this.core.abort()
+	    }
+	}
+
+	module.exports = Transport
+
+/***/ },
+/* 7 */
+/***/ function(module, exports) {
+
+	
+
+	module.exports = function AXO(opts) {
+	    var xhr = new ActiveXObject('Microsoft.XMLHTTP')
+	    
+	    xhr.onreadystatechange = function () {
+	        if (xhr.readyState === 4) {
+	            if (/^2\d\d|1224/.test(xhr.status)) {
+	                events['load'] && events['load'](xhr)
+	            } else {
+	                events['error'] && events['error']()
+	            }
+	        }
+	    }
+	    var events = {}
+	    xhr.on = function (type, fn) {
+	        events[type] = fn
+	    }
+
+	    xhr.abort = function () {
+	        events = {}
+	    }
+	    if (opts.timeout === 'number') {
+	        setTimeout(function () {
+	            events['timeout'] && events['timeout']()
+	            xhr.abort()
+	        }, opts.timeout)
+	    }
+	    return xhr
+	}
+
+/***/ },
+/* 8 */
+/***/ function(module, exports) {
+
+	
+	function JSONP(opts) {
+	    var callbackFunction = opts.jsonpCallbackFunction || generateCallbackFunction();
+	    var jsonpCallback = opts.jsonpCallback || 'callback'
+	    var xhr = document.createElement('script')
+	    if (xhr.charset) {
+	        xhr.charset = opts.charset
+	    }
+	    xhr.onerror = xhr[useOnload ? 'onload' : 'onreadystatechange'] = function (e) {
+	        var execute = /loaded|complete|undefined/i.test(xhr.readyState)
+	        if (e && e.type === 'error') {
+	            events['error'] && events['error']()
+	        } else if (execute) {
+	            setTimeout(function () {
+	                xhr.abort()
+	            }, 0)
+	        }
+	    }
+
+	    var events = {}
+	    xhr.on = function (type, fn) {
+	        events[type] = fn
+	    }
+	    xhr.abort = function () {
+	        events = {}
+	        removeNode(xhr)
+	        clearFunction(callbackFunction)
+	    }
+	    xhr.open = function (a, url) {
+	        window[callbackFunction] = function (response) {
+	            events['load'] && events['load']({
+	                status: 200,
+	                statusText: 'ok',
+	                response: response
+	            })
+	            clearFunction(callbackFunction)
+	        }
+	        var head = document.getElementsTagName('head')[0]
+
+	        url += (url.indexOf('?') === -1) ? '?' : '&';
+	        xhr.setAttribute('src', url + jsonpCallback + '=' + callbackFunction);
+	        head.insertBefore(xhr, head.firstChild)
+	        if (typeof opts.timeout === 'number') {
+	            setTimeout(function () {
+	                events['timeout'] && events['timeout']()
+	                xhr.abort()
+	            }, opts.timeout)
+	        }
+	    }
+	}
+
+
+	function generateCallbackFunction() {
+	    return ('jsonp' + Math.random()).replace(/0\./, '')
+	}
+
+	// Known issue: Will throw 'Uncaught ReferenceError: callback_*** is not defined' error if request timeout
+	function clearFunction(functionName) {
+	    // IE8 throws an exception when you try to delete a property on window
+	    // http://stackoverflow.com/a/1824228/751089
+	    try {
+	        delete window[functionName];
+	    } catch (e) {
+	        window[functionName] = undefined;
+	    }
+	}
+
+	var f = document.createDocumentFragment()
+	var useOnload = 'textContent' in document
+
+	function removeNode(node) {
+	    f.appendChild(node)
+	    f.removeChild(node)
+	    node.onload = onerror = onreadystatechange = function () {
+	    }
+	    return node
+	}
+
+	module.exports = JSONP
+
+/***/ },
+/* 9 */
+/***/ function(module, exports) {
+
+	//https://msdn.microsoft.com/en-us/library/cc288060(v=VS.85).aspx
+	module.exports = function XDR(opts) {
+	    var xhr = new XDomainRequest()
+	    'load,error,timeout'.replace(/\w+/g, function (method) {
+	        xhr['on' + method] = function () {
+	            if (events[method]) {
+	                events[method](xhr)
+	            }
+	        }
+	    })
+	    var events = {}
+	    xhr.on = function (type, fn) {
+	        events[type] = fn
+	    }
+	    xhr.onabort = function () {
+	        events = {}
+	    }
+	    if (typeof opts.timeout === 'number') {
+	        xhr.timeout = opts.timeout
+	    }
+	    return xhr
+	}
+
+/***/ },
+/* 10 */
+/***/ function(module, exports) {
+
+	
+	module.exports = function XHR(opts) {
+	    var xhr = new XMLHttpRequest
+	    'load,error,timeout'.replace(/\w+/g, function (method) {
+	        xhr['on' + method] = function () {
+	            if (events[method]) {
+	                events[method](xhr)
+	            }
+	        }
+	    })
+	    var events = {}
+	    xhr.on = function (type, fn) {
+	        events[type] = fn
+	    }
+	    xhr.onabort = function () {
+	        events = {}
+	    }
+	    if (opts.credentials === 'include') {
+	        xhr.withCredentials = true
+	    }
+
+	    if ('responseType' in xhr && ('Blob' in window)) {
+	        xhr.responseType = 'blob'
+	    }
+	    return xhr
+	}
+
+/***/ }
+/******/ ])
+});
+;
+;
+/*
+ * ! https://github.com/davidchambers/Base64.js
+ */
+;(function () {
+
+    var object = typeof exports != 'undefined' ? exports : this; // #8: web
+    // workers
+    var chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/=';
+
+    function InvalidCharacterError(message) {
+        this.message = message;
+    }
+    InvalidCharacterError.prototype = new Error;
+    InvalidCharacterError.prototype.name = 'InvalidCharacterError';
+
+    // encoder
+    // [https://gist.github.com/999166] by [https://github.com/nignag]
+    object.btoa || (
+        object.btoa = function (input) {
+            for (
+                // initialize result and counter
+                var block, charCode, idx = 0, map = chars, output = '';
+                // if the next input index does not exist:
+                // change the mapping table to "="
+                // check if d has no fractional digits
+                input.charAt(idx | 0) || (map = '=', idx % 1);
+                // "8 - idx % 1 * 8" generates the sequence 2, 4, 6, 8
+                output += map.charAt(63 & block >> 8 - idx % 1 * 8)
+            ) {
+                charCode = input.charCodeAt(idx += 3/4);
+                if (charCode > 0xFF) {
+                    throw new InvalidCharacterError("'btoa' failed: The string to be encoded contains characters outside of the Latin1 range.");
+                }
+                block = block << 8 | charCode;
+            }
+            return output;
+        });
+
+    // decoder
+    // [https://gist.github.com/1020396] by [https://github.com/atk]
+    object.atob || (
+        object.atob = function (input) {
+            input = input.replace(/=+$/, '')
+            if (input.length % 4 == 1) {
+                throw new InvalidCharacterError("'atob' failed: The string to be decoded is not correctly encoded.");
+            }
+            for (
+                // initialize result and counters
+                var bc = 0, bs, buffer, idx = 0, output = '';
+                // get next character
+                buffer = input.charAt(idx++);
+                // character found in table? initialize bit storage and add its ascii
+                // value;
+                ~buffer && (bs = bc % 4 ? bs * 64 + buffer : buffer,
+                    // and if not first of each 4 characters,
+                    // convert the first 8 bits to one ascii character
+                bc++ % 4) ? output += String.fromCharCode(255 & bs >> (-2 * bc & 6)) : 0
+            ) {
+                // try to find character in table (0-63, not found => -1)
+                buffer = chars.indexOf(buffer);
+            }
+            return output;
+        });
+
+}());
 ;
 /**
  * HiPay Fullservice library
@@ -7087,50 +7543,37 @@ var HiPay = (function (HiPay) {
         "en_EN" : {
             "FORM_CVV_3_HELP_MESSAGE": "For security reasons, you have to enter your card security code (CVC). It's the 3-digits number on the back of your card for VISA®, MASTERCARD® and MAESTRO®.",
             "FORM_CVV_4_HELP_MESSAGE": "For security reasons, you have to enter your card security code (CVC). The AMERICAN EXPRESS security code is the 4-digits number on the front of your card.",
-
-
             "FORM_ERROR_INVALID_CARD_NUMBER": "Invalid card number.",
             "FORM_ERROR_INVALID_EXPIRY_DATE_PAST": "The expiration date is already past.",
             "FORM_ERROR_INVALID_MONTH_EXPIRY_DATE": "The month field must be between 1 and 12.",
             "FORM_ERROR_INVALID_CVV": "The CVV field must contain %NUMBER% digits.",
             "FORM_ERROR_DEFAULT": "An error occured.",
-
-
             "FORM_PLACEHOLDER_CARD_NUMBER": "Ex : 5136 0000 0000 0000",
             "FORM_PLACEHOLDER_CARD_HOLDER": "FirstName LastName",
             "FORM_PLACEHOLDER_CARD_EXPIRY_DATE": "MM"+_separatorMonthYear+"YY",
             "FORM_PLACEHOLDER_CARD_CVV": "123",
             "FORM_PLACEHOLDER_CARD_CVV_AMEX": "1234"
-
         },
         "fr_FR" : {
             "FORM_CVV_3_HELP_MESSAGE" : "Pour des raisons de sécurité, vous devez indiquer le code de sécurité (CVC). Ce code correspond aux 3 chiffres visibles au verso de votre carte VISA®, MASTERCARD® and MAESTRO®.",
             "FORM_CVV_4_HELP_MESSAGE" : "Pour des raisons de sécurité, vous devez indiquer le code de sécurité (CVC). Le code de securité AMERICAN EXPRESS est un nombre à 4 chiffres au recto de votre carte.",
-
             "FORM_ERROR_INVALID_CARD_NUMBER": "Numéro de carte invalide.",
             "FORM_ERROR_INVALID_EXPIRY_DATE_PAST": "La date est inférieure à la date actuelle.",
             "FORM_ERROR_INVALID_MONTH_EXPIRY_DATE": "Le mois doit être compris entre 1 et 12.",
             "FORM_ERROR_INVALID_CVV": "Le champ CVV doit contenir %NUMBER% caractères.",
             "FORM_ERROR_DEFAULT": "Une erreur est survenue.",
-
-
             "FORM_PLACEHOLDER_CARD_NUMBER": "Ex : 5136 0000 0000 0000",
             "FORM_PLACEHOLDER_CARD_HOLDER": "Prénom Nom",
             "FORM_PLACEHOLDER_CARD_EXPIRY_DATE": "MM"+_separatorMonthYear+"AA",
             "FORM_PLACEHOLDER_CARD_CVV": "123",
             "FORM_PLACEHOLDER_CARD_CVV_AMEX": "1234"
-        },
+        }
     };
 
     var _loadPaymentProduct;
 
     var _getLocaleTranslationWithId = function(id) {
         return _translationJSON[HiPay.Form.locale][id];
-    };
-
-    var _colorInput = {
-        'default': '#005a94',
-        'error': '#ff0000',
     };
 
     var _cvvContainerId = "container-cvv-help-message";
@@ -7291,22 +7734,45 @@ var HiPay = (function (HiPay) {
         }
     };
 
+
+
+    function _testSelector(selector){
+        // var scope = document.createElement("div");
+        // node.appendChild(scope);
+
+        try {
+            return document.querySelector(selector) !== null;
+        } catch(e) { return false; }
+    }
+
     function _focusNextElement() {
 
         // var focussableElements = 'a:not([disabled]), button:not([disabled]), input[type=text]:not([disabled]), [tabindex]:not([disabled]):not([tabindex="-1"])';
         var focussableElements = "button:not([disabled]), input:not([disabled]):not([tabindex='-1'])";
+        // var focussableElements = "button:[enabled], input:[enabled]:[tabindex='-1'])";
+        // var focussableElementsOldBrowser = "button, input";
+        var focussableElementsOldBrowser = "button, input[data-hipay-tabable='true']";
         // if (document.activeElement && document.activeElement.form) {
         if (document.activeElement) {
 
-            // var focussable = Array.prototype.filter.call(document.activeElement.form.querySelectorAll(focussableElements),
-            var focussable = Array.prototype.filter.call(document.querySelectorAll(focussableElements),
-                function(element) {
-                    return element.offsetWidth > 0 || element.offsetHeight > 0 || element === document.activeElement
-                });
+            if (_testSelector(focussableElements)) {
+                // var focussable = Array.prototype.filter.call(document.activeElement.form.querySelectorAll(focussableElements),
+                var focussable = Array.prototype.filter.call(document.querySelectorAll(focussableElements),
+                    function (element) {
+                        return element.offsetWidth > 0 || element.offsetHeight > 0 || element === document.activeElement
+                    });
+            } else {
+                var focussable = Array.prototype.filter.call(document.querySelectorAll(focussableElementsOldBrowser),
+                    function (element) {
+                        return element.offsetWidth > 0 || element.offsetHeight > 0 || element === document.activeElement
+                    });
+            }
 
             var index = focussable.indexOf(document.activeElement);
 
             focussable[index + 1].focus();
+        } else {
+            element.nextElementSibling.focus();
         }
     };
 
@@ -7591,13 +8057,19 @@ var HiPay = (function (HiPay) {
         };
 
         serviceCreditCard.getCreditCardCVVLengthMax = function(forceReload) {
-            if (serviceCreditCard.creditCardCVVLengthMax == undefined || forceReload == undefined || forceReload == true) {
+            if (typeof serviceCreditCard.creditCardCVVLengthMax == "undefined" || typeof forceReload == "undefined" || forceReload == true) {
 
                 var arrayFormatCVV = ['34', '35', '36', '37'];
                 var creditCardNumber = _selectElementValueWithHipayId(_idInputMapper['cardNumber']);
-                for (var indexFormatCVV = 0; indexFormatCVV <= arrayFormatCVV.length; indexFormatCVV++) {
+                for (var indexFormatCVV = 0; indexFormatCVV < arrayFormatCVV.length; indexFormatCVV++) {
 
-                    if (creditCardNumber != "" && creditCardNumber.indexOf(arrayFormatCVV[indexFormatCVV]) === 0) {
+
+                    console.log("creditCardNumber");
+                    console.log(creditCardNumber == "");
+                    console.log(indexFormatCVV);
+                    console.log(arrayFormatCVV);
+                    console.log(arrayFormatCVV[indexFormatCVV]);
+                    if (creditCardNumber != "" && typeof arrayFormatCVV[indexFormatCVV]  != "undefined" && creditCardNumber.indexOf(arrayFormatCVV[indexFormatCVV]) === 0) {
                         serviceCreditCard.creditCardCVVLengthMax = 4;
                     }
                 }
@@ -7657,7 +8129,7 @@ var HiPay = (function (HiPay) {
 
         serviceCreditCard.initInfoCardWithCardNumber = function(creditCardNumber) {
 
-            if (creditCardNumber == undefined) {
+            if (typeof creditCardNumber  == "undefined") {
                 creditCardNumber = _selectElementValueWithHipayId(_idInputMapper['cardNumber']);
             }
 
@@ -7721,18 +8193,14 @@ var HiPay = (function (HiPay) {
         };
 
         serviceCreditCard.unformatCreditCardNumber = function(cardNumberStringFormatted) {
-            if (cardNumberStringFormatted != undefined) {
+            if (typeof cardNumberStringFormatted != "undefined") {
                 return cardNumberStringFormatted.split(' ').join('');
             }
             return cardNumberStringFormatted;
         }
-        // var _inputCCFinish = function(element, cardNumberString, cardLengthMin, cardLengthMax) {
         var _inputCCNumberFinish = function(element) {
 
             var validatorCreditCardNumber = serviceCreditCard.validatorCreditCardNumber([]);
-
-            // _selectElementWithHipayId("creditCardNumberMessageContainer").innerHTML="";
-            // _selectElementWithHipayId(_idInputMapper.cardNumber).setAttribute('style', 'color:'+ _colorInput["default"] + ' !important');
 
             if ( _selectElementWithHipayId(_idInputMapper['cardCVV'])) {
                 _selectElementWithHipayId(_idInputMapper['cardCVV']).disabled = false;
@@ -7745,7 +8213,6 @@ var HiPay = (function (HiPay) {
 
                     var cvvElement =  _selectElementWithHipayId(_idInputMapper.cardCVV);
                     cvvElement.value = "";
-                    // cvvElement.setAttribute('style', 'color:#333333 !important');
 
 
                     if (!cvvElement.classList.contains('inputdisabled')) {
@@ -7767,7 +8234,6 @@ var HiPay = (function (HiPay) {
             }
             if(serviceCreditCard.cardNumberStringFormatAfter != '' && validatorCreditCardNumber.isValid( _selectElementValueWithHipayId(_idInputMapper['cardNumber']))) {
                 _focusNextElement();
-                // element.focus();
             }
             else {
                 if (serviceCreditCard.cardLengthMax == serviceCreditCard.cardNumberStringAfter.length && !validatorCreditCardNumber.isValid(_selectElementValueWithHipayId(_idInputMapper['cardNumber']))) {
@@ -7777,8 +8243,7 @@ var HiPay = (function (HiPay) {
                     // validatorCreditCardNumber.displayErrorMessage()
 
                     //  _selectElementWithHipayId("creditCardNumberMessageContainer").innerHTML="Le format de la carte n'est pas valide";
-                    //  document.bgColor = _colorInput["error"];
-                    // _selectElementWithHipayId(_idInputMapper.cardNumber).setAttribute('style', 'color:'+ _colorInput["error"] + ' !important');
+
 
                 }
             }
@@ -7834,26 +8299,28 @@ var HiPay = (function (HiPay) {
                 for (var indexNumber = 0; indexNumber < startNumberArray.length; indexNumber++) {
                     startNumber = startNumberArray[indexNumber][0].toString();
                     propt = startNumberArray[indexNumber][1].toString();
-                    startNumberToCompare = startNumber.substr(0,Math.min(startNumber.length, creditCardNumber.length));
-                    if (creditCardNumber.indexOf(startNumberToCompare) === 0) {
-                        cardNumberMaxLength = _cardFormatDefinition[propt]["lengths"]["length"];
-                        if (_cardFormatDefinition[propt]["lengths"]["variable"] != null) {
-                            cardNumberMaxLength = cardNumberMaxLength + _cardFormatDefinition[propt]["lengths"]["variable"];
-                        }
+                    if (startNumber) {
+                        startNumberToCompare = startNumber.substr(0, Math.min(startNumber.length, creditCardNumber.length));
+                        if (startNumberToCompare && creditCardNumber.indexOf(startNumberToCompare) === 0) {
+                            cardNumberMaxLength = _cardFormatDefinition[propt]["lengths"]["length"];
+                            if (_cardFormatDefinition[propt]["lengths"]["variable"] != null) {
+                                cardNumberMaxLength = cardNumberMaxLength + _cardFormatDefinition[propt]["lengths"]["variable"];
+                            }
 
-                        if(creditCardNumber.length < cardNumberMaxLength) {
-                            isPotentiallyValid = true;
-                            break;
-                        } else if(creditCardNumber.length == cardNumberMaxLength) {
-                            if (_isLuhnValid(creditCardNumber) === true) {
+                            if (creditCardNumber.length < cardNumberMaxLength) {
                                 isPotentiallyValid = true;
                                 break;
+                            } else if (creditCardNumber.length == cardNumberMaxLength) {
+                                if (_isLuhnValid(creditCardNumber) === true) {
+                                    isPotentiallyValid = true;
+                                    break;
+                                }
                             }
                         }
                     }
                 }
 
-                if (serviceCreditCard.getCardTypeId() != undefined && _isEnabled(serviceCreditCard.getCardTypeId()) === false) {
+                if (typeof serviceCreditCard.getCardTypeId() != "undefined" && _isEnabled(serviceCreditCard.getCardTypeId()) === false) {
                     isPotentiallyValid = false;
                 }
 
@@ -7869,7 +8336,7 @@ var HiPay = (function (HiPay) {
 
                 // var creditCardNumberUnformated = serviceCreditCard.cardNumberStringAfter.split(' ').join('');
 
-                if (creditCardNumberUnformatted != undefined) {
+                if (typeof creditCardNumberUnformatted != "undefined") {
                     creditCardNumberUnformatted = creditCardNumberUnformatted.split(' ').join('');
                 }
 
@@ -7959,7 +8426,7 @@ var HiPay = (function (HiPay) {
             var validatorCreditCardHolder = {};
             validatorCreditCardHolder.errorCollection = errorArray || [];
             validatorCreditCardHolder.isValid = function (creditCardHolderString) {
-                if (creditCardHolderString == "" || creditCardHolderString == undefined || creditCardHolderString == null) {
+                if (creditCardHolderString == "" || typeof creditCardHolderString == "undefined" || creditCardHolderString == null) {
                     return false;
                 }
 
@@ -8039,7 +8506,7 @@ var HiPay = (function (HiPay) {
 
             validatorExpiryDate.isValid = function(creditCardExpiryDate) {
 
-                if (creditCardExpiryDate == undefined) {
+                if (typeof creditCardExpiryDate == "undefined") {
                     creditCardExpiryDate = _selectElementValueWithHipayId(_idInputMapper['cardExpiryDate']);
                 }
 
@@ -8096,7 +8563,7 @@ var HiPay = (function (HiPay) {
                     }
                 }
 
-                if (creditCardCVVString != undefined && creditCardCVVString != "" && creditCardCVVString.length <= serviceCreditCard.creditCardCVVLengthMax ) {
+                if (typeof creditCardCVVString != "undefined" && creditCardCVVString != "" && creditCardCVVString.length <= serviceCreditCard.creditCardCVVLengthMax ) {
                     isPotentiallyValid = true;
                 }
 
@@ -8115,7 +8582,7 @@ var HiPay = (function (HiPay) {
                     return true;
                 }
 
-                if (creditCardCVVString == "" || creditCardCVVString == undefined || creditCardCVVString == null) {
+                if (creditCardCVVString == "" || typeof creditCardCVVString == "undefined" || creditCardCVVString == null) {
                     return false;
                 }
 
@@ -8128,12 +8595,12 @@ var HiPay = (function (HiPay) {
                     }
                 }
 
-                if (creditCardCVVString != undefined && creditCardCVVString.length > serviceCreditCard.creditCardCVVLengthMax ) {
+                if (typeof creditCardCVVString != "undefined" && creditCardCVVString.length > serviceCreditCard.creditCardCVVLengthMax ) {
                     validatorCreditCardCVV.errorCollection.push(new _InvalidParametersError(50, _getLocaleTranslationWithId("FORM_ERROR_INVALID_CVV").replace("%NUMBER%", serviceCreditCard.creditCardCVVLengthMax)));
                     return false;
                 }
 
-                if ((validateAll == undefined || validateAll == true) && creditCardCVVString != undefined && creditCardCVVString.length < serviceCreditCard.creditCardCVVLengthMax ) {
+                if ((typeof validateAll == "undefined" || validateAll == true) && creditCardCVVString != undefined && creditCardCVVString.length < serviceCreditCard.creditCardCVVLengthMax ) {
                     validatorCreditCardCVV.errorCollection.push(new _InvalidParametersError(50, _getLocaleTranslationWithId("FORM_ERROR_INVALID_CVV").replace("%NUMBER%", serviceCreditCard.creditCardCVVLengthMax)));
                     return false;
                 }
@@ -8188,7 +8655,7 @@ var HiPay = (function (HiPay) {
         serviceCreditCard.initCreditCardNumber = function(charCode, stringPaste){
             serviceCreditCard.lastCharCode = charCode;
 
-            if (charCode == undefined || charCode == '' || charCode == 8 || charCode == 46) {
+            if (typeof charCode == "undefined" || charCode == '' || charCode == 8 || charCode == 46) {
                 serviceCreditCard.lastCharString = '';
             }
             else {
@@ -8378,7 +8845,7 @@ var HiPay = (function (HiPay) {
 
             var numberSpaceBeforeStartFormated= 0;
             for (var nb=0; nb< serviceCreditCard.cardNumberStringAfter.length;nb++) {
-                if (positionSpaceArray != undefined && positionSpaceArray[nb]===1) {
+                if (typeof positionSpaceArray != "undefined" && positionSpaceArray[nb]===1) {
                     if (nb < startA) {
                         numberSpaceBeforeStartFormated +=1;
                     }
@@ -8402,7 +8869,7 @@ var HiPay = (function (HiPay) {
 
         serviceCreditCard.initCreditCardHolder = function(charCode){
             serviceCreditCard.lastCharCodeCreditCardHolder = charCode;
-            if (charCode == undefined || charCode == '' || charCode == 8 || charCode == 46) {
+            if (typeof charCode == "undefined" || charCode == '' || charCode == 8 || charCode == 46) {
                 serviceCreditCard.lastCharStringCreditCardHolder = '';
             }
             else {
@@ -8503,7 +8970,7 @@ var HiPay = (function (HiPay) {
         serviceCreditCard.initCreditCardExpiryDate = function(charCode, stringPaste){
 
             serviceCreditCard.lastCharCodeCreditCardExpiryDate = charCode;
-            if (charCode == undefined || charCode == '' || charCode == 8 || charCode == 46) {
+            if (typeof charCode == "undefined" || charCode == '' || charCode == 8 || charCode == 46) {
                 serviceCreditCard.lastCharStringCreditCardExpiryDate = '';
             }
             else {
@@ -8638,7 +9105,7 @@ var HiPay = (function (HiPay) {
         serviceCreditCard.initCreditCardCVV = function(charCode, stringPaste){
 
             serviceCreditCard.lastCharCodeCreditCardCVV = charCode;
-            if (charCode == undefined || charCode == '' || charCode == 8 || charCode == 46) {
+            if (typeof charCode == "undefined" || charCode == '' || charCode == 8 || charCode == 46) {
                 serviceCreditCard.lastCharStringCreditCardCVV = '';
             }
             else {
@@ -8788,7 +9255,6 @@ var HiPay = (function (HiPay) {
                 if (_selectElementWithHipayId(_idInputMapper[indexInput]) != null && !_selectElementWithHipayId(_idInputMapper[indexInput]).classList.contains('default-card-form')) {
                     _selectElementWithHipayId(_idInputMapper[indexInput]).classList.add('default-card-form');
                 }
-                // _selectElementWithHipayId(_idInputMapper[indexInput]).setAttribute('style', 'color:' + _colorInput["default"] + ' !important');
             }
         }
 
@@ -8829,7 +9295,7 @@ var HiPay = (function (HiPay) {
     };
 
     var _selectElementWithHipayId = function(idHiPay) {
-        if (idHiPay == null || idHiPay == undefined) {
+        if (idHiPay == null || typeof idHiPay == "undefined") {
             return;
         }
         return document.querySelector("[data-hipay-id='"+idHiPay+"']");
@@ -8891,7 +9357,7 @@ var HiPay = (function (HiPay) {
     var _eventHandlersFields = {};
 
     var _addFieldListener = function (node, event, handler, capture) {
-        if (node == undefined) {
+        if (typeof node == "undefined") {
             return;
         }
 
@@ -8907,7 +9373,7 @@ var HiPay = (function (HiPay) {
 
     var _initAllFieldsEventListener = function() {
         for(var propt in _idInputMapper){
-            if (_selectElementWithHipayId(_idInputMapper[propt]) == null || _selectElementWithHipayId(_idInputMapper[propt]) == undefined) {
+            if (_selectElementWithHipayId(_idInputMapper[propt]) == null || typeof _selectElementWithHipayId(_idInputMapper[propt]) == "undefined") {
                 continue;
             }
 
@@ -9171,6 +9637,61 @@ var HiPay = (function (HiPay) {
     /* add listener on all input form */
     window.onload = function() {
 
+
+        if (!Array.prototype.filter)
+        {
+            Array.prototype.filter = function(fun /*, thisp */)
+            {
+                "use strict";
+
+                if (this === void 0 || this === null)
+                    throw new TypeError();
+
+                var t = Object(this);
+                var len = t.length >>> 0;
+                if (typeof fun !== "function")
+                    throw new TypeError();
+
+                var res = [];
+                var thisp = arguments[1];
+                for (var i = 0; i < len; i++)
+                {
+                    if (i in t)
+                    {
+                        var val = t[i]; // in case fun mutates this
+                        if (fun.call(thisp, val, i, t))
+                            res.push(val);
+                    }
+                }
+
+                return res;
+            };
+        }
+
+
+        if (!Array.prototype.indexOf)
+        {
+            Array.prototype.indexOf = function(elt /*, from*/)
+            {
+                var len = this.length >>> 0;
+
+                var from = Number(arguments[1]) || 0;
+                from = (from < 0)
+                    ? Math.ceil(from)
+                    : Math.floor(from);
+                if (from < 0)
+                    from += len;
+
+                for (; from < len; from++)
+                {
+                    if (from in this &&
+                        this[from] === elt)
+                        return from;
+                }
+                return -1;
+            };
+        }
+
         _initApp();
 
     };
@@ -9243,7 +9764,7 @@ var HiPay = (function (HiPay) {
         _instanceServiceCreditCard = new _serviceCreditCard();
 
         var CVVLength = _instanceServiceCreditCard.getCreditCardCVVLengthMax();
-        if (CVVLength == undefined) {
+        if (typeof CVVLength  == "undefined") {
             CVVLength = 3;
         }
 
@@ -9361,7 +9882,7 @@ var HiPay = (function (HiPay) {
             card_expiry_date:_selectElementValueWithHipayId(_idInputMapper["cardExpiryDate"]),
             multi_use: "0"
         };
-        
+
         if (!_instanceServiceCreditCard) {
 
             _instanceServiceCreditCard = new _serviceCreditCard();
@@ -9389,7 +9910,7 @@ var HiPay = (function (HiPay) {
                 var mapping = instance._mapping[key];
 
                 if (typeof mapping === 'object') {
-                    value = typeof specialValueCallback !== 'undefined' ? (specialValueCallback(key, payload[key]) || payload[key]) : payload[key];
+                    value = typeof specialValueCallback !== "undefined" ? (specialValueCallback(key, payload[key]) || payload[key]) : payload[key];
 
                     // Property is writable, value can directly be set
                     if (!_canDefineProperty || mapping.propertyDescriptors.writable) {
@@ -9610,10 +10131,10 @@ var HiPay = (function (HiPay) {
     HiPay.Token = function (responseJSON) {
         var payload;
 
-        if (typeof responseJSON !== 'undefined') {
+        if (typeof responseJSON !== "undefined") {
             payload = responseJSON;
         }
-        if (typeof responseJSON.data !== 'undefined') {
+        if (typeof responseJSON.data !== "undefined") {
             payload = responseJSON.data;
         }
 
@@ -9847,7 +10368,7 @@ var HiPay = (function (HiPay) {
                     return response.json();
                 })
                 .then(function (result) {
-                    if( typeof result['code'] != 'undefined' )  {
+                    if( typeof result['code'] != "undefined" )  {
                         reject(new _APIError(result));
                     }
                     else {
@@ -10048,7 +10569,7 @@ var HiPay = (function (HiPay) {
 
 
         // dump(data.response.data);
-        if (typeof data.response.data !== 'undefined') {
+        if (typeof data.response.data !== "undefined") {
             payload = data.response.data;
         }
 
@@ -10056,7 +10577,7 @@ var HiPay = (function (HiPay) {
             _processObjectPayload(this, _extend({}, payload, {
                 'code': payload.code,
                 'message': payload.message,
-                'description': payload.description,
+                'description': payload.description
             }));
         } else {
             _processObjectPayload(this, _extend({}, payload, {
@@ -10133,8 +10654,7 @@ var HiPay = (function (HiPay) {
 
     _defineProperties(_APIError, {
         'code': {name: 'code'},
-        'message': {name: 'message'},
-
+        'message': {name: 'message'}
     });
 
 
@@ -10254,7 +10774,7 @@ var HiPay = (function (HiPay) {
 
         var serviceCreditCard = new _serviceCreditCard();
         var CVVLength = serviceCreditCard.getCreditCardCVVLengthMax();
-        if (CVVLength == undefined) {
+        if ( typeof CVVLength == "undefined") {
             CVVLength = 3;
         }
         return _translationJSON[HiPay.Form.locale]["FORM_CVV_"+CVVLength+"_HELP_MESSAGE"];

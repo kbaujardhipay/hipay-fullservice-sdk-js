@@ -70,7 +70,7 @@ require_once('../config/credentials.php');
                             <div class="input-group">
                                 <div class="input-group-addon-icon input-group-addon"><span class="glyphicon glyphicon-user" aria-hidden="true"></span></div>
 
-                                <input type="text" class="form-control" id="input-name-custom" autocomplete="cc-name" x-autocompletetype="cc-name" placeholder="" value="" data-hipay-id="card-holder">
+                                <input type="text" class="form-control" id="input-name-custom" autocomplete="cc-name" x-autocompletetype="cc-name" placeholder="" value="" data-hipay-id="card-holder" data-hipay-tabable="true">
                             </div>
                         </div>
                     </div>
@@ -81,7 +81,7 @@ require_once('../config/credentials.php');
                             <label class="sr-only" for="input-card-custom">Card number</label>
                             <div class="input-group">
                                 <div class="input-group-addon-icon input-group-addon"><span class="glyphicon glyphicon-credit-card" aria-hidden="true"></span></div>
-                                <input type="tel" class="form-control" id="input-card-custom" autocomplete="cc-number" x-autocompletetype="cc-number" placeholder="" pattern="\d*" name="cardNumber" value="" data-hipay-id="card-number">
+                                <input type="tel" class="form-control" id="input-card-custom" autocomplete="cc-number" x-autocompletetype="cc-number" placeholder="" pattern="\d*" name="cardNumber" value="" data-hipay-id="card-number" data-hipay-tabable="true">
                             </div>
                             <div id="creditCardNumberMessageContainer" class="inputMessageContainer"></div>
                         </div>
@@ -96,7 +96,7 @@ require_once('../config/credentials.php');
                             <label class="sr-only" for="input-expiry-date">MM / YY</label>
                             <div class="input-group">
                                 <div class="input-group-addon-icon input-group-addon"><span class="glyphicon glyphicon-calendar" aria-hidden="true"></span></div>
-                                <input type="text" class="form-control" id="input-expiry-date" value="" data-hipay-id="card-expiry-date">
+                                <input type="text" class="form-control" id="input-expiry-date" value="" data-hipay-id="card-expiry-date" data-hipay-tabable="true">
                                 <input tabindex="-1" style="position: absolute; left: -999em; width:1px" type="tel" class="form-control" id="expiration-month" value="" data-hipay-id="card-expiry-month">
                                 <input tabindex="-1" style="position: absolute; left: -999em;width:1px" type="tel" class="form-control" id="expiration-year" value="" data-hipay-id="card-expiry-year">
 
@@ -114,7 +114,7 @@ require_once('../config/credentials.php');
                             <label class="sr-only" for="input-cvv">123</label>
                             <div id="container-cvv" class="input-group">
                                 <div class="input-group-addon-icon input-group-addon"><span class="glyphicon glyphicon-lock" aria-hidden="true"></span></div>
-                                <input class="form-control" id="input-cvv" placeholder="123" maxlength="3" value="" data-hipay-id="card-cvv">
+                                <input class="form-control" id="input-cvv" placeholder="123" maxlength="3" value="" data-hipay-id="card-cvv" data-hipay-tabable="true">
                                 <span id="cvv-button" class="input-group-addon"><button type="button" data-toggle="modal" data-target="#cvv-modal">?</button></span>
                             </div>
                             <div id="creditCardCVVMessageContainer" class="inputMessageContainer"></div>
@@ -240,12 +240,12 @@ require_once('../config/credentials.php');
             }
         };
 
-        function focusHandler(){
-
-            console.log("test");
-        }
-        document.body.addEventListener('focus', focusHandler, true); //Non-IE
-        document.body.onfocusin = focusHandler; //IE
+//        function focusHandler(){
+//
+//            console.log("test");
+//        }
+//        document.body.addEventListener('focus', focusHandler, true); //Non-IE
+//        document.body.onfocusin = focusHandler; //IE
 
         $("#pay-button").click(function() {
             $("#form :button").prop("disabled", true);
