@@ -4,6 +4,8 @@
   "main": "dist/hipay-fullservice-sdk.js",
   "description": "The HiPay Fullservice SDK for JavaScript allows you to tokenize credit or debit cards against the HiPay Fullservice payment platform. This method allows you to offer a unified payment workflow to your customer. The SDK leverages the Direct Post method and is fully PCI compliant.",
   "dependencies": {
+    "es6-promise": "^4.1.1",
+    "fetch-ie8": "^1.5.0",
     "fetch-polyfill": "^0.8.2",
     "fetch-polyfill2": "0.0.3",
     "json3": "^3.3.2"

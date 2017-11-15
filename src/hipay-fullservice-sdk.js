@@ -721,7 +721,7 @@ var HiPay = (function (HiPay) {
             }
 
             if (_selectElementWithHipayId(_idInputMapper['cardType'])) {
-                _selectElementWithHipayId(_idInputMapper['cardType']).src = "a";
+                _selectElementWithHipayId(_idInputMapper['cardType']).src = "";
                 _selectElementWithHipayId(_idInputMapper['cardType']).setAttribute('style', 'display:none;');
             }
             for (var propt in _cardFormatDefinition) {
@@ -2339,7 +2339,7 @@ var HiPay = (function (HiPay) {
         imgType.className = 'card-type-custom';
         // imgType.id = _idInputMapper['cardType'];
         imgType.setAttribute('data-hipay-id', _idInputMapper['cardType']);
-        imgType.src = "b";
+        imgType.src = "";
         imgType.setAttribute('style','display:none;');
 
         my_elem.parentNode.insertBefore(imgType, my_elem.nextSibling);
