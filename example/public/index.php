@@ -228,7 +228,6 @@ require_once('../config/credentials.php');
             var myImgCVV = document.getElementById("cvv-img");
             var cvvInfo = HiPay.getCVVInformation();
             myImgCVV.src = "./img/cvv-type/cvv_"+cvvInfo['length']+".png";
-
             $("#pay-button").prop('disabled', !HiPay.Form.paymentFormDataIsValid());
             var errorCollection = HiPay.Form.paymentFormDataGetErrors();
         });
@@ -249,26 +248,10 @@ require_once('../config/credentials.php');
         document.body.onfocusin = focusHandler; //IE
 
         $("#pay-button").click(function() {
-
-//            $("#form :input").prop("disabled", true);
             $("#form :button").prop("disabled", true);
             $("#error").text("");
 
             $("#pay-button").text("Loading…");
-
-            var params = {
-                card_number: $('#input-card')[0].value,
-                card_expiry_date: $('#input-expiry-date')[0].value,
-                card_holder: $('#input-name')[0].value,
-                cvv: $('#input-cvv')[0].value,
-                multi_use: '0',
-                generate_request_id: '0'
-            };
-
-
-//            HiPay.setTarget('stage'); // default is production/live
-//            HiPay.setCredentials('<?php //echo $credentials['public']['username']; ?>//', '<?php //echo $credentials['public']['password']; ?>//');
-
 
             HiPay.Form.tokenizePaymentFormData()
                 .then(function(cardToken) {

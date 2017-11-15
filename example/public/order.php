@@ -2,7 +2,7 @@
 
 namespace HiPay\Fullservice\TokenizationExample;
 
-require __DIR__ . '../config/credentials.php';
+require __DIR__ . '/../config/credentials.php';
 require __DIR__ . '/lib/vendor/autoload.php';
 
 $config = new \HiPay\Fullservice\HTTP\Configuration\Configuration($credentials['private']['username'], $credentials['private']['password']);

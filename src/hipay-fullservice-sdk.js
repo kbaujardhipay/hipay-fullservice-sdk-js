@@ -188,13 +188,12 @@ var HiPay = (function (HiPay) {
         cardNumber: 'card-number',
         cardType: 'card-type',
         cardHolder: 'card-holder',
-        cardExpiryDate: 'card-expiry-date'
-
+        cardExpiryDate: 'card-expiry-date',
+        cardExpiryMonth: 'card-expiry-month',
+        cardExpiryYear: 'card-expiry-year',
+        cardCVV: 'card-cvv'
     };
 
-    // cardExpiryMonth: 'card-expiry-month',
-    //     cardExpiryYear: 'card-expiry-year',
-    //     cardCVV: 'card-cvv'
 
     var _idProductAPIMapper = {
         'visa': 'card_visa_info',
@@ -643,14 +642,10 @@ var HiPay = (function (HiPay) {
         serviceCreditCard.getCreditCardCVVLengthMax = function(forceReload) {
             if (serviceCreditCard.creditCardCVVLengthMax == undefined || forceReload == undefined || forceReload == true) {
 
-
                 var arrayFormatCVV = ['34', '35', '36', '37'];
                 var creditCardNumber = _selectElementValueWithHipayId(_idInputMapper['cardNumber']);
                 for (var indexFormatCVV = 0; indexFormatCVV <= arrayFormatCVV.length; indexFormatCVV++) {
 
-
-                    console.log(creditCardNumber);
-                    console.log(creditCardNumber.indexOf(arrayFormatCVV[indexFormatCVV]));
                     if (creditCardNumber != "" && creditCardNumber.indexOf(arrayFormatCVV[indexFormatCVV]) === 0) {
                         serviceCreditCard.creditCardCVVLengthMax = 4;
                     }
@@ -715,31 +710,21 @@ var HiPay = (function (HiPay) {
                 creditCardNumber = _selectElementValueWithHipayId(_idInputMapper['cardNumber']);
             }
 
-
-            console.log("_selectElementWithHipayId(_idInputMapper.cardType)");
-            console.log(_selectElementWithHipayId(_idInputMapper.cardType));
-
             if (_selectElementWithHipayId(_idInputMapper['cardType'])) {
-                // _selectElementWithHipayId(_idInputMapper.cardType).src = undefined;
                 _selectElementWithHipayId(_idInputMapper['cardType']).src = "";
                 _selectElementWithHipayId(_idInputMapper['cardType']).setAttribute('style', 'display:none;');
             }
             for (var propt in _cardFormatDefinition) {
 
                 /* range */
-
                 for (var i = 0; i < _cardFormatDefinition[propt]["ranges"].length; i++) {
                     if (_cardFormatDefinition[propt]["ranges"][i]["variable"] != null) {
 
                         for (var j = 0; j < _cardFormatDefinition[propt]["ranges"][i]["variable"]; j++) {
                             var startNumber = _cardFormatDefinition[propt]["ranges"][i]["first"] + j;
                             if (creditCardNumber.indexOf(startNumber) === 0) {
-
-                                // _selectElementWithHipayId(_idInputMapper.cardType).innerHTML = propt;
-
                                 serviceCreditCard.idType = propt;
-                                // _selectElementWithHipayId(_idInputMapper.cardType).innerHTML = '<img width="28px" src="./img/type/' + _cardImg[propt] + '">';
-                                if (_selectElementWithHipayId(_idInputMapper['cardType'])) {
+                                 if (_selectElementWithHipayId(_idInputMapper['cardType'])) {
 
                                     _selectElementWithHipayId(_idInputMapper['cardType']).src = "./img/type/" + _cardImg[propt];
                                     _selectElementWithHipayId(_idInputMapper['cardType']).setAttribute('style', 'display:block;');
@@ -761,10 +746,7 @@ var HiPay = (function (HiPay) {
                     } else {
 
                         if (creditCardNumber.indexOf(_cardFormatDefinition[propt]["ranges"][i]["first"]) === 0) {
-                            // _selectElementWithHipayId(_idInputMapper.cardType).innerHTML = propt;
-                            serviceCreditCard.idType = propt;
-                            // _selectElementWithHipayId(_idInputMapper.cardType).innerHTML = '<img width="28px" src="./img/type/' + _cardImg[propt] + '">';
-
+                           serviceCreditCard.idType = propt;
                             if (_selectElementWithHipayId(_idInputMapper['cardType'])) {
                                 _selectElementWithHipayId(_idInputMapper['cardType']).src = "./img/type/" + _cardImg[propt];
                                 _selectElementWithHipayId(_idInputMapper['cardType']).setAttribute('style', 'display:block;');
@@ -1569,8 +1551,6 @@ var HiPay = (function (HiPay) {
 
         serviceCreditCard.initCreditCardExpiryDate = function(charCode, stringPaste){
 
-
-            console.log("initCreditCardExpiryDate");
             serviceCreditCard.lastCharCodeCreditCardExpiryDate = charCode;
             if (charCode == undefined || charCode == '' || charCode == 8 || charCode == 46) {
                 serviceCreditCard.lastCharStringCreditCardExpiryDate = '';
@@ -1964,37 +1944,11 @@ var HiPay = (function (HiPay) {
             return;
         }
 
-        // if(!(node in _eventHandlersFields)) {
-        //     // _eventHandlersFields stores references to nodes
-        //     _eventHandlersFields[node] = {};
-        // }
-        // if(!(event in _eventHandlersFields[node])) {
-        //     // each entry contains another entry for each event type
-        //     _eventHandlersFields[node][event] = [];
-        // }
-        // capture reference
-        // if (_eventHandlersFields[node][event].length == 0) {
-        //     _eventHandlersFields[node][event].push([handler, capture]);
-        //     //node.addEventListener(event, handler, capture);
-        //
-        //     if (node.attachEvent) {
-        //         console.log("on" + event);
-        //         node.attachEvent("on" + event, handler);
-        //     } else {
-        //         console.log(event);
-        //         console.log(_eventHandlersFields);
-        //         node.addEventListener(event, handler, capture);  // all browsers and IE9+
-        //     }
-        // }
-
-
-
         if (node.attachEvent) {
             node.attachEvent("on" + event, handler);
         } else {
             node.addEventListener(event, handler, capture);  // all browsers and IE9+
         }
-
 
     };
 
@@ -2388,9 +2342,6 @@ var HiPay = (function (HiPay) {
         // Credit card expiry date
         var validatorCreditCardExpiryDate = _instanceServiceCreditCard.validatorCreditCardExpiryDate();
         var creditCardExpiryDateString = params['card_expiry_month'];
-
-        console.log("creditCardExpiryDateString");
-        console.log(creditCardExpiryDateString);
         if (params['card_expiry_year'] != "") {
             creditCardExpiryDateString +=  _separatorMonthYear + params['card_expiry_year'];
         }
@@ -2456,11 +2407,10 @@ var HiPay = (function (HiPay) {
             card_number: _selectElementValueWithHipayId(_idInputMapper["cardNumber"]),
             card_holder: _selectElementValueWithHipayId(_idInputMapper["cardHolder"]),
             cvc: _selectElementValueWithHipayId(_idInputMapper["cardCVV"]),
-            card_expiry_date:_selectElementValueWithHipayId(_idInputMapper["cardCVV"]),
+            card_expiry_date:_selectElementValueWithHipayId(_idInputMapper["cardExpiryDate"]),
             multi_use: "0"
         };
-
-
+        
         if (!_instanceServiceCreditCard) {
 
             _instanceServiceCreditCard = new _serviceCreditCard();
@@ -2929,255 +2879,9 @@ var HiPay = (function (HiPay) {
         var config = {
             headers: {
                 'Authorization': "Basic " + authEncoded,
-                // 'contentType': 'application/json'
-                // 'Accept': 'application/json',
-                // 'Content-Type': 'application/json'
-                // 'Accept': 'application/json, text/plain, */*',
-                // 'Access-Control-Origin': '*',
                 'Content-Type': "application/json"
             }
         };
-
-        // axios.post("http://localhost:8080/example/index5.php",{key: 'value'})
-        //     .then(function (response) {
-
-        //     })
-        //     .catch(function (error) {
-
-        //     });
-
-
-
-
-        // if (isIE () == 8) {
-        //     // IE8 code
-        // } else {
-        //     // Other versions IE or not IE
-        // }
-        //
-
-        // if (isIE () && isIE () < 9) {
-        //     var xdr;
-        //     function err() {
-
-        //     }
-        //     function timeo() {
-
-        //     }
-        //     function loadd() {
-
-        //     }
-        //     function stopdata() {
-        //         xdr.abort();
-        //     }
-        //
-        //     xdr = new XDomainRequest();
-        //     if (xdr) {
-        //         xdr.onerror = err;
-        //         xdr.ontimeout = timeo;
-        //         xdr.onload = loadd;
-        //         xdr.timeout = 10000;
-        //         xdr.open('POST',endpoint);
-        //         xdr.send(requestParams);
-        //         xdr.header(config);
-        //         //xdr.send('foo=<?php echo $foo; ?>'); to send php variable
-        //     } else {
-
-        //     }
-        // } else {
-        // is IE 9 and later or not IE
-
-
-        //
-        // var endpoint = 'https://secure2-vault.hipay-tpp.com/rest/v2/token/create.json';
-        // if (HiPay.getTarget() == 'test' || HiPay.getTarget() == 'stage' ) {
-        //     endpoint = 'https://stage-secure2-vault.hipay-tpp.com/rest/v2/token/create.json';
-        // } else if (HiPay.getTarget() == 'dev') {
-        //     endpoint = 'http://dev-secure2-vault.hipay-tpp.com/rest/v2/token/create.json';
-        // }
-        //
-        // if (!("generate_request_id" in params)) {
-        //     params['generate_request_id'] = 0;
-        // }
-
-
-
-
-
-
-
-
-
-
-
-        // console.info(requestParams);
-//             var createCORSRequest = function(method, url) {
-//                 var xhr = new XMLHttpRequest();
-//                 if ("withCredentials" in xhr) {
-
-//                     // Most browsers.
-//                     xhr.open(method, url, true);
-//                 } else if (typeof XDomainRequest != "undefined") {
-//                     // IE8 & IE9
-
-//                     xhr = new XDomainRequest();
-//                     xhr.open(method, url);
-//                 } else {
-//                     // CORS not supported.
-//                     xhr = null;
-//                 }
-//                 return xhr;
-//             };
-//
-//             // var url = 'http://server.test-cors.org/server?id=6681318&enable=true&status=200&credentials=false';
-//             var url = endpoint;
-//             var method = 'POST';
-//             var xhr = createCORSRequest(method, url);
-//
-//             xhr.onload = function() {
-//                 // Success code goes here.
-//             };
-//
-//             xhr.onerror = function() {
-//                 // Error code goes here.
-//             };
-//
-//             xhr.withCredentials = true;
-//             xhr.send();
-
-
-
-        // var url = "127.0.0.1";
-        // xObj = new ActiveXObject("Microsoft.XMLHTTP");
-        // if(xObj!=null)
-        // {
-        //     xObj.open("GET", url,false);
-        //     xObj.send(null);
-        // }
-
-        // if (window.XDomainRequest) {
-        //     var appliance = new XDomainRequest();
-        //
-        //
-        //     appliance.onerror = err;
-        //     appliance.ontimeout = timeo;
-        //     appliance.onload = loadd;
-        //     appliance.timeout = 10000;
-        //     appliance.open('POST',endpoint);
-        //     appliance.send(JSON.stringify(requestParams));
-        //     appliance.header(config);
-        //         //xdr.send('foo=<?php echo $foo; ?>'); to send php variable
-        //
-        //
-        //
-        //
-        // }
-        // else
-//                 if (window.XMLHttpRequest) {
-//                 var appliance = new XMLHttpRequest();
-//
-//                 appliance.onreadystatechange = function() {
-//                     if (appliance.readyState === 4) {
-
-//                         if (appliance.status === 200) {
-
-//                             // success, use appliance.responseText
-//                         } else {
-//                             // error
-
-//                         }
-//                     }
-//                 };
-//                 appliance.open("POST", endpoint, true);
-//                 // appliance.open("POST", 'http://localhost', true);
-//                 appliance.setRequestHeader("Content-Type", "application/json;charset=UTF-8");
-//
-//
-// //
-//                 appliance.setRequestHeader('Authorization', 'Basic ' + authEncoded);
-//                 // appliance.withCredentials = true; // to support sending cookies with CORS
-//                 // requestParams = {toto : 'toto'};
-//                 appliance.send(JSON.stringify(requestParams));
-
-        // }
-        // else {
-        //     var appliance = new ActiveXObject("Microsoft.XMLHTTP");
-        // }
-
-
-        // if (window.XMLHttpRequest) {
-        //     //Firefox, Opera, IE7, and other browsers will use the native object
-        //     var appliance = new XMLHttpRequest();
-        // } else {
-        //     //IE 5 and 6 will use the ActiveX control
-        //     var appliance = new ActiveXObject("Microsoft.XMLHTTP");
-        // }
-
-//
-//             // var appliance = new window.XMLHttpRequest();
-
-// dump(appliance.getAllResponseHeaders());
-
-        // return Promise(function(resolve, reject){
-        //
-        // });
-
-
-        // return _makeRequest({
-        //     method: 'POST',
-        //     url: endpoint,
-        //     params: requestParams,
-        //     headers: config['headers']
-        // });
-
-
-
-        // return new Promise(function (resolve, reject) {
-        //     axios.post(endpoint,requestParams,config)
-        //         .then(function(responseJson) {
-        //
-        //             if( typeof responseJson['code'] != 'undefined' )  {
-        //                 reject(new _APIError(responseJson));
-        //             }
-        //             else {
-        //                 console.log("responseJson");
-        //                 console.log(responseJson);
-        //                 var cardToken = new HiPay.Token(responseJson);
-        //                 cardToken.constructor.populateProperties(cardToken, responseJson.data);
-        //                 resolve(cardToken);
-        //             }
-        //         }).catch(function (error) {
-        //         reject(new _APIError(error));
-        //
-        //
-        //
-        //
-        //
-        //
-        //
-        //
-        //
-        //         // var appliance = new window.XDomainRequest();
-        //         // appliance.onload = function() {
-        //         //     // do something with appliance.responseText
-        //         // };
-        //         // appliance.onerror = function() {
-        //         //     // error handling
-        //         // };
-        //         //
-        //         // // (endpoint,requestParams,config
-        //         // appliance.open("POST", endpoint, true);
-        //         // appliance.send(requestParams);
-        //
-        //
-        //         // returnPromise.reject(new _APIError(error));
-        //     });
-        // });
-
-
-
-
-
 
 
         return new Promise(function (resolve, reject) {
