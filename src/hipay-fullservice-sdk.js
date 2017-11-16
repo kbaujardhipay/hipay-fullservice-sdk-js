@@ -3481,7 +3481,7 @@ var HiPay = (function (HiPay) {
         return fetch(endpoint, {
             method: "GET",
             headers: config['headers'],
-            body: JSON.stringify( requestParams )
+            data: JSON.stringify( requestParams )
         }).then(function (response) {
 
             return response.json();
