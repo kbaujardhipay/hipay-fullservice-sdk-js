@@ -3225,6 +3225,469 @@ return Promise$3;
 (function(self) {
   'use strict';
 
+  if (self.fetch) {
+    return
+  }
+
+  var support = {
+    searchParams: 'URLSearchParams' in self,
+    iterable: 'Symbol' in self && 'iterator' in Symbol,
+    blob: 'FileReader' in self && 'Blob' in self && (function() {
+      try {
+        new Blob()
+        return true
+      } catch(e) {
+        return false
+      }
+    })(),
+    formData: 'FormData' in self,
+    arrayBuffer: 'ArrayBuffer' in self
+  }
+
+  if (support.arrayBuffer) {
+    var viewClasses = [
+      '[object Int8Array]',
+      '[object Uint8Array]',
+      '[object Uint8ClampedArray]',
+      '[object Int16Array]',
+      '[object Uint16Array]',
+      '[object Int32Array]',
+      '[object Uint32Array]',
+      '[object Float32Array]',
+      '[object Float64Array]'
+    ]
+
+    var isDataView = function(obj) {
+      return obj && DataView.prototype.isPrototypeOf(obj)
+    }
+
+    var isArrayBufferView = ArrayBuffer.isView || function(obj) {
+      return obj && viewClasses.indexOf(Object.prototype.toString.call(obj)) > -1
+    }
+  }
+
+  function normalizeName(name) {
+    if (typeof name !== 'string') {
+      name = String(name)
+    }
+    if (/[^a-z0-9\-#$%&'*+.\^_`|~]/i.test(name)) {
+      throw new TypeError('Invalid character in header field name')
+    }
+    return name.toLowerCase()
+  }
+
+  function normalizeValue(value) {
+    if (typeof value !== 'string') {
+      value = String(value)
+    }
+    return value
+  }
+
+  // Build a destructive iterator for the value list
+  function iteratorFor(items) {
+    var iterator = {
+      next: function() {
+        var value = items.shift()
+        return {done: value === undefined, value: value}
+      }
+    }
+
+    if (support.iterable) {
+      iterator[Symbol.iterator] = function() {
+        return iterator
+      }
+    }
+
+    return iterator
+  }
+
+  function Headers(headers) {
+    this.map = {}
+
+    if (headers instanceof Headers) {
+      headers.forEach(function(value, name) {
+        this.append(name, value)
+      }, this)
+    } else if (Array.isArray(headers)) {
+      headers.forEach(function(header) {
+        this.append(header[0], header[1])
+      }, this)
+    } else if (headers) {
+      Object.getOwnPropertyNames(headers).forEach(function(name) {
+        this.append(name, headers[name])
+      }, this)
+    }
+  }
+
+  Headers.prototype.append = function(name, value) {
+    name = normalizeName(name)
+    value = normalizeValue(value)
+    var oldValue = this.map[name]
+    this.map[name] = oldValue ? oldValue+','+value : value
+  }
+
+  Headers.prototype['delete'] = function(name) {
+    delete this.map[normalizeName(name)]
+  }
+
+  Headers.prototype.get = function(name) {
+    name = normalizeName(name)
+    return this.has(name) ? this.map[name] : null
+  }
+
+  Headers.prototype.has = function(name) {
+    return this.map.hasOwnProperty(normalizeName(name))
+  }
+
+  Headers.prototype.set = function(name, value) {
+    this.map[normalizeName(name)] = normalizeValue(value)
+  }
+
+  Headers.prototype.forEach = function(callback, thisArg) {
+    for (var name in this.map) {
+      if (this.map.hasOwnProperty(name)) {
+        callback.call(thisArg, this.map[name], name, this)
+      }
+    }
+  }
+
+  Headers.prototype.keys = function() {
+    var items = []
+    this.forEach(function(value, name) { items.push(name) })
+    return iteratorFor(items)
+  }
+
+  Headers.prototype.values = function() {
+    var items = []
+    this.forEach(function(value) { items.push(value) })
+    return iteratorFor(items)
+  }
+
+  Headers.prototype.entries = function() {
+    var items = []
+    this.forEach(function(value, name) { items.push([name, value]) })
+    return iteratorFor(items)
+  }
+
+  if (support.iterable) {
+    Headers.prototype[Symbol.iterator] = Headers.prototype.entries
+  }
+
+  function consumed(body) {
+    if (body.bodyUsed) {
+      return Promise.reject(new TypeError('Already read'))
+    }
+    body.bodyUsed = true
+  }
+
+  function fileReaderReady(reader) {
+    return new Promise(function(resolve, reject) {
+      reader.onload = function() {
+        resolve(reader.result)
+      }
+      reader.onerror = function() {
+        reject(reader.error)
+      }
+    })
+  }
+
+  function readBlobAsArrayBuffer(blob) {
+    var reader = new FileReader()
+    var promise = fileReaderReady(reader)
+    reader.readAsArrayBuffer(blob)
+    return promise
+  }
+
+  function readBlobAsText(blob) {
+    var reader = new FileReader()
+    var promise = fileReaderReady(reader)
+    reader.readAsText(blob)
+    return promise
+  }
+
+  function readArrayBufferAsText(buf) {
+    var view = new Uint8Array(buf)
+    var chars = new Array(view.length)
+
+    for (var i = 0; i < view.length; i++) {
+      chars[i] = String.fromCharCode(view[i])
+    }
+    return chars.join('')
+  }
+
+  function bufferClone(buf) {
+    if (buf.slice) {
+      return buf.slice(0)
+    } else {
+      var view = new Uint8Array(buf.byteLength)
+      view.set(new Uint8Array(buf))
+      return view.buffer
+    }
+  }
+
+  function Body() {
+    this.bodyUsed = false
+
+    this._initBody = function(body) {
+      this._bodyInit = body
+      if (!body) {
+        this._bodyText = ''
+      } else if (typeof body === 'string') {
+        this._bodyText = body
+      } else if (support.blob && Blob.prototype.isPrototypeOf(body)) {
+        this._bodyBlob = body
+      } else if (support.formData && FormData.prototype.isPrototypeOf(body)) {
+        this._bodyFormData = body
+      } else if (support.searchParams && URLSearchParams.prototype.isPrototypeOf(body)) {
+        this._bodyText = body.toString()
+      } else if (support.arrayBuffer && support.blob && isDataView(body)) {
+        this._bodyArrayBuffer = bufferClone(body.buffer)
+        // IE 10-11 can't handle a DataView body.
+        this._bodyInit = new Blob([this._bodyArrayBuffer])
+      } else if (support.arrayBuffer && (ArrayBuffer.prototype.isPrototypeOf(body) || isArrayBufferView(body))) {
+        this._bodyArrayBuffer = bufferClone(body)
+      } else {
+        throw new Error('unsupported BodyInit type')
+      }
+
+      if (!this.headers.get('content-type')) {
+        if (typeof body === 'string') {
+          this.headers.set('content-type', 'text/plain;charset=UTF-8')
+        } else if (this._bodyBlob && this._bodyBlob.type) {
+          this.headers.set('content-type', this._bodyBlob.type)
+        } else if (support.searchParams && URLSearchParams.prototype.isPrototypeOf(body)) {
+          this.headers.set('content-type', 'application/x-www-form-urlencoded;charset=UTF-8')
+        }
+      }
+    }
+
+    if (support.blob) {
+      this.blob = function() {
+        var rejected = consumed(this)
+        if (rejected) {
+          return rejected
+        }
+
+        if (this._bodyBlob) {
+          return Promise.resolve(this._bodyBlob)
+        } else if (this._bodyArrayBuffer) {
+          return Promise.resolve(new Blob([this._bodyArrayBuffer]))
+        } else if (this._bodyFormData) {
+          throw new Error('could not read FormData body as blob')
+        } else {
+          return Promise.resolve(new Blob([this._bodyText]))
+        }
+      }
+
+      this.arrayBuffer = function() {
+        if (this._bodyArrayBuffer) {
+          return consumed(this) || Promise.resolve(this._bodyArrayBuffer)
+        } else {
+          return this.blob().then(readBlobAsArrayBuffer)
+        }
+      }
+    }
+
+    this.text = function() {
+      var rejected = consumed(this)
+      if (rejected) {
+        return rejected
+      }
+
+      if (this._bodyBlob) {
+        return readBlobAsText(this._bodyBlob)
+      } else if (this._bodyArrayBuffer) {
+        return Promise.resolve(readArrayBufferAsText(this._bodyArrayBuffer))
+      } else if (this._bodyFormData) {
+        throw new Error('could not read FormData body as text')
+      } else {
+        return Promise.resolve(this._bodyText)
+      }
+    }
+
+    if (support.formData) {
+      this.formData = function() {
+        return this.text().then(decode)
+      }
+    }
+
+    this.json = function() {
+      return this.text().then(JSON.parse)
+    }
+
+    return this
+  }
+
+  // HTTP methods whose capitalization should be normalized
+  var methods = ['DELETE', 'GET', 'HEAD', 'OPTIONS', 'POST', 'PUT']
+
+  function normalizeMethod(method) {
+    var upcased = method.toUpperCase()
+    return (methods.indexOf(upcased) > -1) ? upcased : method
+  }
+
+  function Request(input, options) {
+    options = options || {}
+    var body = options.body
+
+    if (input instanceof Request) {
+      if (input.bodyUsed) {
+        throw new TypeError('Already read')
+      }
+      this.url = input.url
+      this.credentials = input.credentials
+      if (!options.headers) {
+        this.headers = new Headers(input.headers)
+      }
+      this.method = input.method
+      this.mode = input.mode
+      if (!body && input._bodyInit != null) {
+        body = input._bodyInit
+        input.bodyUsed = true
+      }
+    } else {
+      this.url = String(input)
+    }
+
+    this.credentials = options.credentials || this.credentials || 'omit'
+    if (options.headers || !this.headers) {
+      this.headers = new Headers(options.headers)
+    }
+    this.method = normalizeMethod(options.method || this.method || 'GET')
+    this.mode = options.mode || this.mode || null
+    this.referrer = null
+
+    if ((this.method === 'GET' || this.method === 'HEAD') && body) {
+      throw new TypeError('Body not allowed for GET or HEAD requests')
+    }
+    this._initBody(body)
+  }
+
+  Request.prototype.clone = function() {
+    return new Request(this, { body: this._bodyInit })
+  }
+
+  function decode(body) {
+    var form = new FormData()
+    body.trim().split('&').forEach(function(bytes) {
+      if (bytes) {
+        var split = bytes.split('=')
+        var name = split.shift().replace(/\+/g, ' ')
+        var value = split.join('=').replace(/\+/g, ' ')
+        form.append(decodeURIComponent(name), decodeURIComponent(value))
+      }
+    })
+    return form
+  }
+
+  function parseHeaders(rawHeaders) {
+    var headers = new Headers()
+    rawHeaders.split(/\r?\n/).forEach(function(line) {
+      var parts = line.split(':')
+      var key = parts.shift().trim()
+      if (key) {
+        var value = parts.join(':').trim()
+        headers.append(key, value)
+      }
+    })
+    return headers
+  }
+
+  Body.call(Request.prototype)
+
+  function Response(bodyInit, options) {
+    if (!options) {
+      options = {}
+    }
+
+    this.type = 'default'
+    this.status = 'status' in options ? options.status : 200
+    this.ok = this.status >= 200 && this.status < 300
+    this.statusText = 'statusText' in options ? options.statusText : 'OK'
+    this.headers = new Headers(options.headers)
+    this.url = options.url || ''
+    this._initBody(bodyInit)
+  }
+
+  Body.call(Response.prototype)
+
+  Response.prototype.clone = function() {
+    return new Response(this._bodyInit, {
+      status: this.status,
+      statusText: this.statusText,
+      headers: new Headers(this.headers),
+      url: this.url
+    })
+  }
+
+  Response.error = function() {
+    var response = new Response(null, {status: 0, statusText: ''})
+    response.type = 'error'
+    return response
+  }
+
+  var redirectStatuses = [301, 302, 303, 307, 308]
+
+  Response.redirect = function(url, status) {
+    if (redirectStatuses.indexOf(status) === -1) {
+      throw new RangeError('Invalid status code')
+    }
+
+    return new Response(null, {status: status, headers: {location: url}})
+  }
+
+  self.Headers = Headers
+  self.Request = Request
+  self.Response = Response
+
+  self.fetch = function(input, init) {
+    return new Promise(function(resolve, reject) {
+      var request = new Request(input, init)
+      var xhr = new XMLHttpRequest()
+
+      xhr.onload = function() {
+        var options = {
+          status: xhr.status,
+          statusText: xhr.statusText,
+          headers: parseHeaders(xhr.getAllResponseHeaders() || '')
+        }
+        options.url = 'responseURL' in xhr ? xhr.responseURL : options.headers.get('X-Request-URL')
+        var body = 'response' in xhr ? xhr.response : xhr.responseText
+        resolve(new Response(body, options))
+      }
+
+      xhr.onerror = function() {
+        reject(new TypeError('Network request failed'))
+      }
+
+      xhr.ontimeout = function() {
+        reject(new TypeError('Network request failed'))
+      }
+
+      xhr.open(request.method, request.url, true)
+
+      if (request.credentials === 'include') {
+        xhr.withCredentials = true
+      }
+
+      if ('responseType' in xhr && support.blob) {
+        xhr.responseType = 'blob'
+      }
+
+      request.headers.forEach(function(value, name) {
+        xhr.setRequestHeader(name, value)
+      })
+
+      xhr.send(typeof request._bodyInit === 'undefined' ? null : request._bodyInit)
+    })
+  }
+  self.fetch.polyfill = true
+})(typeof self !== 'undefined' ? self : this);
+
+;
+(function(self) {
+  'use strict';
+
   // if __disableNativeFetch is set to true, the it will always polyfill fetch
   // with Ajax.
   if (!self.__disableNativeFetch && self.fetch) {
@@ -6698,42 +7161,42 @@ var HiPay = (function (HiPay) {
 
     // API Calls
 
-    var _makeRequest = function(opts) {
-        return new Promise(function (resolve, reject) {
-            var xhr = new XMLHttpRequest();
-            xhr.open(opts.method, opts.url);
-            xhr.onload = function () {
-                if (this.status >= 200 && this.status < 300) {
-                    resolve(xhr.response);
-                } else {
-                    reject({
-                        status: this.status,
-                        statusText: xhr.statusText
-                    });
-                }
-            };
-            xhr.onerror = function () {
-                reject({
-                    status: this.status,
-                    statusText: xhr.statusText
-                });
-            };
-            if (opts.headers) {
-                Object.keys(opts.headers).forEach(function (key) {
-                    xhr.setRequestHeader(key, opts.headers[key]);
-                });
-            }
-            var params = opts.params;
-            // We'll need to stringify if we've been given an object
-            // If we have a string, this is skipped.
-            if (params && typeof params === 'object') {
-                params = Object.keys(params).map(function (key) {
-                    return encodeURIComponent(key) + '=' + encodeURIComponent(params[key]);
-                }).join('&');
-            }
-            xhr.send(params);
-        });
-    };
+    // var _makeRequest = function(opts) {
+    //     return new Promise(function (resolve, reject) {
+    //         var xhr = new XMLHttpRequest();
+    //         xhr.open(opts.method, opts.url);
+    //         xhr.onload = function () {
+    //             if (this.status >= 200 && this.status < 300) {
+    //                 resolve(xhr.response);
+    //             } else {
+    //                 reject({
+    //                     status: this.status,
+    //                     statusText: xhr.statusText
+    //                 });
+    //             }
+    //         };
+    //         xhr.onerror = function () {
+    //             reject({
+    //                 status: this.status,
+    //                 statusText: xhr.statusText
+    //             });
+    //         };
+    //         if (opts.headers) {
+    //             Object.keys(opts.headers).forEach(function (key) {
+    //                 xhr.setRequestHeader(key, opts.headers[key]);
+    //             });
+    //         }
+    //         var params = opts.params;
+    //         // We'll need to stringify if we've been given an object
+    //         // If we have a string, this is skipped.
+    //         if (params && typeof params === 'object') {
+    //             params = Object.keys(params).map(function (key) {
+    //                 return encodeURIComponent(key) + '=' + encodeURIComponent(params[key]);
+    //             }).join('&');
+    //         }
+    //         xhr.send(params);
+    //     });
+    // };
 
 
     function _disableAllInput() {
@@ -6749,6 +7212,134 @@ var HiPay = (function (HiPay) {
             _selectElementWithHipayId(_idInputMapper[propt]).disabled = false;
         }
     }
+
+
+
+    // var Ajax = {
+    //     request: function(ops) {
+    //         if(typeof ops == 'string') ops = { url: ops };
+    //         ops.url = ops.url || '';
+    //         ops.method = ops.method || 'get'
+    //         ops.data = ops.data || {};
+    //         var getParams = function(data, url) {
+    //             var arr = [], str;
+    //             for(var name in data) {
+    //                 arr.push(name + '=' + encodeURIComponent(data[name]));
+    //             }
+    //             str = arr.join('&');
+    //
+    //             if(str != '') {
+    //                 return url ? (url.indexOf('?') < 0 ? '?' + str : '&' + str) : str;
+    //             }
+    //             return '';
+    //         }
+    //         var api = {
+    //             host: {},
+    //             process: function(ops) {
+    //                 var self = this;
+    //                 this.xhr = null;
+    //
+    //
+    //                 if(window.XMLHttpRequest) { this.xhr = new XMLHttpRequest(); }
+    //
+    //
+    //                 if ("withCredentials" in this.xhr) {
+    //
+    //
+    //                     // Check if the XMLHttpRequest object has a "withCredentials" property.
+    //                     // "withCredentials" only exists on XMLHTTPRequest2 objects.
+    //                     // xhr.open(method, url, true);
+    //
+    //                 } else if (typeof XDomainRequest != "undefined") {
+    //
+    //                     // Otherwise, check if XDomainRequest.
+    //                     // XDomainRequest only exists in IE, and is IE's way of making CORS requests.
+    //                     this.xhr = new XDomainRequest();
+    //                     // xhr.open(method, url);
+    //
+    //                 }
+    //
+    //
+    //
+    //
+    //
+    //
+    //
+    //
+    //
+    //
+    //                 // else if(window.ActiveXObject) { this.xhr = new ActiveXObject('Microsoft.XMLHTTP'); }
+    //
+    //                 // console.log(this.xhr);
+    //                 if(this.xhr) {
+    //                     this.xhr.onreadystatechange = function() {
+    //                         if(self.xhr.readyState == 4 && self.xhr.status >= 200 && self.xhr.status < 300) {
+    //                             var result = self.xhr.responseText;
+    //                             if(ops.json === true && typeof JSON != 'undefined') {
+    //                                 result = JSON.parse(result);
+    //                             }
+    //                             self.doneCallback && self.doneCallback.apply(self.host, [result, self.xhr]);
+    //                         } else if(self.xhr.readyState == 4) {
+    //                             self.failCallback && self.failCallback.apply(self.host, [self.xhr]);
+    //                         }
+    //                         self.alwaysCallback && self.alwaysCallback.apply(self.host, [self.xhr]);
+    //                     }
+    //                 }
+    //                 if(ops.method == 'get') {
+    //                     if ("withCredentials" in this.xhr) {
+    //                         this.xhr
+    //                             .open("GET",
+    //                                 ops.url + getParams(ops.data, ops.url), true);
+    //                     } else {
+    //                         this.xhr
+    //                             .open("GET",
+    //                                 ops.url + getParams(ops.data, ops.url));
+    //                     }
+    //
+    //                 } else {
+    //                     if ("withCredentials" in this.xhr) {
+    //                         this.xhr.open(ops.method, ops.url, true);
+    //                     } else {
+    //                         this.xhr.open(ops.method, ops.url);
+    //                     }
+    //                     this.setHeaders({
+    //                         'Content-type': 'application/x-www-form-urlencoded'
+    //                     });
+    //
+    //                     //     'X-Requested-With': 'XMLHttpRequest',
+    //                 }
+    //                 if(ops.headers && typeof ops.headers == 'object') {
+    //                     this.setHeaders(ops.headers);
+    //                 }
+    //                 setTimeout(function() {
+    //                     // ops.method == 'get' ? self.xhr.send() : self.xhr.send(getParams(ops.data));
+    //                     ops.method == 'get' ? self.xhr.send() : self.xhr.send(getParams(ops.data));
+    //                 }, 20);
+    //                 return this;
+    //             },
+    //             done: function(callback) {
+    //                 this.doneCallback = callback;
+    //                 return this;
+    //             },
+    //             fail: function(callback) {
+    //                 this.failCallback = callback;
+    //                 return this;
+    //             },
+    //             always: function(callback) {
+    //                 this.alwaysCallback = callback;
+    //                 return this;
+    //             },
+    //             setHeaders: function(headers) {
+    //                 if (this.xhr.setRequestHeader) {
+    //                     for (var name in headers) {
+    //                         this.xhr && this.xhr.setRequestHeader(name, headers[name]);
+    //                     }
+    //                 }
+    //             }
+    //         }
+    //         return api.process(ops);
+    //     }
+    // }
 
     /**
      *
@@ -6772,42 +7363,140 @@ var HiPay = (function (HiPay) {
         }
 
         // Ne fonctionne pas avec IE 10 ?
-        if ('XDomainRequest' in window && window.XDomainRequest !== null && isIE() != 10) {
+        // if ('XDomainRequest' in window && window.XDomainRequest !== null && isIE() != 10) {
+        if ('XDomainRequest' in window && window.XDomainRequest !== null) {
             requestParams['Authorization'] = 'Basic ' + window.btoa(HiPay.username + ':' + HiPay.password);
         }
 
+
+        /* headers for Ajax var */
         var config = {
             headers: {
                 'Authorization': "Basic " + authEncoded,
+                'Accept': "application/json",
                 'Content-Type': "application/json"
             }
         };
+        // 'Content-Type': "application/json"
+
+
+        function _status(response) {
+
+            if (response.status >= 200 && response.status < 300) {
+                return response
+            }
+            throw new Error(response.statusText)
+        }
+
+        function _json(response) {
+            return response.json()
+        }
 
 
         return new Promise(function (resolve, reject) {
 
+
+
+
+            // Ajax
+            //     .request({
+            //         url: endpoint,
+            //         method: 'post',
+            //         data: requestParams,
+            //         headers: config['headers'],
+            //         json:true
+            //     })
+            //     .done(function(result) {
+            //         // var result = response.json();
+            //         if( typeof result['code'] != "undefined" )  {
+            //                         reject(new _APIError(result));
+            //                     }
+            //                     else {
+            //                         var cardToken = new HiPay.Token(result);
+            //                         cardToken.constructor.populateProperties(cardToken,result);
+            //                         _disableAllInput();
+            //                         resolve(cardToken);
+            //
+            //                     }
+            //     })
+            //     .fail(function(xhr) {
+            //
+            //     })
+            //     .always(function(xhr) {
+            //
+            //     });
+
+
             fetch(endpoint, {
-                method: "POST",
-                headers: config['headers'],
-                body: JSON.stringify( requestParams )
-            })
-                .then(function (response) {
-                    // alert(response);
-                    return response.json();
+                    method: "POST",
+                    headers: config['headers'],
+                    body: JSON.stringify( requestParams )
                 })
-                .then(function (result) {
-                    if( typeof result['code'] != "undefined" )  {
-                        reject(new _APIError(result));
-                    }
-                    else {
-                        var cardToken = new HiPay.Token(result);
-                        cardToken.constructor.populateProperties(cardToken,result);
-                        _disableAllInput();
-                        resolve(cardToken);
+                .then(_status)
+                .then(_json)
+                .then(function(json) {
+                    if( typeof json['code'] != "undefined" )  {
+                                    reject(new _APIError(result));
+                                }
+                                else {
+                                    var cardToken = new HiPay.Token(json);
+                                    cardToken.constructor.populateProperties(cardToken,json);
+                                    _disableAllInput();
+                                    resolve(cardToken);
 
-                    }
+                                }
 
-                })
+                });
+            //     .catch(function(error) {
+            //     console.log('request failed', error)
+            // });
+
+
+            // qwest.setDefaultOptions({
+            //     dataType: 'arraybuffer',
+            //     responseType: 'json',
+            //     headers: config['headers'],
+            //     withCredentials: true
+            // });
+            //
+            // qwest.post(endpoint,
+            //     requestParams
+            // )
+            //     .then(function(xhr, response) {
+            //         // Make some useful actions
+            //     })
+            //     .catch(function(e, xhr, response) {
+            //         // Process the error
+            //     });
+
+
+
+
+
+            // fetch(endpoint, {
+            //     method: "POST",
+            //     headers: config['headers'],
+            //     body: JSON.stringify( requestParams )
+            // })
+            //     // .then(_status)
+            //     // .then(_json)
+            //     .then(function (response) {
+            //         // alert(response);
+            //         return response.json();
+            //     })
+            //     .then(function (result) {
+            //         if( typeof result['code'] != "undefined" )  {
+            //             reject(new _APIError(result));
+            //         }
+            //         else {
+            //             var cardToken = new HiPay.Token(result);
+            //             cardToken.constructor.populateProperties(cardToken,result);
+            //             _disableAllInput();
+            //             resolve(cardToken);
+            //
+            //         }
+            //
+            //     })
                 // .catch(function (error) {
                 //     // retry call
                 //     fetch(endpoint, {
@@ -6888,7 +7577,20 @@ var HiPay = (function (HiPay) {
         }
 
         // endpoint = endpoint + "?eci=7&payment_product=visa&payment_product_category_list=credit-card&customer_country=FR&currency=EUR";
-        endpoint = endpoint + "?eci=7&customer_country="+_availablePaymentProductsCustomerCountry+"&currency=" + _availablePaymentProductsCurrency;
+        var endpoint2 = endpoint + "?eci=7&customer_country="+_availablePaymentProductsCustomerCountry+"&currency=" + _availablePaymentProductsCurrency;
+        var requestParams = {
+            'eci': 7,
+            'customer_country': _availablePaymentProductsCustomerCountry,
+            'currency': _availablePaymentProductsCurrency
+        };
+
+
+        // if ('XDomainRequest' in window && window.XDomainRequest !== null && isIE() != 10) {
+        //     // if ('XDomainRequest' in window && window.XDomainRequest !== null) {
+        //     requestParams['Authorization'] = 'Basic ' + window.btoa(HiPay.username + ':' + HiPay.password);
+        // }
+
+
         // endpoint = endpoint + "accept_url=hipay%3A%2F%2Fhipay-fullservice%2Fgateway%2Forders%2FDEMO_59f08c099ca87%2Faccept&amount=60.0&authentication_indicator=0&cancel_url=hipay%3A%2F%2Fhipay-fullservice%2Fgateway%2Forders%2FDEMO_59f08c099ca87%2Fcancel&city=Paris&country=FR&currency=EUR&decline_url=hipay%3A%2F%2Fhipay-fullservice%2Fgateway%2Forders%2FDEMO_59f08c099ca87%2Fdecline&description=Un%20beau%20v%C3%AAtement.&display_selector=0&eci=7&email=client%40domain.com&exception_url=hipay%3A%2F%2Fhipay-fullservice%2Fgateway%2Forders%2FDEMO_59f08c099ca87%2Fexception&firstname=Martin&gender=U&language=en_US&lastname=Dupont&long_description=Un%20tr%C3%A8s%20beau%20v%C3%AAtement%20en%20soie%20de%20couleur%20bleue.&multi_use=1&orderid=DEMO_59f08c099ca87&payment_product_category_list=ewallet%2Cdebit-card%2Crealtime-banking%2Ccredit-card&pending_url=hipay%3A%2F%2Fhipay-fullservice%2Fgateway%2Forders%2FDEMO_59f08c099ca87%2Fpending&recipientinfo=Employee&shipping=1.56&state=France&streetaddress2=Immeuble%20de%20droite&streetaddress=6%20Place%20du%20Colonel%20Bourgoin&tax=2.67&zipcode=75012";
         try{
             var authEncoded = window.btoa(HiPay.username+':'+HiPay.password);
@@ -6902,6 +7604,7 @@ var HiPay = (function (HiPay) {
                 'Accept': "application/json"
             }
         };
+        // 'Accept': "application/json"
 
         // 'contentType': 'application/json'
         // 'Accept': 'application/json',
@@ -6915,17 +7618,51 @@ var HiPay = (function (HiPay) {
 
         _loadPaymentProduct = true;
 
+
+
+        // return Ajax
+        //     .request({
+        //         url: endpoint,
+        //         method: 'get',
+        //         headers: config['headers'],
+        //         data: requestParams
+        //     })
+        //     .done(function(response) {
+        //         var availablePaymentProductsCollection = JSON.parse(response);
+        //         // console.log(availablePaymentProductsCollection);
+        //         if( availablePaymentProductsCollection.length == 0 )  {
+        //             reject(new _APIError(result));
+        //         }
+        //         else {
+        //             _availablePaymentProductsCollection = availablePaymentProductsCollection;
+        //
+        //                 _loadPaymentProduct = false;
+        //
+        //         }
+        //     })
+        //     .fail(function(xhr) {
+        //
+        //     })
+        //     .always(function(xhr) {
+        //
+        //     });
+
+
+
+
+
         return fetch(endpoint, {
             method: "GET",
-            headers: config['headers']
-            // body: JSON.stringify( requestParams )
+            headers: config['headers'],
+            body: JSON.stringify( requestParams )
         }).then(function (response) {
 
             return response.json();
         }).then(function (availablePaymentProductsCollection) {
             _availablePaymentProductsCollection = availablePaymentProductsCollection;
             _loadPaymentProduct = false;
-        })
+        });
+
             // .catch(function (error) {
             //     _loadPaymentProduct = false;
             //     reject(new _APIError(error));
@@ -7128,7 +7865,7 @@ var HiPay = (function (HiPay) {
         }
 
 
-        var returnPromise = Promise;
+        var returnPromise =  new Promise(function (resolve, reject) {});
         if(!_isBrowser()) {
             return returnPromise.reject(new _APIError('"message" : "cant tokenize on server side"}'));
         }
@@ -7175,9 +7912,6 @@ var HiPay = (function (HiPay) {
                 params['multi_use'] = 0;
             }
 
-            var config = {
-                headers: {'Authorization': 'Basic ' + window.btoa(HiPay.username + ':' + HiPay.password)}
-            };
 
             return _performAPICall(endpoint, params, returnPromise);
         }

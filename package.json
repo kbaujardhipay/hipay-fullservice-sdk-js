@@ -8,7 +8,10 @@
     "fetch-ie8": "^1.5.0",
     "fetch-polyfill": "^0.8.2",
     "fetch-polyfill2": "0.0.3",
-    "json3": "^3.3.2"
+    "json3": "^3.3.2",
+    "promise-polyfill": "6.0.2",
+    "qwest": "^4.5.0",
+    "whatwg-fetch": "^2.0.3"
   },
   "devDependencies": {
     "axios": "0.16.2",

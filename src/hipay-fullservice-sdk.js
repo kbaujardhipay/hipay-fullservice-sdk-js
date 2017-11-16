@@ -2988,42 +2988,42 @@ var HiPay = (function (HiPay) {
 
     // API Calls
 
-    var _makeRequest = function(opts) {
-        return new Promise(function (resolve, reject) {
-            var xhr = new XMLHttpRequest();
-            xhr.open(opts.method, opts.url);
-            xhr.onload = function () {
-                if (this.status >= 200 && this.status < 300) {
-                    resolve(xhr.response);
-                } else {
-                    reject({
-                        status: this.status,
-                        statusText: xhr.statusText
-                    });
-                }
-            };
-            xhr.onerror = function () {
-                reject({
-                    status: this.status,
-                    statusText: xhr.statusText
-                });
-            };
-            if (opts.headers) {
-                Object.keys(opts.headers).forEach(function (key) {
-                    xhr.setRequestHeader(key, opts.headers[key]);
-                });
-            }
-            var params = opts.params;
-            // We'll need to stringify if we've been given an object
-            // If we have a string, this is skipped.
-            if (params && typeof params === 'object') {
-                params = Object.keys(params).map(function (key) {
-                    return encodeURIComponent(key) + '=' + encodeURIComponent(params[key]);
-                }).join('&');
-            }
-            xhr.send(params);
-        });
-    };
+    // var _makeRequest = function(opts) {
+    //     return new Promise(function (resolve, reject) {
+    //         var xhr = new XMLHttpRequest();
+    //         xhr.open(opts.method, opts.url);
+    //         xhr.onload = function () {
+    //             if (this.status >= 200 && this.status < 300) {
+    //                 resolve(xhr.response);
+    //             } else {
+    //                 reject({
+    //                     status: this.status,
+    //                     statusText: xhr.statusText
+    //                 });
+    //             }
+    //         };
+    //         xhr.onerror = function () {
+    //             reject({
+    //                 status: this.status,
+    //                 statusText: xhr.statusText
+    //             });
+    //         };
+    //         if (opts.headers) {
+    //             Object.keys(opts.headers).forEach(function (key) {
+    //                 xhr.setRequestHeader(key, opts.headers[key]);
+    //             });
+    //         }
+    //         var params = opts.params;
+    //         // We'll need to stringify if we've been given an object
+    //         // If we have a string, this is skipped.
+    //         if (params && typeof params === 'object') {
+    //             params = Object.keys(params).map(function (key) {
+    //                 return encodeURIComponent(key) + '=' + encodeURIComponent(params[key]);
+    //             }).join('&');
+    //         }
+    //         xhr.send(params);
+    //     });
+    // };
 
 
     function _disableAllInput() {
@@ -3039,6 +3039,134 @@ var HiPay = (function (HiPay) {
             _selectElementWithHipayId(_idInputMapper[propt]).disabled = false;
         }
     }
+
+
+
+    // var Ajax = {
+    //     request: function(ops) {
+    //         if(typeof ops == 'string') ops = { url: ops };
+    //         ops.url = ops.url || '';
+    //         ops.method = ops.method || 'get'
+    //         ops.data = ops.data || {};
+    //         var getParams = function(data, url) {
+    //             var arr = [], str;
+    //             for(var name in data) {
+    //                 arr.push(name + '=' + encodeURIComponent(data[name]));
+    //             }
+    //             str = arr.join('&');
+    //
+    //             if(str != '') {
+    //                 return url ? (url.indexOf('?') < 0 ? '?' + str : '&' + str) : str;
+    //             }
+    //             return '';
+    //         }
+    //         var api = {
+    //             host: {},
+    //             process: function(ops) {
+    //                 var self = this;
+    //                 this.xhr = null;
+    //
+    //
+    //                 if(window.XMLHttpRequest) { this.xhr = new XMLHttpRequest(); }
+    //
+    //
+    //                 if ("withCredentials" in this.xhr) {
+    //
+    //
+    //                     // Check if the XMLHttpRequest object has a "withCredentials" property.
+    //                     // "withCredentials" only exists on XMLHTTPRequest2 objects.
+    //                     // xhr.open(method, url, true);
+    //
+    //                 } else if (typeof XDomainRequest != "undefined") {
+    //
+    //                     // Otherwise, check if XDomainRequest.
+    //                     // XDomainRequest only exists in IE, and is IE's way of making CORS requests.
+    //                     this.xhr = new XDomainRequest();
+    //                     // xhr.open(method, url);
+    //
+    //                 }
+    //
+    //
+    //
+    //
+    //
+    //
+    //
+    //
+    //
+    //
+    //                 // else if(window.ActiveXObject) { this.xhr = new ActiveXObject('Microsoft.XMLHTTP'); }
+    //
+    //                 // console.log(this.xhr);
+    //                 if(this.xhr) {
+    //                     this.xhr.onreadystatechange = function() {
+    //                         if(self.xhr.readyState == 4 && self.xhr.status >= 200 && self.xhr.status < 300) {
+    //                             var result = self.xhr.responseText;
+    //                             if(ops.json === true && typeof JSON != 'undefined') {
+    //                                 result = JSON.parse(result);
+    //                             }
+    //                             self.doneCallback && self.doneCallback.apply(self.host, [result, self.xhr]);
+    //                         } else if(self.xhr.readyState == 4) {
+    //                             self.failCallback && self.failCallback.apply(self.host, [self.xhr]);
+    //                         }
+    //                         self.alwaysCallback && self.alwaysCallback.apply(self.host, [self.xhr]);
+    //                     }
+    //                 }
+    //                 if(ops.method == 'get') {
+    //                     if ("withCredentials" in this.xhr) {
+    //                         this.xhr
+    //                             .open("GET",
+    //                                 ops.url + getParams(ops.data, ops.url), true);
+    //                     } else {
+    //                         this.xhr
+    //                             .open("GET",
+    //                                 ops.url + getParams(ops.data, ops.url));
+    //                     }
+    //
+    //                 } else {
+    //                     if ("withCredentials" in this.xhr) {
+    //                         this.xhr.open(ops.method, ops.url, true);
+    //                     } else {
+    //                         this.xhr.open(ops.method, ops.url);
+    //                     }
+    //                     this.setHeaders({
+    //                         'Content-type': 'application/x-www-form-urlencoded'
+    //                     });
+    //
+    //                     //     'X-Requested-With': 'XMLHttpRequest',
+    //                 }
+    //                 if(ops.headers && typeof ops.headers == 'object') {
+    //                     this.setHeaders(ops.headers);
+    //                 }
+    //                 setTimeout(function() {
+    //                     // ops.method == 'get' ? self.xhr.send() : self.xhr.send(getParams(ops.data));
+    //                     ops.method == 'get' ? self.xhr.send() : self.xhr.send(getParams(ops.data));
+    //                 }, 20);
+    //                 return this;
+    //             },
+    //             done: function(callback) {
+    //                 this.doneCallback = callback;
+    //                 return this;
+    //             },
+    //             fail: function(callback) {
+    //                 this.failCallback = callback;
+    //                 return this;
+    //             },
+    //             always: function(callback) {
+    //                 this.alwaysCallback = callback;
+    //                 return this;
+    //             },
+    //             setHeaders: function(headers) {
+    //                 if (this.xhr.setRequestHeader) {
+    //                     for (var name in headers) {
+    //                         this.xhr && this.xhr.setRequestHeader(name, headers[name]);
+    //                     }
+    //                 }
+    //             }
+    //         }
+    //         return api.process(ops);
+    //     }
+    // }
 
     /**
      *
@@ -3062,42 +3190,140 @@ var HiPay = (function (HiPay) {
         }
 
         // Ne fonctionne pas avec IE 10 ?
-        if ('XDomainRequest' in window && window.XDomainRequest !== null && isIE() != 10) {
+        // if ('XDomainRequest' in window && window.XDomainRequest !== null && isIE() != 10) {
+        if ('XDomainRequest' in window && window.XDomainRequest !== null) {
             requestParams['Authorization'] = 'Basic ' + window.btoa(HiPay.username + ':' + HiPay.password);
         }
 
+
+        /* headers for Ajax var */
         var config = {
             headers: {
                 'Authorization': "Basic " + authEncoded,
+                'Accept': "application/json",
                 'Content-Type': "application/json"
             }
         };
+        // 'Content-Type': "application/json"
+
+
+        function _status(response) {
+
+            if (response.status >= 200 && response.status < 300) {
+                return response
+            }
+            throw new Error(response.statusText)
+        }
+
+        function _json(response) {
+            return response.json()
+        }
 
 
         return new Promise(function (resolve, reject) {
 
+
+
+
+            // Ajax
+            //     .request({
+            //         url: endpoint,
+            //         method: 'post',
+            //         data: requestParams,
+            //         headers: config['headers'],
+            //         json:true
+            //     })
+            //     .done(function(result) {
+            //         // var result = response.json();
+            //         if( typeof result['code'] != "undefined" )  {
+            //                         reject(new _APIError(result));
+            //                     }
+            //                     else {
+            //                         var cardToken = new HiPay.Token(result);
+            //                         cardToken.constructor.populateProperties(cardToken,result);
+            //                         _disableAllInput();
+            //                         resolve(cardToken);
+            //
+            //                     }
+            //     })
+            //     .fail(function(xhr) {
+            //
+            //     })
+            //     .always(function(xhr) {
+            //
+            //     });
+
+
             fetch(endpoint, {
-                method: "POST",
-                headers: config['headers'],
-                body: JSON.stringify( requestParams )
-            })
-                .then(function (response) {
-                    // alert(response);
-                    return response.json();
+                    method: "POST",
+                    headers: config['headers'],
+                    body: JSON.stringify( requestParams )
                 })
-                .then(function (result) {
-                    if( typeof result['code'] != "undefined" )  {
-                        reject(new _APIError(result));
-                    }
-                    else {
-                        var cardToken = new HiPay.Token(result);
-                        cardToken.constructor.populateProperties(cardToken,result);
-                        _disableAllInput();
-                        resolve(cardToken);
+                .then(_status)
+                .then(_json)
+                .then(function(json) {
+                    if( typeof json['code'] != "undefined" )  {
+                                    reject(new _APIError(result));
+                                }
+                                else {
+                                    var cardToken = new HiPay.Token(json);
+                                    cardToken.constructor.populateProperties(cardToken,json);
+                                    _disableAllInput();
+                                    resolve(cardToken);
 
-                    }
+                                }
 
-                })
+                });
+            //     .catch(function(error) {
+            //     console.log('request failed', error)
+            // });
+
+
+            // qwest.setDefaultOptions({
+            //     dataType: 'arraybuffer',
+            //     responseType: 'json',
+            //     headers: config['headers'],
+            //     withCredentials: true
+            // });
+            //
+            // qwest.post(endpoint,
+            //     requestParams
+            // )
+            //     .then(function(xhr, response) {
+            //         // Make some useful actions
+            //     })
+            //     .catch(function(e, xhr, response) {
+            //         // Process the error
+            //     });
+
+
+
+
+
+            // fetch(endpoint, {
+            //     method: "POST",
+            //     headers: config['headers'],
+            //     body: JSON.stringify( requestParams )
+            // })
+            //     // .then(_status)
+            //     // .then(_json)
+            //     .then(function (response) {
+            //         // alert(response);
+            //         return response.json();
+            //     })
+            //     .then(function (result) {
+            //         if( typeof result['code'] != "undefined" )  {
+            //             reject(new _APIError(result));
+            //         }
+            //         else {
+            //             var cardToken = new HiPay.Token(result);
+            //             cardToken.constructor.populateProperties(cardToken,result);
+            //             _disableAllInput();
+            //             resolve(cardToken);
+            //
+            //         }
+            //
+            //     })
                 // .catch(function (error) {
                 //     // retry call
                 //     fetch(endpoint, {
@@ -3178,7 +3404,20 @@ var HiPay = (function (HiPay) {
         }
 
         // endpoint = endpoint + "?eci=7&payment_product=visa&payment_product_category_list=credit-card&customer_country=FR&currency=EUR";
-        endpoint = endpoint + "?eci=7&customer_country="+_availablePaymentProductsCustomerCountry+"&currency=" + _availablePaymentProductsCurrency;
+        var endpoint2 = endpoint + "?eci=7&customer_country="+_availablePaymentProductsCustomerCountry+"&currency=" + _availablePaymentProductsCurrency;
+        var requestParams = {
+            'eci': 7,
+            'customer_country': _availablePaymentProductsCustomerCountry,
+            'currency': _availablePaymentProductsCurrency
+        };
+
+
+        // if ('XDomainRequest' in window && window.XDomainRequest !== null && isIE() != 10) {
+        //     // if ('XDomainRequest' in window && window.XDomainRequest !== null) {
+        //     requestParams['Authorization'] = 'Basic ' + window.btoa(HiPay.username + ':' + HiPay.password);
+        // }
+
+
         // endpoint = endpoint + "accept_url=hipay%3A%2F%2Fhipay-fullservice%2Fgateway%2Forders%2FDEMO_59f08c099ca87%2Faccept&amount=60.0&authentication_indicator=0&cancel_url=hipay%3A%2F%2Fhipay-fullservice%2Fgateway%2Forders%2FDEMO_59f08c099ca87%2Fcancel&city=Paris&country=FR&currency=EUR&decline_url=hipay%3A%2F%2Fhipay-fullservice%2Fgateway%2Forders%2FDEMO_59f08c099ca87%2Fdecline&description=Un%20beau%20v%C3%AAtement.&display_selector=0&eci=7&email=client%40domain.com&exception_url=hipay%3A%2F%2Fhipay-fullservice%2Fgateway%2Forders%2FDEMO_59f08c099ca87%2Fexception&firstname=Martin&gender=U&language=en_US&lastname=Dupont&long_description=Un%20tr%C3%A8s%20beau%20v%C3%AAtement%20en%20soie%20de%20couleur%20bleue.&multi_use=1&orderid=DEMO_59f08c099ca87&payment_product_category_list=ewallet%2Cdebit-card%2Crealtime-banking%2Ccredit-card&pending_url=hipay%3A%2F%2Fhipay-fullservice%2Fgateway%2Forders%2FDEMO_59f08c099ca87%2Fpending&recipientinfo=Employee&shipping=1.56&state=France&streetaddress2=Immeuble%20de%20droite&streetaddress=6%20Place%20du%20Colonel%20Bourgoin&tax=2.67&zipcode=75012";
         try{
             var authEncoded = window.btoa(HiPay.username+':'+HiPay.password);
@@ -3192,6 +3431,7 @@ var HiPay = (function (HiPay) {
                 'Accept': "application/json"
             }
         };
+        // 'Accept': "application/json"
 
         // 'contentType': 'application/json'
         // 'Accept': 'application/json',
@@ -3205,17 +3445,51 @@ var HiPay = (function (HiPay) {
 
         _loadPaymentProduct = true;
 
+
+
+        // return Ajax
+        //     .request({
+        //         url: endpoint,
+        //         method: 'get',
+        //         headers: config['headers'],
+        //         data: requestParams
+        //     })
+        //     .done(function(response) {
+        //         var availablePaymentProductsCollection = JSON.parse(response);
+        //         // console.log(availablePaymentProductsCollection);
+        //         if( availablePaymentProductsCollection.length == 0 )  {
+        //             reject(new _APIError(result));
+        //         }
+        //         else {
+        //             _availablePaymentProductsCollection = availablePaymentProductsCollection;
+        //
+        //                 _loadPaymentProduct = false;
+        //
+        //         }
+        //     })
+        //     .fail(function(xhr) {
+        //
+        //     })
+        //     .always(function(xhr) {
+        //
+        //     });
+
+
+
+
+
         return fetch(endpoint, {
             method: "GET",
-            headers: config['headers']
-            // body: JSON.stringify( requestParams )
+            headers: config['headers'],
+            body: JSON.stringify( requestParams )
         }).then(function (response) {
 
             return response.json();
         }).then(function (availablePaymentProductsCollection) {
             _availablePaymentProductsCollection = availablePaymentProductsCollection;
             _loadPaymentProduct = false;
-        })
+        });
+
             // .catch(function (error) {
             //     _loadPaymentProduct = false;
             //     reject(new _APIError(error));
@@ -3418,7 +3692,7 @@ var HiPay = (function (HiPay) {
         }
 
 
-        var returnPromise = Promise;
+        var returnPromise =  new Promise(function (resolve, reject) {});
         if(!_isBrowser()) {
             return returnPromise.reject(new _APIError('"message" : "cant tokenize on server side"}'));
         }
@@ -3465,9 +3739,6 @@ var HiPay = (function (HiPay) {
                 params['multi_use'] = 0;
             }
 
-            var config = {
-                headers: {'Authorization': 'Basic ' + window.btoa(HiPay.username + ':' + HiPay.password)}
-            };
 
             return _performAPICall(endpoint, params, returnPromise);
         }
