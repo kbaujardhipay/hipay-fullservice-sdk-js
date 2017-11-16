@@ -2519,7 +2519,7 @@ var HiPay = (function (HiPay) {
         var validatorCreditCardHolder = _instanceServiceCreditCard.validatorCreditCardHolder();
         var creditCardHolderString = params['card_holder'];
 
-        if (creditCardHolderString != "") {
+        if (typeof creditCardHolderString != 'undefined' && creditCardHolderString != "") {
             if (!validatorCreditCardHolder.isPotentiallyValid(creditCardHolderString) ||
                 (!validatorCreditCardHolder.isValid(creditCardHolderString) && _selectElementWithHipayId(_idInputMapper.cardHolder) && _selectElementWithHipayId(_idInputMapper.cardHolder) !== document.activeElement )
             ) {
@@ -3525,10 +3525,21 @@ var HiPay = (function (HiPay) {
             generate_request_id: '0'
         };
         return HiPay.tokenize(params['card_number'], params['card_expiry_month'], params['card_expiry_year'], params['card_holder'], params['cvv'], params['multi_use'], params['generate_request_id'] )
-//
 
     }
 
+    HiPay.Form.getCardType = function() {
+        _instanceServiceCreditCard = new _serviceCreditCard();
+        var cardTypeId = _instanceServiceCreditCard.getCardTypeId();
+
+        for (var product in _idProductAPIMapper) {
+            if (cardTypeId === _idProductAPIMapper[product]) {
+                return product;
+            }
+        }
+
+        return undefined;
+    };
 
     return HiPay;
 
