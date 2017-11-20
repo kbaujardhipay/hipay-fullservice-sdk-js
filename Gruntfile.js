@@ -16,11 +16,11 @@ module.exports = function(grunt) {
                 separator: grunt.util.linefeed + ';' + grunt.util.linefeed,
             },
             dist1: {
-                src: ['node_modules/es6-promise/dist/es6-promise.js',  'node_modules/es6-promise/dist/es6-promise.auto.js','node_modules/json3/lib/json3.js', 'node_modules/fetch-ie8/fetch.js', 'src/base64.js', 'src/hipay-fullservice-sdk.js'],
+                src: ['node_modules/es2-shim-sham/index.js', 'node_modules/es6-promise/dist/es6-promise.auto.js', 'node_modules/json3/lib/json3.js', 'node_modules/fetch-ie8/fetch.js', 'src/base64.js', 'src/hipay-fullservice-sdk.js'],
                 dest: 'example/public/lib/vendor/hipay/hipay-fullservice-sdk-js/hipay-fullservice-sdk-2.js'
             },
             dist2: {
-                src: ['node_modules/es6-promise/dist/es6-promise.js', 'node_modules/es6-promise/dist/es6-promise.auto.js', 'node_modules/json3/lib/json3.js', 'node_modules/fetch-ie8/fetch.js', 'src/base64.js', 'src/hipay-fullservice-sdk.js'],
+                src: ['node_modules/es2-shim-sham/index.js', 'node_modules/es6-promise/dist/es6-promise.auto.js', 'node_modules/json3/lib/json3.js', 'node_modules/fetch-ie8/fetch.js', 'src/base64.js', 'src/hipay-fullservice-sdk.js'],
                 dest: 'dist/hipay-fullservice-sdk-2.js'
             }
             // dist1: {

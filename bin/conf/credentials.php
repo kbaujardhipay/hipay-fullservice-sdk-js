@@ -18,7 +18,7 @@
  */
 
 $credentials = [
-  
+
   /* You can create your credentials in your HiPay
    * Fullservice back office > Integration >
    * Security Settings.

@@ -26,6 +26,7 @@ WORKDIR /var/www/htdocs
 
 # add credentials php
 COPY ./bin/conf/credentials.php /var/www/htdocs/example/config/credentials.php
+COPY ./bin/conf/credentials_public.json /var/www/htdocs/example/public/credentials_public.json
 COPY ./dist /var/www/htdocs/example/public/lib/hipay-fullservice-sdk
 
 # run entrypoint

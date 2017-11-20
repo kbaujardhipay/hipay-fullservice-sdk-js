@@ -7,14 +7,10 @@
 
     <title>HiPay Fullservice Tokenization</title>
 
-    <link rel="stylesheet" href="./lib/vendor/node_modules/bootstrap/dist/css/bootstrap.css">
-    <link rel="stylesheet" href="./lib/vendor/node_modules/bootstrap/dist/css/bootstrap-theme.css">
 
-    <link href="./css/example.css" media="screen" rel="stylesheet" type="text/css">
+
+    <link href="./css/example2.css" media="screen" rel="stylesheet" type="text/css">
     <link href="./css/custom.css" media="screen" rel="stylesheet" type="text/css">
-
-    <script type="text/javascript" src="./lib/vendor/node_modules/jquery/dist/jquery.js"></script>
-    <script type="text/javascript" src="./lib/vendor/node_modules/bootstrap/dist/js/bootstrap.js"></script>
 
     <!-- HTML5 shim, for IE6-8 support of HTML5 elements -->
     <!--[if lt IE 9]>
@@ -28,8 +24,8 @@
     <body>
     <div id="main" class="container">
 
-        <div class="row">
-            <div class="col-sm-12 col-lg-7">
+
+
 
                 <!-- Main component for a primary marketing message or call to action -->
             <div class="scontainer" id ="infos-txt" class="">
@@ -43,9 +39,9 @@
                     <a class="btn btn-lg btn-primary" role="button" href="#null" id="charge-button" style="display: none;">Create a test charge on this token (server-side PHP SDK)</a>
                 </p>
             </div>
-        </div>
 
-        <div class="col-sm-12 col-lg-5">
+
+
             <div class="scontainer" id="form">
 
                 <p class="form-description details">
@@ -53,102 +49,104 @@
                 </p>
 
                 <div class="row">
-                    <div class="col-lg-12">
-                        <div class="form-group">
+
                             <label class="sr-only" for="input-name-custom">Prénom Nom</label>
                             <div class="input-group">
                                 <div class="input-group-addon-icon input-group-addon"><span class="glyphicon glyphicon-user" aria-hidden="true"></span></div>
 
                                 <input type="text" class="form-control" id="input-name-custom" autocomplete="cc-name" x-autocompletetype="cc-name" placeholder="" value="" data-hipay-id="card-holder" data-hipay-tabable="true">
                             </div>
-                        </div>
-                    </div>
+
                 </div>
                 <div class="row">
-                    <div class="col-lg-12">
-                        <div class="form-group">
+
                             <label class="sr-only" for="input-card-custom">Card number</label>
                             <div class="input-group">
                                 <div class="input-group-addon-icon input-group-addon"><span class="glyphicon glyphicon-credit-card" aria-hidden="true"></span></div>
                                 <input type="tel" class="form-control" id="input-card-custom" autocomplete="cc-number" x-autocompletetype="cc-number" placeholder="" pattern="\d*" name="cardNumber" value="" data-hipay-id="card-number" data-hipay-tabable="true">
                             </div>
                             <div id="creditCardNumberMessageContainer" class="inputMessageContainer"></div>
-                        </div>
-                    </div>
+
                 </div>
 
 
 
                 <div class="row">
-                    <div class="col-lg-12">
-                        <div class="form-group">
+
                             <label class="sr-only" for="input-expiry-date">MM / YY</label>
                             <div class="input-group">
                                 <div class="input-group-addon-icon input-group-addon"><span class="glyphicon glyphicon-calendar" aria-hidden="true"></span></div>
                                 <input type="text" class="form-control" id="input-expiry-date" value="" data-hipay-id="card-expiry-date" data-hipay-tabable="true">
                                </div>
-                            <div id="creditCardExpiryDateMessageContainer" class="inputMessageContainer"></div>
-                        </div>
-                    </div>
+                            <div id="creditCardExpiryDateMessageContainer" class="inputMessageContainer">
+
+                            </div>
+
                 </div>
 
                 <div class="row">
-                    <div class="col-lg-12">
 
-                        <div class="form-group">
                             <label class="sr-only" for="input-cvv">123</label>
                             <div id="container-cvv" class="input-group">
                                 <div class="input-group-addon-icon input-group-addon"><span class="glyphicon glyphicon-lock" aria-hidden="true"></span></div>
                                 <input class="form-control" id="input-cvv" placeholder="123" maxlength="3" value="" data-hipay-id="card-cvv" data-hipay-tabable="true">
-                                <span id="cvv-button" class="input-group-addon"><button type="button" data-toggle="modal" data-target="#cvv-modal">?</button></span>
+                                <span id="cvv-button" class="input-group-addon"><button id="cvv-modal" type="button" data-toggle="modal" data-target="#cvv-modal">?</button></span>
                             </div>
-                            <div id="creditCardCVVMessageContainer" class="inputMessageContainer"></div>
-                        </div>
-                    </div>
+                            <div id="creditCardCVVMessageContainer" class="inputMessageContainer">
+                                <p id="container-cvv-help-message"></p><img id="cvv-img">
+                            </div>
+
                 </div>
 
 
                 <div class="row">
-                    <div class="col-lg-12">
                         <div id="submit-zone">
-                            <div id="error"></div>
+                            <div id="error-container"></div>
                             <button class="btn btn-large" type="button" data-toggle="modal" data-target="#other-method-modal" id="pay-button" data-hipay-id="pay-button">Tokenize</button>
                         </div>
-                    </div>
                 </div>
 
             </div>
-        </div>
 
-    </div>
+
 
 </div> <!-- /container -->
 
-<div class="modal fade" id="cvv-modal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
-    <div class="modal-dialog">
-        <div class="modal-content">
-            <div class="modal-header">
-                <button type="button" id="btn-close" class="close" data-dismiss="modal">&times;</button>
-                <div id="modal-header-title">
-                    <h4 class="modal-title" id="myModalLabel">Card verification code</h4>
-                </div>
-            </div>
-            <div class="modal-body">
-                <p id="container-cvv-help-message"></p>
-                <!--                <p>For security reasons, you have to enter your card security code (CVC).-->
-                <!--                    It's the 3-digits number on the back of your card for <span class="modal-bold">VISA®</span>, <span class="modal-bold">MASTERCARD®</span> and <span class="modal-bold">MAESTRO®</span></p>-->
-                <!--                <p>The <span class="modal-bold">AMERICAN EXPRESS</span> security code is the 4-digits number on the front of your card.</p>-->
-                <div id="cvv-img-container">
-                    <img id="cvv-img" src="./img/card.png">
-                </div>
-            </div>
-        </div>
-    </div>
-</div>
-
 <script type="text/javascript">
-    $(document).ready(function(){
 
+    function addLoadEvent(func) {
+        var oldonload = window.onload;
+        if (typeof window.onload != 'function') {
+            window.onload = func;
+        } else {
+            window.onload = function() {
+                if (oldonload) {
+                    oldonload();
+                }
+                func();
+            }
+        }
+    }
+
+
+    function addCustomEventListener(node, event, handler, capture) {
+        if (typeof node == "undefined") {
+            return;
+        }
+
+        if (node.attachEvent) {
+            node.attachEvent("on" + event, handler);
+        } else {
+            node.addEventListener(event, handler, capture);  // all browsers and IE9+
+        }
+
+    };
+
+
+    function initClient() {
+
+        console.log( document.getElementById("pay-button"));
+        console.log( document.getElementById("pay-button"));
         HiPay.setTarget('stage'); // default is production/live
 /* Set HiPay public credentials */
        fetch('/credentials_public.json')
@@ -173,91 +171,103 @@
         // img CVV
         var myImgCVV = document.getElementById("cvv-img");
         var cvvInfo = HiPay.getCVVInformation();
+
+        console.log("cvvInfo");
+        console.log(cvvInfo);
         myImgCVV.src = "./img/cvv-type/cvv_"+cvvInfo['length']+".png";
 
 
         var token = null;
 
-        $('#link').click(function() {
+//        $('#link').click(function() {
+//
+//            $('#input-name').focus().val('John Doe');
+//            $('#input-card').val('4111 1111 1111 1111');
+//            $('#input-card').trigger("change");
+//            $('#input-expiry-date').val('10 / 30').trigger('change');
+//            $('#input-cvv').focus().val('123').trigger('change');
+//            HiPay.Form.paymentFormDataIsValid();
+//
+//        });
 
-            $('#input-name').focus().val('John Doe');
-            $('#input-card').val('4111 1111 1111 1111');
-            $('#input-card').trigger("change");
-            $('#input-expiry-date').val('10 / 30').trigger('change');
-            $('#input-cvv').focus().val('123').trigger('change');
-            HiPay.Form.paymentFormDataIsValid();
+            addCustomEventListener(document.getElementById("charge-button"), "click",function() {
+                document.getElementById("charge-button").innerHTML = "Loading…";
+                document.getElementById("charge-button").disabled = true;
 
-        });
+                fetch('order.php?token='+token, {
+                type : 'GET'
+                })
+                        .then(function(response){
 
-        $("#charge-button").click(function() {
+                            return response.text();
 
-            $("#charge-button").text("Loading…");
-            $("#charge-button").prop("disabled", true);
+                }).then(function(body) {
 
-            $.ajax({
-                url : 'order.php?token='+token,
-                type : 'GET',
-                dataType : 'html',
-                success : function(html, status){
-                    $('#order').html(html);
-                    $('#code').html('');
-                    $("#charge-button").hide();
-                },
-                error : function(result, status, error){
-                    $('#order').html(result.responseText);
-                    $('#code').html('');
-                    $("#charge-button").text("Try again to create a charge…");
-                    $("#charge-button").prop("disabled", false);
-                }
+                    document.getElementById('order').innerHTML = body;
+                    document.getElementById('code').innerHTML = '';
+                    document.getElementById("charge-button").style.display = "none";
+                });
+//                success :
+//                error : function(result, status, error){
+//                    $('#order').html(result.responseText);
+//                    $('#code').html('');
+//                    $("#charge-button").text("Try again to create a charge…");
+//                    $("#charge-button").prop("disabled", false);
+//                }
             });
 
-        });
-
-        $("#pay-button").prop('disabled', !HiPay.Form.paymentFormDataIsValid());
-        HiPay.Form.change(function() {
-            // Information on card CVV
-            // message CVV
-            document.getElementById('container-cvv-help-message').innerHTML = HiPay.Form.CVVHelpText();
-            // img CVV
-            var myImgCVV = document.getElementById("cvv-img");
-            var cvvInfo = HiPay.getCVVInformation();
-            myImgCVV.src = "./img/cvv-type/cvv_"+cvvInfo['length']+".png";
-            $("#pay-button").prop('disabled', !HiPay.Form.paymentFormDataIsValid());
-            var errorCollection = HiPay.Form.paymentFormDataGetErrors();
-        });
+        document.getElementById("creditCardCVVMessageContainer").style.display = "none";
 
 
-        var focusHandler = function(event) {
-            var type = event.target.nodeName.toLowerCase();
-            if(type == 'input' || type == 'textarea') {
-                //Do something
+        addCustomEventListener(document.getElementById("cvv-modal"), "click",function() {
+            if ( document.getElementById("creditCardCVVMessageContainer").style.display == "block") {
+                document.getElementById("creditCardCVVMessageContainer").style.display = "none";
             }
-        };
+            else {
+                document.getElementById("creditCardCVVMessageContainer").style.display = "block";
+            }
+        });
 
-//        function focusHandler(){
-//
-//            console.log("test");
-//        }
-//        document.body.addEventListener('focus', focusHandler, true); //Non-IE
-//        document.body.onfocusin = focusHandler; //IE
 
-        $("#pay-button").click(function() {
-            $("#form :button").prop("disabled", true);
-            $("#error").text("");
+var isDisabled =!HiPay.Form.paymentFormDataIsValid();
+        console.log("isDisabled");
+        console.log(isDisabled);
+        document.getElementById("pay-button").disabled = isDisabled;
 
-            $("#pay-button").text("Loading…");
+       HiPay.Form.change(function() {
+           // Information on card CVV
+           // message CVV
+           document.getElementById('container-cvv-help-message').innerHTML = HiPay.Form.CVVHelpText();
+           // img CVV
+           var myImgCVV = document.getElementById("cvv-img");
+           cvvInfo = HiPay.getCVVInformation();
+           console.log("cvvInfo");
+           console.log(cvvInfo);
+           myImgCVV.src = "./img/cvv-type/cvv_"+cvvInfo['length']+".png";
+           var isDisabled =!HiPay.Form.paymentFormDataIsValid();
+           document.getElementById("pay-button").disabled = isDisabled;
+           var errorCollection = HiPay.Form.paymentFormDataGetErrors();
+       });
+
+
+
+           addCustomEventListener(document.getElementById("pay-button"), "click",function() {
+           document.getElementById("pay-button").disabled = true;
+           document.getElementById("error-container").innerHTML = "";
+
+           document.getElementById("pay-button").innerHTML = "Loading…";
 
             HiPay.Form.tokenizePaymentFormData()
                 .then(function(cardToken) {
                     token = cardToken.token;
 
-                    $("#pay-button").text("Tokenize");
-                    $("#order").text("The token has been created using the JavaScript SDK (client side).");
+                    document.getElementById("pay-button").innerHTML = "Tokenize";
+                    document.getElementById("order").innerHTML = "The token has been created using the JavaScript SDK (client side).";
 
-                    $('#code').text(JSON.stringify(cardToken, null, 4));
-                    $('#link-area').text('');
+                    document.getElementById("code").innerHTML = JSON.stringify(cardToken, null, 4);
+                    document.getElementById("link-area").innerHTML = "";
 
-                    $("#charge-button").show();
+                    document.getElementById("charge-button").style.display = 'block';
                 })
 //                .catch(function(error){
 ////                    alert(error);
@@ -269,9 +279,10 @@
 //                        console.log("Token passé invalide…");
 //                    }
 //
-//                    $("#pay-button").text("Tokenize");
-//                    $("#form :input").prop("disabled", false);
-//                    $("#form :button").prop("disabled", false);
+//                    $("#pay-button").innerHTML = "Tokenize";
+                    document.getElementById("pay-button").disabled = false;
+
+
 //
 //
 //                    if (error.errorCollection != undefined && error.errorCollection.length > 0) {
@@ -285,6 +296,11 @@
             return false;
         });
 
+    };
+
+    addLoadEvent(initClient);
+    addLoadEvent(function() {
+        document.body.style.backgroundColor = '#EFDF95';
     });
 </script>
 

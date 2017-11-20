@@ -24,4 +24,6 @@ exec apache2-foreground
 
 
 echo ""
-echo "Setup completed! Do not forget to copy the file example/config/credentials.php.dist to example/config/credentials.php and add your HiPay Fullservice credentials into the example/config/credentials.php file."
+echo "Setup completed!"
+echo "Do not forget to copy the file example/config/credentials_public.json.dist to example/public/credentials_public.json and add your HiPay Fullservice credentials public."
+echo "Do not forget to copy the file example/config/credentials.php.dist to example/config/credentials.php and add your HiPay Fullservice credentials private."

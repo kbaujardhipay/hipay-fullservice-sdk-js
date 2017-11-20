@@ -18,3 +18,5 @@ example/config/credentials.php
 etc/ssl/
 
 \.ideaold/
+
+example/public/credentials_public\.json
