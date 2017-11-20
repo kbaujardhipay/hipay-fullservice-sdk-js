@@ -136,6 +136,7 @@ var HiPay = (function (HiPay) {
         "en_EN" : {
             "FORM_CVV_3_HELP_MESSAGE": "For security reasons, you have to enter your card security code (CVC). It's the 3-digits number on the back of your card for VISA®, MASTERCARD® and MAESTRO®.",
             "FORM_CVV_4_HELP_MESSAGE": "For security reasons, you have to enter your card security code (CVC). The AMERICAN EXPRESS security code is the 4-digits number on the front of your card.",
+            "FORM_ERROR_INVALID_CARD_HOLDER": "The name field must contain maximum %NUMBER% digits.",
             "FORM_ERROR_INVALID_CARD_NUMBER": "Invalid card number.",
             "FORM_ERROR_INVALID_EXPIRY_DATE_PAST": "The expiration date is already past.",
             "FORM_ERROR_INVALID_MONTH_EXPIRY_DATE": "The month field must be between 1 and 12.",
@@ -150,6 +151,7 @@ var HiPay = (function (HiPay) {
         "fr_FR" : {
             "FORM_CVV_3_HELP_MESSAGE" : "Pour des raisons de sécurité, vous devez indiquer le code de sécurité (CVC). Ce code correspond aux 3 chiffres visibles au verso de votre carte VISA®, MASTERCARD® and MAESTRO®.",
             "FORM_CVV_4_HELP_MESSAGE" : "Pour des raisons de sécurité, vous devez indiquer le code de sécurité (CVC). Le code de securité AMERICAN EXPRESS est un nombre à 4 chiffres au recto de votre carte.",
+            "FORM_ERROR_INVALID_CARD_HOLDER": "Le champ nom doit contenir au maximum %NUMBER% caractères.",
             "FORM_ERROR_INVALID_CARD_NUMBER": "Numéro de carte invalide.",
             "FORM_ERROR_INVALID_EXPIRY_DATE_PAST": "La date est inférieure à la date actuelle.",
             "FORM_ERROR_INVALID_MONTH_EXPIRY_DATE": "Le mois doit être compris entre 1 et 12.",
@@ -1027,8 +1029,11 @@ var HiPay = (function (HiPay) {
                 }
 
                 if (creditCardHolderString && creditCardHolderString.length > serviceCreditCard.creditCardHolderLengthMax ) {
+                    validatorCreditCardHolder.errorCollection.push(new _InvalidParametersError(50, _getLocaleTranslationWithId("FORM_ERROR_INVALID_CARD_HOLDER").replace("%NUMBER%", serviceCreditCard.creditCardHolderLengthMax)))
+
                     return false;
                 }
+
                 return true;
             }
 
@@ -1039,6 +1044,11 @@ var HiPay = (function (HiPay) {
                 if (creditCardHolderString && creditCardHolderString.length <= serviceCreditCard.creditCardHolderLengthMax ) {
                     isPotentiallyValid = true;
                 }
+
+                if (isPotentiallyValid == false) {
+                    validatorCreditCardHolder.isValid(creditCardHolderString);
+                }
+
                 return isPotentiallyValid;
             }
             return validatorCreditCardHolder;
@@ -1513,6 +1523,7 @@ var HiPay = (function (HiPay) {
                     newTempStringAfter = tempStringAfterDebut + "" + tempStringAfterFin;
 
                     startA = startA - 1;
+
                 } else if(charCode == 46) {
                     var tempStringAfterDebut = newTempStringAfter.substring(0, (parseInt(startB)));
                     var tempStringAfterFin = newTempStringAfter.substring((parseInt(startB) + 1), newTempStringAfter.length);
@@ -1528,7 +1539,7 @@ var HiPay = (function (HiPay) {
                 endA = startA;
             }
 
-            var startA = startBFormat;
+            //var startA = startBFormat;
 
             var tempStringAfter = "";
 
@@ -1537,6 +1548,7 @@ var HiPay = (function (HiPay) {
                 // if (nbBefore == realCursorPositionInNumberBefore) {
                 if (nbBefore == startA) {
                     if (charCode == 8 || charCode == 46) {
+
 
                     } else {
                         tempStringAfter += serviceCreditCard.lastCharStringCreditCardHolder;
@@ -1551,11 +1563,24 @@ var HiPay = (function (HiPay) {
             startA = startAtemp;
 
             if (serviceCreditCard.creditCardHolderLengthMax == null || tempStringAfter.length <= serviceCreditCard.creditCardHolderLengthMax) {
-                serviceCreditCard.cardHolderStringAfter = tempStringAfter;
+
+
+                    serviceCreditCard.cardHolderStringAfter = tempStringAfter;
+
             }
             else {
-                serviceCreditCard.cardHolderStringAfter = serviceCreditCard.cardHolderStringFormatedBefore;
-                startA = startBFormat;
+                if (charCode == 8 || charCode == 46) {
+                    serviceCreditCard.cardHolderStringAfter = tempStringAfter;
+                    // if (charCode == 46) {
+                    //
+                    // } else {
+                    //     startA  = startA - 1;
+                    // }
+                } else {
+
+                    serviceCreditCard.cardHolderStringAfter = serviceCreditCard.cardHolderStringFormatedBefore;
+                    startA = startBFormat;
+                }
             }
 
             _setElementValueWithHipayId(_idInputMapper.cardHolder, serviceCreditCard.cardHolderStringAfter);
@@ -2587,8 +2612,9 @@ var HiPay = (function (HiPay) {
         var creditCardHolderString = params['card_holder'];
 
         if (typeof creditCardHolderString != 'undefined' && creditCardHolderString != "") {
-            if (!validatorCreditCardHolder.isPotentiallyValid(creditCardHolderString) ||
-                (!validatorCreditCardHolder.isValid(creditCardHolderString) && _selectElementWithHipayId(_idInputMapper.cardHolder) && _selectElementWithHipayId(_idInputMapper.cardHolder) !== document.activeElement )
+
+            if (( validatorCreditCardHolder.isPotentiallyValid(creditCardHolderString) == false) ||
+                ( (validatorCreditCardHolder.isValid(creditCardHolderString) == false) && _selectElementWithHipayId(_idInputMapper.cardHolder) && _selectElementWithHipayId(_idInputMapper.cardHolder) !== document.activeElement )
             ) {
                 errorCollection['cardHolder'] = validatorCreditCardHolder.errorCollection[0]['message'];
             }
