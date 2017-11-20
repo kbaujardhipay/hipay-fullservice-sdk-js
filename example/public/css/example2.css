@@ -115,7 +115,7 @@ span#card-type {
 
 /* submit button */
 #submit-zone {
-    width: 150px;
+    width: 100%;
 }
 
 #charge-button {
@@ -123,16 +123,22 @@ span#card-type {
     word-wrap: break-word;
 }
 #submit-zone button {
+    box-sizing:border-box;
     border: medium none;
     white-space:normal !important;
     word-wrap: break-word;
     color: #ffffff;
-    font-size: 1.4rem;
+    font-size: 1.2rem;
     /* font-size: 18px */
     font-weight: bold;
     /*padding: 10px 0;*/
     transition: all 0.1s ease 0s;
     width: 100%;
+    max-width: 300px;
+    height: 40px;
+    padding: 6px;
+    margin-bottom: 10px;
+    font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
 }
 
 #pay-button {
@@ -150,8 +156,8 @@ span#card-type {
 #pay-button:hover {
     background-color: #66CC66;
     transition: all 0.1s ease 0s;
+    cursor:pointer;
 }
-
 
 
 /* sdk css */
@@ -176,4 +182,22 @@ span#card-type {
     position: relative;
 }
 
+
+.form-control {
+    box-sizing:border-box;
+    width: 100%;
+    max-width: 300px;
+    height: 40px;
+    padding: 6px;
+
+    font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+    font-size: 14px;
+}
+
+.input-group {
+    margin-bottom: 10px;
+}
+#cvv-modal:hover {
+    cursor:pointer;
+}
 /* ./form */
