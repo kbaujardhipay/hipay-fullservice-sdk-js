@@ -1721,13 +1721,15 @@ console.log(tempStringAfterFin);
 
 
             console.log(startA);
+            console.log("tempStringAfter");
+            console.log(tempStringAfter);
 
 
             if (tempStringAfter.length <= 4) {
                 serviceCreditCard.cardExpiryDateStringAfter = tempStringAfter;
             }
             else {
-                serviceCreditCard.cardExpiryDateStringAfter = serviceCreditCard.creditCardExpiryDateFormattedBefore;
+                serviceCreditCard.cardExpiryDateStringAfter = serviceCreditCard.creditCardExpiryDateUnformattedBefore;
                 startA = startBFormat;
             }
 
@@ -1745,6 +1747,9 @@ console.log(tempStringAfterFin);
             console.log("startA");
             console.log(startA);
             serviceCreditCard.cardExpiryDateStringFormattedAfter = serviceCreditCard.cardExpiryDateStringAfter;
+
+            console.log("serviceCreditCard.cardExpiryDateStringFormattedAfter");
+            console.log(serviceCreditCard.cardExpiryDateStringFormattedAfter);
             if ( serviceCreditCard.cardExpiryDateStringAfter.length >= 2) {
                 serviceCreditCard.cardExpiryDateStringFormattedAfter = serviceCreditCard.cardExpiryDateStringFormattedAfter.substring(0, 2) + _separatorMonthYear + serviceCreditCard.cardExpiryDateStringAfter.substring(2, serviceCreditCard.cardExpiryDateStringFormattedAfter.length);
                 if (charCode != 8) {
