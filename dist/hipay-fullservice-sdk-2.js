@@ -4690,12 +4690,13 @@ if (startA >= 2) {
     var _setElementValueWithHipayId = function(idHiPay, value) {
         if (_selectElementWithHipayId(idHiPay)) {
             _selectElementWithHipayId(idHiPay).value = value;
-
-            if (  _selectElementWithHipayId(idHiPay).focus) {
+            if (  _selectElementWithHipayId(idHiPay).blur) {
                 _selectElementWithHipayId(idHiPay).blur();
-                _selectElementWithHipayId(idHiPay).focus();
-                // alert("toto");
             }
+            if (  _selectElementWithHipayId(idHiPay).focus) {
+                _selectElementWithHipayId(idHiPay).focus();
+            }
+
         }
 
     };
