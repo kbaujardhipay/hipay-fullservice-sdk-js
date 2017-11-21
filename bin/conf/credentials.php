@@ -24,16 +24,6 @@ $credentials = [
    * Security Settings.
    */
 
-  /* PUBLIC CREDENTIALS
-   * To create such credentials, you must
-   * set credentials accessibility to "Public"
-   * and at least check the "Tokenization" grant.
-   */
-  'public' => [
-    'username' => '{HIPAY_JS_USERNAME_PUBLIC}',
-    'password' => '{HIPAY_JS_PASSWORD_PUBLIC}',
-  ],
-
   /* PRIVATE CREDENTIALS
    * To create such credentials, you must
    * set credentials accessibility to "Private"

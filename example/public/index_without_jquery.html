@@ -48,6 +48,10 @@
             Enter your payment details:
         </p>
 
+
+        <div class="row">
+            <p id="container-error-form"></p>
+            </div>
         <div class="row">
 
             <label class="sr-only" for="input-name-custom">Prénom Nom</label>
@@ -144,11 +148,9 @@
 
 
     function initClient() {
-
-        console.log( document.getElementById("pay-button"));
-        console.log( document.getElementById("pay-button"));
-        HiPay.setTarget('stage'); // default is production/live
-        /* Set HiPay public credentials */
+        // default is production/live
+        HiPay.setTarget('stage');
+        // Set HiPay public credentials
         fetch('/credentials_public.json')
                 .then(function(response) {
                     return response.json();
@@ -159,11 +161,12 @@
             console.log('parsing failed', ex);
         });
 
-
+        // Set available payment products country
         HiPay.setAvailalblePaymentProductsCustomerCountry('FR');
+        // Set available payment products currency
         HiPay.setAvailalblePaymentProductsCurrency('EUR');
-//        HiPay.enabledPaymentProducts(['visa', 'maestro']);
-
+        // Enable payment products. All product in this array witch is not allowed for country and currency selected will be ignore.
+        // HiPay.enabledPaymentProducts(['visa', 'maestro']);
 
 
         // message CVV
@@ -172,8 +175,6 @@
         var myImgCVV = document.getElementById("cvv-img");
         var cvvInfo = HiPay.getCVVInformation();
 
-        console.log("cvvInfo");
-        console.log(cvvInfo);
         myImgCVV.src = "./img/cvv-type/cvv_"+cvvInfo['length']+".png";
 
 
@@ -206,14 +207,12 @@
                 document.getElementById('order').innerHTML = body;
                 document.getElementById('code').innerHTML = '';
                 document.getElementById("charge-button").style.display = "none";
-            });
-//                success :
-//                error : function(result, status, error){
-//                    $('#order').html(result.responseText);
+            }).catch(function() {
+                //                    $('#order').html(result.responseText);
 //                    $('#code').html('');
 //                    $("#charge-button").text("Try again to create a charge…");
 //                    $("#charge-button").prop("disabled", false);
-//                }
+            });
         });
 
         document.getElementById("creditCardCVVMessageContainer").style.display = "none";
@@ -229,7 +228,6 @@
         });
 
 
-//var isDisabled =!HiPay.Form.paymentFormDataIsValid();
         document.getElementById("pay-button").disabled = !HiPay.Form.paymentFormDataIsValid();
 
         HiPay.Form.change(function() {
@@ -239,12 +237,21 @@
             // img CVV
             var myImgCVV = document.getElementById("cvv-img");
             cvvInfo = HiPay.getCVVInformation();
-            console.log("cvvInfo");
-            console.log(cvvInfo);
             myImgCVV.src = "./img/cvv-type/cvv_"+cvvInfo['length']+".png";
             var isDisabled =!HiPay.Form.paymentFormDataIsValid();
             document.getElementById("pay-button").disabled = isDisabled;
             var errorCollection = HiPay.Form.paymentFormDataGetErrors();
+console.log("errorCollection");
+console.log(errorCollection);
+            for (var errorIndex in errorCollection) {
+                var elementError = document.createElement('li');
+                elementError.errorIndex
+                elementError.innerHTML = errorCollection[errorIndex];
+
+
+                document.getElementById('container-error-form').appendChild(elementError);
+
+            }
         });
 
 

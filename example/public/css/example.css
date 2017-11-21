@@ -163,7 +163,7 @@ span#card-type {
 }
 
 .card-type-custom {
-    margin-left: -30px;
+    margin: 3px 0 auto -30px;
     width: 28px;
     height:28px;
 }
