@@ -4174,8 +4174,23 @@ var HiPay = (function (HiPay) {
             var splitSubStringEnd = subStringEnd.split(_separatorMonthYear);
             var nbSpaceEnd = (splitSubStringEnd.length - 1)*_separatorMonthYear.length;
 
+
             var startB = parseInt(startBFormat) - parseInt(nbSpaceStart);
             var endB = parseInt(endBFormat) - parseInt(nbSpaceEnd);
+            if (startBFormat > 2 && startBFormat <= (2 + _separatorMonthYear.length)) {
+                startB = 2;
+            }
+
+            if (endBFormat > 2 && endBFormat <= (2 + _separatorMonthYear.length)) {
+                endB = 2;
+            }
+
+            console.log("startBOK");
+            console.log(startB);
+ console.log("endBOK");
+            console.log(endB);
+
+
 
             var startA = startB;
             var endA = endB;
@@ -4204,12 +4219,25 @@ var HiPay = (function (HiPay) {
                 }
                 else if (startB > 0) {
                     if (charCode == 8) {
+
+                        console.log("startB");
+                        console.log(startB);
+                        console.log("newTempStringAfter");
+                        console.log(newTempStringAfter);
                         var tempStringAfterDebut = newTempStringAfter.substring(0, (parseInt(startB) - 1));
                         var tempStringAfterFin = newTempStringAfter.substring((parseInt(startB)), newTempStringAfter.length);
+console.log("tempStringAfterDebut");
+console.log(tempStringAfterDebut);
+console.log("tempStringAfterFin");
+console.log(tempStringAfterFin);
 
                         newTempStringAfter = tempStringAfterDebut + "" + tempStringAfterFin;
 
                         startA = startA - 1;
+                        console.log(startA);
+
+                        console.log("startA first");
+                        console.log(startA);
                     } else if (charCode == 46) {
                         var tempStringAfterDebut = newTempStringAfter.substring(0, (parseInt(startB)));
                         var tempStringAfterFin = newTempStringAfter.substring((parseInt(startB) + 1), newTempStringAfter.length);
@@ -4243,6 +4271,8 @@ var HiPay = (function (HiPay) {
             startA = startAtemp;
 
 
+            console.log(startA);
+
 
             if (tempStringAfter.length <= 4) {
                 serviceCreditCard.cardExpiryDateStringAfter = tempStringAfter;
@@ -4252,22 +4282,74 @@ var HiPay = (function (HiPay) {
                 startA = startBFormat;
             }
 
-            serviceCreditCard.cardExpiryDateStringFormattedAfter =  serviceCreditCard.cardExpiryDateStringAfter;
-            if ( serviceCreditCard.cardExpiryDateStringFormattedAfter.length === 1) {
-                if (serviceCreditCard.cardExpiryDateStringFormattedAfter.charAt(0) > 1) {
-                    serviceCreditCard.cardExpiryDateStringFormattedAfter = "0"+serviceCreditCard.cardExpiryDateStringFormattedAfter;
-                    startA = startA + 1;
+             if ( serviceCreditCard.cardExpiryDateStringAfter.length === 1) {
+                 if (charCode != 8 && charCode != 46 ) {
+                     if (serviceCreditCard.cardExpiryDateStringAfter.charAt(0) > 1) {
+                         serviceCreditCard.cardExpiryDateStringAfter = "0" + serviceCreditCard.cardExpiryDateStringAfter;
+                         startA = startA + 1;
+                     }
+                 }
+            }
+
+            console.log("serviceCreditCard.cardExpiryDateStringAfter");
+            console.log(serviceCreditCard.cardExpiryDateStringAfter);
+            console.log("startA");
+            console.log(startA);
+            serviceCreditCard.cardExpiryDateStringFormattedAfter = serviceCreditCard.cardExpiryDateStringAfter;
+            if ( serviceCreditCard.cardExpiryDateStringAfter.length >= 2) {
+                serviceCreditCard.cardExpiryDateStringFormattedAfter = serviceCreditCard.cardExpiryDateStringFormattedAfter.substring(0, 2) + _separatorMonthYear + serviceCreditCard.cardExpiryDateStringAfter.substring(2, serviceCreditCard.cardExpiryDateStringFormattedAfter.length);
+                if (charCode != 8) {
+                    startA = startA + _separatorMonthYear.length;
+                } else {
+if (startA >= 2) {
+    startA = startA + _separatorMonthYear.length;
+}
                 }
             }
+
+            console.log("serviceCreditCard.cardExpiryDateStringFormattedAfter");
+            console.log(serviceCreditCard.cardExpiryDateStringFormattedAfter);
+
+
+
 
             if ( serviceCreditCard.cardExpiryDateStringFormattedAfter.length >= 2) {
 
-                if (serviceCreditCard.cardExpiryDateStringFormattedAfter.split(_separatorMonthYear).length < 2) {
-                    serviceCreditCard.cardExpiryDateStringFormattedAfter = serviceCreditCard.cardExpiryDateStringFormattedAfter.substring(0, 2) + _separatorMonthYear + serviceCreditCard.cardExpiryDateStringFormattedAfter.substring(2, serviceCreditCard.cardExpiryDateStringFormattedAfter.length);
-                    startA = startA + _separatorMonthYear.length;
-                }
+
+
+                // if (serviceCreditCard.cardExpiryDateStringFormattedAfter.split(_separatorMonthYear).length < 2) {
+                //     // serviceCreditCard.cardExpiryDateStringFormattedAfter = serviceCreditCard.cardExpiryDateStringFormattedAfter.substring(0, 2) + _separatorMonthYear + serviceCreditCard.cardExpiryDateStringFormattedAfter.substring(2, serviceCreditCard.cardExpiryDateStringFormattedAfter.length);
+                //     if (charCode != 8) {
+                //         if (startA>=2) {
+                //             startA = startA + _separatorMonthYear.length;
+                //         }
+                //     } else {
+                //         if (startA > 2 && startA < (2+_separatorMonthYear.length)) {
+                //             startA = 1;
+                //         }
+                //     }
+                //
+                //     //
+                //     // if (startA>2) {
+                //     //     startA = startA + _separatorMonthYear.length;
+                //     // } else {
+                //     //    if (startA == 2) {
+                //     //
+                //     //            startA = startA + _separatorMonthYear.length;
+                //     //        }
+                //     //    }
+                //     // }
+                //     console.log("startA");
+                // } else {
+                //     if (charCode != 8) {
+                //         if (startA>=2) {
+                //             startA = startA + _separatorMonthYear.length;
+                //         }
+                //     }
+                // }
             }
 
+            console.log(startA);
             _setElementValueWithHipayId(_idInputMapper['cardExpiryDate'], serviceCreditCard.cardExpiryDateStringFormattedAfter);
             _setCaretPosition(_selectElementWithHipayId(_idInputMapper['cardExpiryDate']), startA);
             _inputCardExpiryDateFinish( _selectElementWithHipayId(_idInputMapper.cardCVV), serviceCreditCard);
