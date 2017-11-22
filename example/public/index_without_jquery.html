@@ -54,20 +54,20 @@
             </div>
         <div class="row">
 
-            <label class="sr-only" for="input-name-custom">Prénom Nom</label>
+            <label class="sr-only" for="input-name">Prénom Nom</label>
             <div class="input-group">
                 <div class="input-group-addon-icon input-group-addon"><span class="glyphicon glyphicon-user" aria-hidden="true"></span></div>
 
-                <input type="text" class="form-control" id="input-name-custom" autocomplete="cc-name" x-autocompletetype="cc-name" placeholder="" value="" data-hipay-id="card-holder" data-hipay-tabable="true">
+                <input type="text" class="form-control" id="input-name" autocomplete="cc-name" x-autocompletetype="cc-name" placeholder="" value="" data-hipay-id="card-holder" data-hipay-tabable="true">
             </div>
 
         </div>
         <div class="row">
 
-            <label class="sr-only" for="input-card-custom">Card number</label>
+            <label class="sr-only" for="input-card">Card number</label>
             <div class="input-group">
                 <div class="input-group-addon-icon input-group-addon"><span class="glyphicon glyphicon-credit-card" aria-hidden="true"></span></div>
-                <input type="tel" class="form-control" id="input-card-custom" autocomplete="cc-number" x-autocompletetype="cc-number" placeholder="" pattern="\d*" name="cardNumber" value="" data-hipay-id="card-number" data-hipay-tabable="true">
+                <input type="tel" class="form-control" id="input-card" autocomplete="cc-number" x-autocompletetype="cc-number" placeholder="" pattern="\d*" name="cardNumber" value="" data-hipay-id="card-number" data-hipay-tabable="true">
             </div>
             <div id="creditCardNumberMessageContainer" class="inputMessageContainer"></div>
 
@@ -180,16 +180,18 @@
 
         var token = null;
 
-//        $('#link').click(function() {
-//
-//            $('#input-name').focus().val('John Doe');
-//            $('#input-card').val('4111 1111 1111 1111');
-//            $('#input-card').trigger("change");
-//            $('#input-expiry-date').val('10 / 30').trigger('change');
-//            $('#input-cvv').focus().val('123').trigger('change');
-//            HiPay.Form.paymentFormDataIsValid();
-//
-//        });
+
+             addCustomEventListener(document.getElementById("link"), "click",function() {
+
+
+                 document.getElementById("input-name").value = 'John Doe';
+                 document.getElementById("input-card").value = '4111 1111 1111 1111';
+                 document.getElementById("input-expiry-date").value = '10 / 30';
+                 document.getElementById("input-cvv").value = '123';
+                 document.getElementById("pay-button").disabled = false;
+                         HiPay.Form.paymentFormDataIsValid();
+
+        });
 
         addCustomEventListener(document.getElementById("charge-button"), "click",function() {
             document.getElementById("charge-button").innerHTML = "Loading…";

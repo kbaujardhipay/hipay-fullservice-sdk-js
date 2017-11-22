@@ -55,11 +55,11 @@
                 <div class="row">
                     <div class="col-lg-12">
                         <div class="form-group">
-                            <label class="sr-only" for="input-name-custom">Prénom Nom</label>
+                            <label class="sr-only" for="input-name">Prénom Nom</label>
                             <div class="input-group">
                                 <div class="input-group-addon-icon input-group-addon"><span class="glyphicon glyphicon-user" aria-hidden="true"></span></div>
 
-                                <input type="text" class="form-control" id="input-name-custom" autocomplete="cc-name" x-autocompletetype="cc-name" placeholder="" value="" data-hipay-id="card-holder" data-hipay-tabable="true">
+                                <input type="text" class="form-control" id="input-name" autocomplete="cc-name" x-autocompletetype="cc-name" placeholder="" value="" data-hipay-id="card-holder" data-hipay-tabable="true">
                             </div>
                         </div>
                     </div>
@@ -67,10 +67,10 @@
                 <div class="row">
                     <div class="col-lg-12">
                         <div class="form-group">
-                            <label class="sr-only" for="input-card-custom">Card number</label>
+                            <label class="sr-only" for="input-card">Card number</label>
                             <div class="input-group">
                                 <div class="input-group-addon-icon input-group-addon"><span class="glyphicon glyphicon-credit-card" aria-hidden="true"></span></div>
-                                <input type="tel" class="form-control" id="input-card-custom" autocomplete="cc-number" x-autocompletetype="cc-number" placeholder="" pattern="\d*" name="cardNumber" value="" data-hipay-id="card-number" data-hipay-tabable="true">
+                                <input type="tel" class="form-control" id="input-card" autocomplete="cc-number" x-autocompletetype="cc-number" placeholder="" pattern="\d*" name="cardNumber" value="" data-hipay-id="card-number" data-hipay-tabable="true">
                             </div>
                             <div id="creditCardNumberMessageContainer" class="inputMessageContainer"></div>
                         </div>
@@ -135,9 +135,6 @@
             </div>
             <div class="modal-body">
                 <p id="container-cvv-help-message"></p>
-                <!--                <p>For security reasons, you have to enter your card security code (CVC).-->
-                <!--                    It's the 3-digits number on the back of your card for <span class="modal-bold">VISA®</span>, <span class="modal-bold">MASTERCARD®</span> and <span class="modal-bold">MAESTRO®</span></p>-->
-                <!--                <p>The <span class="modal-bold">AMERICAN EXPRESS</span> security code is the 4-digits number on the front of your card.</p>-->
                 <div id="cvv-img-container">
                     <img id="cvv-img" src="./img/card.png">
                 </div>
@@ -185,7 +182,7 @@
             $('#input-card').trigger("change");
             $('#input-expiry-date').val('10 / 30').trigger('change');
             $('#input-cvv').focus().val('123').trigger('change');
-            HiPay.Form.paymentFormDataIsValid();
+            $("#pay-button").prop('disabled', !HiPay.Form.paymentFormDataIsValid());
 
         });
 
@@ -226,21 +223,6 @@
             var errorCollection = HiPay.Form.paymentFormDataGetErrors();
         });
 
-
-        var focusHandler = function(event) {
-            var type = event.target.nodeName.toLowerCase();
-            if(type == 'input' || type == 'textarea') {
-                //Do something
-            }
-        };
-
-//        function focusHandler(){
-//
-//            console.log("test");
-//        }
-//        document.body.addEventListener('focus', focusHandler, true); //Non-IE
-//        document.body.onfocusin = focusHandler; //IE
-
         $("#pay-button").click(function() {
             $("#form :button").prop("disabled", true);
             $("#error").text("");
@@ -259,29 +241,27 @@
 
                     $("#charge-button").show();
                 })
-//                .catch(function(error){
-////                    alert(error);
-//                    if (error.code === HiPay.ErrorReason.APIIncorrectCredentials) { // égal à 1012003
-//                        console.log("Invalid crédentials");
-//                    }
-//
-//                    if (error.code === HiPay.ErrorReason.InvalidCardToken) { // égal à 1012003
-//                        console.log("Token passé invalide…");
-//                    }
-//
-//                    $("#pay-button").text("Tokenize");
-//                    $("#form :input").prop("disabled", false);
-//                    $("#form :button").prop("disabled", false);
-//
-//
-//                    if (error.errorCollection != undefined && error.errorCollection.length > 0) {
-//                        for (var i = 0; i < error.errorCollection.length; i++) {
-//                            var errorParameters = error.errorCollection[i];
-//                            $("#error").append(errorParameters.message);
-//                        }
-//                    }
-//
-//                });
+                .catch(function(error){
+                    if (error.code === HiPay.ErrorReason.APIIncorrectCredentials) { // égal à 1012003
+                        console.log("Invalid crédentials");
+                    }
+
+                    if (error.code === HiPay.ErrorReason.InvalidCardToken) { // égal à 1012003
+                        console.log("Token passé invalide…");
+                    }
+
+                    $("#pay-button").text("Tokenize");
+                    $("#form :input").prop("disabled", false);
+                    $("#form :button").prop("disabled", false);
+
+                    if (error.errorCollection != undefined && error.errorCollection.length > 0) {
+                        for (var i = 0; i < error.errorCollection.length; i++) {
+                            var errorParameters = error.errorCollection[i];
+                            $("#error").append(errorParameters.message);
+                        }
+                    }
+
+                });
             return false;
         });
 
