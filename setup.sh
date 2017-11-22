@@ -1,5 +1,10 @@
 #!/bin/sh -e
 
+header="bin/tests/"
+pathPreFile=${header}000*/*.js
+pathLibHipay=${header}000*/*/*/*.js
+pathDir=${header}0*
+
 # =============================================================================
 #  Use this script build hipay images and run Hipay's containers
 # ==============================================================================
@@ -57,4 +62,16 @@ if [ "$1" = 'kill' ];then
      docker-compose -f docker-compose.yml rm -fv
      rm -Rf example/public/lib/vendor
      rm -Rf example/public/lib/node_modules
+fi
+
+if [ "$1" = 'test' ];then
+
+   # Init SDK HipPay CasperJS
+   cd bin/tests/000_lib
+   bower install hipay-casperjs-lib#develop --allow-root
+   cd ../../../;
+
+   BASE_URL=http://localhost/
+
+   casperjs test $pathLibHipay $pathPreFile ${pathDir}/[0-9][0-9][0-9][0-9]-*.js --url=$BASE_URL --xunit=${header}result.xml --ignore-ssl-errors=true --ssl-protocol=any
 fi
