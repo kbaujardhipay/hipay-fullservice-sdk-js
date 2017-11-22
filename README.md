@@ -37,3 +37,64 @@ The **HiPay Fullservice SDK for JavaScript** is available under the **Apache 2.0
 [project-license]: LICENSE.md
 [project-changelog]: CHANGELOG.md
 [project-contributing]: CONTRIBUTING.md
+
+
+        .then(function(){
+            this.waitForSelector('input[data-hipay-id="card-number"]', function success(){
+                casper.fillSelectors('body', {
+                    'input[data-hipay-id="card-number"]': "41111111111111111",
+                }, false);
+
+                // this.sendKeys('input[data-hipay-id="card-number"]', '41111111111111111');
+
+                var value = this.evaluate(function() {
+                    return document.querySelector('input[data-hipay-id="card-number"]').value
+                });
+
+                test.assertEquals(value, "4111 1111 1111 1111", value + "==" + "4111 1111 1111 1111");
+
+            }, function fail() {
+                test.assertExists('input[data-hipay-id="card-number"]',"Field 'Card-Number' exist")
+            },1000);
+        })
+
+        .then(function(){
+            this.waitForSelector('input[data-hipay-id="card-expiry-date"]', function success(){
+                casper.fillSelectors('body', {
+                    'input[data-hipay-id="card-expiry-date"]': "1230",
+                }, false);
+
+
+                this.sendKeys('input[data-hipay-id="card-expiry-date"]', "1230");
+
+                var value = this.evaluate(function() {
+                    return document.querySelector('input[data-hipay-id="card-expiry-date"]').value
+                });
+
+                test.assertEquals(value, "12 / 30", value + '==' +  "12 / 30");
+
+            }, function fail() {
+                test.assertExists('input[data-hipay-id="card-expiry-date"]',"Field 'Card Expiry Date' exist")
+            },1000);
+        })
+
+
+        .then(function(){
+            this.waitForSelector('input[data-hipay-id="card-cvv"]', function success(){
+                casper.fillSelectors('body', {
+                    'input[data-hipay-id="card-cvv"]': "123",
+                }, false);
+
+
+                this.sendKeys('input[data-hipay-id="card-cvv"]', "123");
+
+                var value = this.evaluate(function() {
+                    return document.querySelector('input[data-hipay-id="card-cvv"]').value
+                });
+
+                test.assertEquals(value, "123", value + '==' +  "123");
+
+            }, function fail() {
+                test.assertExists('input[data-hipay-id="card-expiry-date"]',"Field 'Card Expiry Date' exist")
+            },1000);
+        })

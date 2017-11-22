@@ -3,84 +3,34 @@ casper.test.begin('Test example JKurc', function(test) {
     casper.start(baseURL)
         .then(function() {
             // Step 1
+            this.echo("Filling Payment form","INFO");
             this.waitForSelector('input[data-hipay-id="card-holder"]', function success(){
-                casper.fillSelectors('body', {
-                    'input[data-hipay-id="card-holder"]': "Test",
-                }, false);
-
-                // this.sendKeys('input[data-hipay-id="card-holder"]', 'Test');
-
-
-                var value = this.evaluate(function() {
-                    return document.querySelector('input[data-hipay-id="card-holder"]').value
-                });
-
-                test.assertEquals(value, "Test");
-
-
-            }, function fail() {
-                test.assertExists('input[data-hipay-id="card-holder"]',"Field 'Card-Holder' exist")
-            },1000);
-        })
-
-        .then(function(){
-            this.waitForSelector('input[data-hipay-id="card-number"]', function success(){
-                casper.fillSelectors('body', {
-                    'input[data-hipay-id="card-number"]': "41111111111111111",
-                }, false);
-
-                // this.sendKeys('input[data-hipay-id="card-number"]', '41111111111111111');
-
-                var value = this.evaluate(function() {
-                    return document.querySelector('input[data-hipay-id="card-number"]').value
-                });
-
-                test.assertEquals(value, "4111 1111 1111 1111", value + "==" + "4111 1111 1111 1111");
-
-            }, function fail() {
-                test.assertExists('input[data-hipay-id="card-number"]',"Field 'Card-Number' exist")
-            },1000);
-        })
-
-        .then(function(){
-            this.waitForSelector('input[data-hipay-id="card-expiry-date"]', function success(){
-                casper.fillSelectors('body', {
-                    'input[data-hipay-id="card-expiry-date"]': "1230",
-                }, false);
-
-
-                this.sendKeys('input[data-hipay-id="card-expiry-date"]', "1230");
-
-                var value = this.evaluate(function() {
-                    return document.querySelector('input[data-hipay-id="card-expiry-date"]').value
-                });
-
-                test.assertEquals(value, "12 / 30", value + '==' +  "12 / 30");
-
-            }, function fail() {
-                test.assertExists('input[data-hipay-id="card-expiry-date"]',"Field 'Card Expiry Date' exist")
-            },1000);
-        })
-
-
-        .then(function(){
-            this.waitForSelector('input[data-hipay-id="card-cvv"]', function success(){
-                casper.fillSelectors('body', {
+                casper.fillSelectors('div#form', {
+                    'input[data-hipay-id="card-holder"]': "Card Holder",
+                    'input[data-hipay-id="card-expiry-date"]': "12 / 30",
                     'input[data-hipay-id="card-cvv"]': "123",
                 }, false);
-
-
-                this.sendKeys('input[data-hipay-id="card-cvv"]', "123");
-
-                var value = this.evaluate(function() {
-                    return document.querySelector('input[data-hipay-id="card-cvv"]').value
-                });
-
-                test.assertEquals(value, "123", value + '==' +  "123");
-
+                this.sendKeys('input[data-hipay-id="card-number"]',cardNumber.visa);
+                this.click('button[data-hipay-id="pay-button"]');
+                test.info("Filling OK")
             }, function fail() {
-                test.assertExists('input[data-hipay-id="card-expiry-date"]',"Field 'Card Expiry Date' exist")
+                test.assertExists('input[data-hipay-id="card-holder"]',"Field 'Card-Holder' exist");
             },1000);
+        })
+        .then(function() {
+            this.waitForText('The token has been created using the JavaScript SDK (client side).', function success(){
+                this.echo("Check SDK Response","INFO");
+                test.assertExists('div#infos-txt div#code');
+                code=this.fetchText('div#infos-txt div#code');
+
+                test.info('Response is ' . assertTextExists);
+                // Todo Verifier avec un objet json si la carte est celle envoyée, si le token a un bon format etc
+                test.assertTextExists('token');
+                test.assertTextExists('brand');
+            }, function fail(){
+                test.assertExists('input[data-hipay-id="card-holder"]',"Field 'Card-Holder' exist");
+            },25000);
+
         })
         .run(function() {
             test.done();
