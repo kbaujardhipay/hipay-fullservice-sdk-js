@@ -21,17 +21,17 @@
     <script src="./lib/vendor/node_modules/lt-ie-9/lt-ie-9.min.js"></script>
     <link href="../assets/old_bws.css" media="screen" rel="stylesheet" type="text/css">
     <![endif]-->
-        <script type="text/javascript" src="./lib/vendor/hipay/hipay-fullservice-sdk-js/hipay-fullservice-sdk-2.js"></script>
+    <script type="text/javascript" src="./lib/vendor/hipay/hipay-fullservice-sdk-js/hipay-fullservice-sdk-2.js"></script>
 
-    </head>
+</head>
 
-    <body>
-    <div id="main" class="container">
+<body>
+<div id="main" class="container">
 
-        <div class="row">
-            <div class="col-sm-12 col-lg-7">
+    <div class="row">
+        <div class="col-sm-12 col-lg-7">
 
-                <!-- Main component for a primary marketing message or call to action -->
+            <!-- Main component for a primary marketing message or call to action -->
             <div class="scontainer" id ="infos-txt" class="">
                 <h1 class="main-title" id="price">HiPay Direct Post Tokenization Simulator</h1>
                 <p id="order">Submit the form in oder to tokenize the credit card details using the HiPay Fullservice SDK for JavaScript (payment details won't hit the server). You will see the HiPay Fullservice platform response below.</p>
@@ -47,76 +47,76 @@
 
         <div class="col-sm-12 col-lg-5">
             <div class="scontainer" id="form">
+                <form>
+                    <p class="form-description details">
+                        Enter your payment details:
+                    </p>
 
-                <p class="form-description details">
-                    Enter your payment details:
-                </p>
+                    <div class="row">
+                        <div class="col-lg-12">
+                            <div class="form-group">
+                                <label class="sr-only" for="input-name">Prénom Nom</label>
+                                <div class="input-group">
+                                    <div class="input-group-addon-icon input-group-addon"><span class="glyphicon glyphicon-user" aria-hidden="true"></span></div>
 
-                <div class="row">
-                    <div class="col-lg-12">
-                        <div class="form-group">
-                            <label class="sr-only" for="input-name">Prénom Nom</label>
-                            <div class="input-group">
-                                <div class="input-group-addon-icon input-group-addon"><span class="glyphicon glyphicon-user" aria-hidden="true"></span></div>
-
-                                <input type="text" class="form-control" id="input-name" autocomplete="cc-name" x-autocompletetype="cc-name" placeholder="" value="" data-hipay-id="card-holder" data-hipay-tabable="true">
+                                    <input type="text" class="form-control" id="input-name" autocomplete="cc-name" x-autocompletetype="cc-name" placeholder="" value="" data-hipay-id="card-holder" data-hipay-tabable="true">
+                                </div>
                             </div>
                         </div>
                     </div>
-                </div>
-                <div class="row">
-                    <div class="col-lg-12">
-                        <div class="form-group">
-                            <label class="sr-only" for="input-card">Card number</label>
-                            <div class="input-group">
-                                <div class="input-group-addon-icon input-group-addon"><span class="glyphicon glyphicon-credit-card" aria-hidden="true"></span></div>
-                                <input type="tel" class="form-control" id="input-card" autocomplete="cc-number" x-autocompletetype="cc-number" placeholder="" pattern="\d*" name="cardNumber" value="" data-hipay-id="card-number" data-hipay-tabable="true">
+                    <div class="row">
+                        <div class="col-lg-12">
+                            <div class="form-group">
+                                <label class="sr-only" for="input-card">Card number</label>
+                                <div class="input-group">
+                                    <div class="input-group-addon-icon input-group-addon"><span class="glyphicon glyphicon-credit-card" aria-hidden="true"></span></div>
+                                    <input type="tel" class="form-control" id="input-card" autocomplete="cc-number" x-autocompletetype="cc-number" placeholder="" pattern="\d*" name="cardNumber" value="" data-hipay-id="card-number" data-hipay-tabable="true">
+                                </div>
+                                <div id="creditCardNumberMessageContainer" class="inputMessageContainer"></div>
                             </div>
-                            <div id="creditCardNumberMessageContainer" class="inputMessageContainer"></div>
                         </div>
                     </div>
-                </div>
 
 
 
-                <div class="row">
-                    <div class="col-lg-12">
-                        <div class="form-group">
-                            <label class="sr-only" for="input-expiry-date">MM / YY</label>
-                            <div class="input-group">
-                                <div class="input-group-addon-icon input-group-addon"><span class="glyphicon glyphicon-calendar" aria-hidden="true"></span></div>
-                                <input type="text" class="form-control" id="input-expiry-date" value="" data-hipay-id="card-expiry-date" data-hipay-tabable="true">
-                               </div>
-                            <div id="creditCardExpiryDateMessageContainer" class="inputMessageContainer"></div>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="row">
-                    <div class="col-lg-12">
-
-                        <div class="form-group">
-                            <label class="sr-only" for="input-cvv">123</label>
-                            <div id="container-cvv" class="input-group">
-                                <div class="input-group-addon-icon input-group-addon"><span class="glyphicon glyphicon-lock" aria-hidden="true"></span></div>
-                                <input class="form-control" id="input-cvv" placeholder="123" maxlength="3" value="" data-hipay-id="card-cvv" data-hipay-tabable="true">
-                                <span id="cvv-button" class="input-group-addon"><button type="button" data-toggle="modal" data-target="#cvv-modal">?</button></span>
+                    <div class="row">
+                        <div class="col-lg-12">
+                            <div class="form-group">
+                                <label class="sr-only" for="input-expiry-date">MM / YY</label>
+                                <div class="input-group">
+                                    <div class="input-group-addon-icon input-group-addon"><span class="glyphicon glyphicon-calendar" aria-hidden="true"></span></div>
+                                    <input type="text" class="form-control" id="input-expiry-date" value="" data-hipay-id="card-expiry-date" data-hipay-tabable="true">
+                                </div>
+                                <div id="creditCardExpiryDateMessageContainer" class="inputMessageContainer"></div>
                             </div>
-                            <div id="creditCardCVVMessageContainer" class="inputMessageContainer"></div>
                         </div>
                     </div>
-                </div>
 
+                    <div class="row">
+                        <div class="col-lg-12">
 
-                <div class="row">
-                    <div class="col-lg-12">
-                        <div id="submit-zone">
-                            <div id="error"></div>
-                            <button class="btn btn-large" type="button" data-toggle="modal" data-target="#other-method-modal" id="pay-button" data-hipay-id="pay-button">Tokenize</button>
+                            <div class="form-group">
+                                <label class="sr-only" for="input-cvv">123</label>
+                                <div id="container-cvv" class="input-group">
+                                    <div class="input-group-addon-icon input-group-addon"><span class="glyphicon glyphicon-lock" aria-hidden="true"></span></div>
+                                    <input class="form-control" id="input-cvv" placeholder="123" maxlength="3" value="" data-hipay-id="card-cvv" data-hipay-tabable="true">
+                                    <span id="cvv-button" class="input-group-addon"><button type="button" data-toggle="modal" data-target="#cvv-modal">?</button></span>
+                                </div>
+                                <div id="creditCardCVVMessageContainer" class="inputMessageContainer"></div>
+                            </div>
                         </div>
                     </div>
-                </div>
 
+
+                    <div class="row">
+                        <div class="col-lg-12">
+                            <div id="submit-zone">
+                                <div id="error"></div>
+                                <button class="btn btn-large" type="button" data-toggle="modal" data-target="#other-method-modal" id="pay-button" data-hipay-id="pay-button">Tokenize</button>
+                            </div>
+                        </div>
+                    </div>
+                </form>
             </div>
         </div>
 
@@ -147,16 +147,16 @@
     $(document).ready(function(){
 
         HiPay.setTarget('stage'); // default is production/live
-/* Set HiPay public credentials */
-       fetch('/credentials_public.json')
-           .then(function(response) {
-           return response.json();
-       }).then(function(json) {
-           HiPay.setCredentials( json.public.username, json.public.password);
+        /* Set HiPay public credentials */
+        fetch('/credentials_public.json')
+                .then(function(response) {
+                    return response.json();
+                }).then(function(json) {
+            HiPay.setCredentials( json.public.username, json.public.password);
 
-       }).catch(function(ex) {
-           console.log('parsing failed', ex);
-       });
+        }).catch(function(ex) {
+            console.log('parsing failed', ex);
+        });
 
 
         HiPay.setAvailalblePaymentProductsCustomerCountry('FR');
@@ -230,38 +230,38 @@
             $("#pay-button").text("Loading…");
 
             HiPay.Form.tokenizePaymentFormData()
-                .then(function(cardToken) {
-                    token = cardToken.token;
+                    .then(function(cardToken) {
+                        token = cardToken.token;
 
-                    $("#pay-button").text("Tokenize");
-                    $("#order").text("The token has been created using the JavaScript SDK (client side).");
+                        $("#pay-button").text("Tokenize");
+                        $("#order").text("The token has been created using the JavaScript SDK (client side).");
 
-                    $('#code').text(JSON.stringify(cardToken, null, 4));
-                    $('#link-area').text('');
+                        $('#code').text(JSON.stringify(cardToken, null, 4));
+                        $('#link-area').text('');
 
-                    $("#charge-button").show();
-                })
-                .catch(function(error){
-                    if (error.code === HiPay.ErrorReason.APIIncorrectCredentials) { // égal à 1012003
-                        console.log("Invalid crédentials");
-                    }
-
-                    if (error.code === HiPay.ErrorReason.InvalidCardToken) { // égal à 1012003
-                        console.log("Token passé invalide…");
-                    }
-
-                    $("#pay-button").text("Tokenize");
-                    $("#form :input").prop("disabled", false);
-                    $("#form :button").prop("disabled", false);
-
-                    if (error.errorCollection != undefined && error.errorCollection.length > 0) {
-                        for (var i = 0; i < error.errorCollection.length; i++) {
-                            var errorParameters = error.errorCollection[i];
-                            $("#error").append(errorParameters.message);
+                        $("#charge-button").show();
+                    })
+                    .catch(function(error){
+                        if (error.code === HiPay.ErrorReason.APIIncorrectCredentials) { // égal à 1012003
+                            console.log("Invalid crédentials");
                         }
-                    }
 
-                });
+                        if (error.code === HiPay.ErrorReason.InvalidCardToken) { // égal à 1012003
+                            console.log("Token passé invalide…");
+                        }
+
+                        $("#pay-button").text("Tokenize");
+                        $("#form :input").prop("disabled", false);
+                        $("#form :button").prop("disabled", false);
+
+                        if (error.errorCollection != undefined && error.errorCollection.length > 0) {
+                            for (var i = 0; i < error.errorCollection.length; i++) {
+                                var errorParameters = error.errorCollection[i];
+                                $("#error").append(errorParameters.message);
+                            }
+                        }
+
+                    });
             return false;
         });
 
