@@ -42,7 +42,8 @@ span#card-type {
     margin-top: 0;
 }
 
-#infos-txt #code {
+/*#infos-txt #code {*/
+    #tokenize-content-token {
     color: #aaa;
     font-family: "Courier New", Courier, "Lucida Sans Typewriter", "Lucida Typewriter", monospace;
     font-size: 13.5px;

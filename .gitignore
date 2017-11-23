@@ -12,3 +12,5 @@ etc/ssl/
 example/public/credentials_public\.json
 example/config/credentials.php
 example/vendor/
+
+bin/tests/errors/

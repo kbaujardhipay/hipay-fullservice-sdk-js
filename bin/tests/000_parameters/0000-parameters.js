@@ -6,6 +6,9 @@ var fs = require('fs'),
     cardNumber = {
         visa: '4111111111111111'
     },
+    cardBrand = {
+        visa: 'VISA'
+    },
     pathHeader = "bin/tests/",
     pathErrors = pathHeader + "errors/";
 

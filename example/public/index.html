@@ -34,8 +34,10 @@
             <!-- Main component for a primary marketing message or call to action -->
             <div class="scontainer" id ="infos-txt">
                 <h1 class="main-title" id="price">HiPay Direct Post Tokenization Simulator</h1>
-                <p id="order">Submit the form in oder to tokenize the credit card details using the HiPay Fullservice SDK for JavaScript (payment details won't hit the server). You will see the HiPay Fullservice platform response below.</p>
-                <div id="code"></div>
+                <p id="sub-title">Submit the form in oder to tokenize the credit card details using the HiPay Fullservice SDK for JavaScript (payment details won't hit the server). You will see the HiPay Fullservice platform response below.</p>
+
+                <div id="container-response">
+                    </div>
                 <p id="link-area">
                     <a class="" role="link" href="#null" id="link">Click here</a> to fill the form with sample payment details.
                 </p>
@@ -196,13 +198,21 @@
                 type : 'GET',
                 dataType : 'html',
                 success : function(html, status){
-                    $('#order').html(html);
-                    $('#code').html('');
+
+                    $("#container-response").append($("<div>", {id: "order-content-message"}));
+                    $('#order-content-message').html(html);
+//                    $('#code').html('');
+                    $('#tokenize-content-token').remove();
+                    $('#tokenize-content-message').remove();
                     $("#charge-button").hide();
                 },
                 error : function(result, status, error){
-                    $('#order').html(result.responseText);
-                    $('#code').html('');
+//                    $('#order').html();
+                    $("#container-response").append($("<div>", {id: "order-content-message"}));
+                    $('#order-content-message').html(result.responseText);
+//                    $('#code').html('');
+                    $('#tokenize-content-token').remove();
+                    $('#tokenize-content-message').remove();
                     $("#charge-button").text("Try again to create a charge…");
                     $("#charge-button").prop("disabled", false);
                 }
@@ -234,9 +244,19 @@
                         token = cardToken.token;
 
                         $("#pay-button").text("Tokenize");
-                        $("#order").text("The token has been created using the JavaScript SDK (client side).");
 
-                        $('#code').text(JSON.stringify(cardToken, null, 4));
+//                        $('#code').text(JSON.stringify(cardToken, null, 4));
+//                        $("#order").text("The token has been created using the JavaScript SDK (client side).");
+                        $("#sub-title").remove();
+
+                        $("#container-response").append($("<div>", {id: "tokenize-content-message"}));
+                        $("#container-response").append($("<div>", {id: "tokenize-content-token"}));
+
+                        $("#tokenize-content-message").text("The token has been created using the JavaScript SDK (client side).");
+                        $('#tokenize-content-token').text(JSON.stringify(cardToken, null, 4));
+
+
+
                         $('#link-area').text('');
 
                         $("#charge-button").show();
