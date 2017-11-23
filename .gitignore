@@ -20,3 +20,5 @@ etc/ssl/
 \.ideaold/
 
 example/public/credentials_public\.json
+
+example/vendor/
