@@ -1,0 +1,6 @@
+web:
+  restart: always
+  ports :
+   - "80:80"
+  volumes:
+    - .:/var/www/htdocs/

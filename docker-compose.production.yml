@@ -1,0 +1,10 @@
+web:
+  container_name: {CONTAINER_NAME_WEB}
+  ports:
+    - "{PORT_WEB}:80"
+  labels:
+    - "com.hipay.github={label}"
+    - "com.hipay.circleci={circleci}"
+  environment:
+    - WEB_PORT={PORT_WEB}
+    - WEB_URL=http://{CONTAINER_NAME_WEB}

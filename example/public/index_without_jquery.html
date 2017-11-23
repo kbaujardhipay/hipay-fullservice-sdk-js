@@ -1,0 +1,314 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <meta content="IE=edge" http-equiv="X-UA-Compatible">
+    <meta content="width=device-width, initial-scale=1" name="viewport">
+
+    <title>HiPay Fullservice Tokenization</title>
+
+
+
+    <link href="./css/example2.css" media="screen" rel="stylesheet" type="text/css">
+    <link href="./css/custom.css" media="screen" rel="stylesheet" type="text/css">
+
+    <!-- HTML5 shim, for IE6-8 support of HTML5 elements -->
+    <!--[if lt IE 9]>
+    <script src="./lib/vendor/node_modules/lt-ie-9/lt-ie-9.min.js"></script>
+    <link href="../assets/old_bws.css" media="screen" rel="stylesheet" type="text/css">
+    <![endif]-->
+    <script type="text/javascript" src="./lib/vendor/hipay/hipay-fullservice-sdk-js/hipay-fullservice-sdk-2.js"></script>
+
+</head>
+
+<body>
+<div id="main" class="container">
+
+
+
+
+    <!-- Main component for a primary marketing message or call to action -->
+    <div class="scontainer" id ="infos-txt" class="">
+        <h1 class="main-title" id="price">HiPay Direct Post Tokenization Simulator</h1>
+        <p id="order">Submit the form in oder to tokenize the credit card details using the HiPay Fullservice SDK for JavaScript (payment details won't hit the server). You will see the HiPay Fullservice platform response below.</p>
+        <div id="code"></div>
+        <p id="link-area">
+            <a class="" role="link" href="#null" id="link">Click here</a> to fill the form with sample payment details.
+        </p>
+        <p id="charge" >
+            <a class="btn btn-lg btn-primary" role="button" href="#null" id="charge-button" style="display: none;">Create a test charge on this token (server-side PHP SDK)</a>
+        </p>
+    </div>
+
+
+
+    <div class="scontainer" id="form">
+
+        <p class="form-description details">
+            Enter your payment details:
+        </p>
+
+
+        <div class="row">
+            <p id="container-error-form"></p>
+            </div>
+        <div class="row">
+
+            <label class="sr-only" for="input-name">Prénom Nom</label>
+            <div class="input-group">
+                <div class="input-group-addon-icon input-group-addon"><span class="glyphicon glyphicon-user" aria-hidden="true"></span></div>
+
+                <input type="text" class="form-control" id="input-name" autocomplete="cc-name" x-autocompletetype="cc-name" placeholder="" value="" data-hipay-id="card-holder" data-hipay-tabable="true">
+            </div>
+
+        </div>
+        <div class="row">
+
+            <label class="sr-only" for="input-card">Card number</label>
+            <div class="input-group">
+                <div class="input-group-addon-icon input-group-addon"><span class="glyphicon glyphicon-credit-card" aria-hidden="true"></span></div>
+                <input type="tel" class="form-control" id="input-card" autocomplete="cc-number" x-autocompletetype="cc-number" placeholder="" pattern="\d*" name="cardNumber" value="" data-hipay-id="card-number" data-hipay-tabable="true">
+            </div>
+            <div id="creditCardNumberMessageContainer" class="inputMessageContainer"></div>
+
+        </div>
+
+
+
+        <div class="row">
+
+            <label class="sr-only" for="input-expiry-date">MM / YY</label>
+            <div class="input-group">
+                <div class="input-group-addon-icon input-group-addon"><span class="glyphicon glyphicon-calendar" aria-hidden="true"></span></div>
+                <input type="text" class="form-control" id="input-expiry-date" value="" data-hipay-id="card-expiry-date" data-hipay-tabable="true">
+            </div>
+            <div id="creditCardExpiryDateMessageContainer" class="inputMessageContainer">
+
+            </div>
+
+        </div>
+
+        <div class="row">
+
+            <label class="sr-only" for="input-cvv">123</label>
+            <div id="container-cvv" class="input-group">
+                <div class="input-group-addon-icon input-group-addon"><span class="glyphicon glyphicon-lock" aria-hidden="true"></span></div>
+                <input class="form-control" id="input-cvv" placeholder="123" maxlength="3" value="" data-hipay-id="card-cvv" data-hipay-tabable="true">
+                <span id="cvv-button" class="input-group-addon"><button id="cvv-modal" type="button" data-toggle="modal" data-target="#cvv-modal">?</button></span>
+            </div>
+            <div id="creditCardCVVMessageContainer" class="inputMessageContainer">
+                <p id="container-cvv-help-message"></p><img id="cvv-img">
+            </div>
+
+        </div>
+
+
+        <div class="row">
+            <div id="submit-zone">
+                <div id="error-container"></div>
+                <button class="btn btn-large" type="button" data-toggle="modal" data-target="#other-method-modal" id="pay-button" data-hipay-id="pay-button">Tokenize</button>
+            </div>
+        </div>
+
+    </div>
+
+
+
+</div> <!-- /container -->
+
+<script type="text/javascript">
+
+    function addLoadEvent(func) {
+        var oldonload = window.onload;
+        if (typeof window.onload != 'function') {
+            window.onload = func;
+        } else {
+            window.onload = function() {
+                if (oldonload) {
+                    oldonload();
+                }
+                func();
+            }
+        }
+    }
+
+
+    function addCustomEventListener(node, event, handler, capture) {
+        if (typeof node == "undefined") {
+            return;
+        }
+
+        if (node.attachEvent) {
+            node.attachEvent("on" + event, handler);
+        } else {
+            node.addEventListener(event, handler, capture);  // all browsers and IE9+
+        }
+
+    };
+
+
+    function initClient() {
+        // default is production/live
+        HiPay.setTarget('stage');
+        // Set HiPay public credentials
+        fetch('/credentials_public.json')
+                .then(function(response) {
+                    return response.json();
+                }).then(function(json) {
+            HiPay.setCredentials( json.public.username, json.public.password);
+
+        }).catch(function(ex) {
+            console.log('parsing failed', ex);
+        });
+
+        // Set available payment products country
+        HiPay.setAvailalblePaymentProductsCustomerCountry('FR');
+        // Set available payment products currency
+        HiPay.setAvailalblePaymentProductsCurrency('EUR');
+        // Enable payment products. All product in this array witch is not allowed for country and currency selected will be ignore.
+        // HiPay.enabledPaymentProducts(['visa', 'maestro']);
+
+
+        // message CVV
+        document.getElementById('container-cvv-help-message').innerHTML = HiPay.Form.CVVHelpText();
+        // img CVV
+        var myImgCVV = document.getElementById("cvv-img");
+        var cvvInfo = HiPay.getCVVInformation();
+
+        myImgCVV.src = "./img/cvv-type/cvv_"+cvvInfo['length']+".png";
+
+
+        var token = null;
+
+
+             addCustomEventListener(document.getElementById("link"), "click",function() {
+
+
+                 document.getElementById("input-name").value = 'John Doe';
+                 document.getElementById("input-card").value = '4111 1111 1111 1111';
+                 document.getElementById("input-expiry-date").value = '10 / 30';
+                 document.getElementById("input-cvv").value = '123';
+                 document.getElementById("pay-button").disabled = false;
+                         HiPay.Form.paymentFormDataIsValid();
+
+        });
+
+        addCustomEventListener(document.getElementById("charge-button"), "click",function() {
+            document.getElementById("charge-button").innerHTML = "Loading…";
+            document.getElementById("charge-button").disabled = true;
+
+            fetch('order.php?token='+token, {
+                type : 'GET'
+            })
+                    .then(function(response){
+
+                        return response.text();
+
+                    }).then(function(body) {
+
+                document.getElementById('order').innerHTML = body;
+                document.getElementById('code').innerHTML = '';
+                document.getElementById("charge-button").style.display = "none";
+            }).catch(function() {
+                //                    $('#order').html(result.responseText);
+//                    $('#code').html('');
+//                    $("#charge-button").text("Try again to create a charge…");
+//                    $("#charge-button").prop("disabled", false);
+            });
+        });
+
+        document.getElementById("creditCardCVVMessageContainer").style.display = "none";
+
+
+        addCustomEventListener(document.getElementById("cvv-modal"), "click",function() {
+            if ( document.getElementById("creditCardCVVMessageContainer").style.display == "block") {
+                document.getElementById("creditCardCVVMessageContainer").style.display = "none";
+            }
+            else {
+                document.getElementById("creditCardCVVMessageContainer").style.display = "block";
+            }
+        });
+
+
+        document.getElementById("pay-button").disabled = !HiPay.Form.paymentFormDataIsValid();
+
+        HiPay.Form.change(function() {
+            // Information on card CVV
+            // message CVV
+            document.getElementById('container-cvv-help-message').innerHTML = HiPay.Form.CVVHelpText();
+            // img CVV
+            var myImgCVV = document.getElementById("cvv-img");
+            cvvInfo = HiPay.getCVVInformation();
+            myImgCVV.src = "./img/cvv-type/cvv_"+cvvInfo['length']+".png";
+            var isDisabled =!HiPay.Form.paymentFormDataIsValid();
+            document.getElementById("pay-button").disabled = isDisabled;
+            var errorCollection = HiPay.Form.paymentFormDataGetErrors();
+console.log("errorCollection");
+console.log(errorCollection);
+            for (var errorIndex in errorCollection) {
+                var elementError = document.createElement('li');
+                elementError.errorIndex
+                elementError.innerHTML = errorCollection[errorIndex];
+
+
+                document.getElementById('container-error-form').appendChild(elementError);
+
+            }
+        });
+
+
+
+        addCustomEventListener(document.getElementById("pay-button"), "click",function() {
+            document.getElementById("pay-button").disabled = true;
+            document.getElementById("error-container").innerHTML = "";
+
+            document.getElementById("pay-button").innerHTML = "Loading…";
+
+            HiPay.Form.tokenizePaymentFormData()
+                    .then(function(cardToken) {
+                        token = cardToken.token;
+
+                        document.getElementById("pay-button").innerHTML = "Tokenize";
+                        document.getElementById("order").innerHTML = "The token has been created using the JavaScript SDK (client side).";
+
+                        document.getElementById("code").innerHTML = JSON.stringify(cardToken, null, 4);
+                        document.getElementById("link-area").innerHTML = "";
+
+                        document.getElementById("charge-button").style.display = 'block';
+                    })
+                    .catch(function(error){
+                        if (error.code === HiPay.ErrorReason.APIIncorrectCredentials) { // égal à 1012003
+                            console.log("Invalid crédentials");
+                        }
+
+                        if (error.code === HiPay.ErrorReason.InvalidCardToken) { // égal à 1012003
+                            console.log("Token passé invalide…");
+                        }
+
+                        document.getElementById("pay-button").innerHTML = "Tokenize";
+
+
+//
+//
+//                    if (error.errorCollection != undefined && error.errorCollection.length > 0) {
+//                        for (var i = 0; i < error.errorCollection.length; i++) {
+//                            var errorParameters = error.errorCollection[i];
+//                            $("#error").append(errorParameters.message);
+//                        }
+//                    }
+//
+                    });
+            return false;
+        });
+
+    };
+
+    addLoadEvent(initClient);
+    addLoadEvent(function() {
+        document.body.style.backgroundColor = '#EFDF95';
+    });
+</script>
+
+
+</body>
+</html>
