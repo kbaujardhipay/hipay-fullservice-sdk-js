@@ -16,7 +16,7 @@
             //     'http://bing.com/'
             // ];
 
-            casper.start().each(cardCollection, function(self, card) {
+            casper.each(cardCollection, function(self, card) {
                 self.thenOpen(baseURL, function() {
 
                     casper.then(function () {
