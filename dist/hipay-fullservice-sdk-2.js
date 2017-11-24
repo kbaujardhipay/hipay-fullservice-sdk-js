@@ -2758,6 +2758,8 @@ var HiPay = (function (HiPay) {
         card_maestro_info: "ic_credit_card_maestro.png"
     }
 
+    var _creditCardCVVMaxLength = 3;
+
     var _cardFormatDefinition = {
         card_visa_info:
         {
@@ -3182,7 +3184,7 @@ var HiPay = (function (HiPay) {
         var serviceCreditCard = {};
 
         serviceCreditCard.creditCardHolderLengthMax = 60;
-        serviceCreditCard.creditCardCVVLengthMax = 3;
+        serviceCreditCard.creditCardCVVLengthMax = _creditCardCVVMaxLength;
         serviceCreditCard.cardFormatArray = [];
 
         serviceCreditCard.getCreditCardHolderInput = function() {
@@ -3218,7 +3220,9 @@ var HiPay = (function (HiPay) {
             return serviceCreditCard.creditCardCVVLengthMax;
         };
 
-
+        serviceCreditCard.setCreditCardCVVMaxLength = function(cardCVVMaxLength) {
+            _creditCardCVVMaxLength = cardCVVMaxLength;
+        }
 
         /* @ todo clean init */
         serviceCreditCard.getCardTypeId = function() {
@@ -6615,6 +6619,11 @@ if (startA >= 2) {
         }
 
         return undefined;
+    };
+
+    HiPay.Form.setCreditCardCVVMaxLength = function(cardCVVMaxLength) {
+        _instanceServiceCreditCard = new _serviceCreditCard();
+        _instanceServiceCreditCard.setCreditCardCVVMaxLength(cardCVVMaxLength);
     };
 
     return HiPay;
