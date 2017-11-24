@@ -7,7 +7,7 @@
         //var tab = line.split(";");
 
 
-        casper.test.begin("Test cartes", 1, function suite(test) {
+        casper.test.begin("Test cartes", 14, function suite(test) {
 
             casper.start(baseURL);
             // var links = [
@@ -32,7 +32,7 @@
                             this.click('button[data-hipay-id="pay-button"]');
                             test.info("Filling OK")
                         }, function fail() {
-                            // test.assertExists('input[data-hipay-id="card-holder"]', "Field 'Card-Holder' exist");
+                            test.assertExists('input[data-hipay-id="card-holder"]', "Field 'Card-Holder' exist");
                         }, 1000);
                     }).then(function () {
                         this.waitForSelector('div#tokenize-content-token', function success() {
@@ -105,7 +105,7 @@
 
 
                         }, function fail() {
-                            // test.assertExists('input[data-hipay-id="card-holder"]', "Field 'Card-Holder' exist");
+                            test.assertExists('input[data-hipay-id="card-holder"]', "Field 'Card-Holder' exist");
                         }, 25000);
 
 
