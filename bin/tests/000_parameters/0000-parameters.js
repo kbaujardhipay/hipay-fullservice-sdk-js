@@ -3,11 +3,22 @@ var fs = require('fs'),
     x = require('casper').selectXPath,
     baseURL = casper.cli.get('url'),
     defaultViewPortSizes = { width: 1920, height: 1080 },
-    cardNumber = {
-        visa: '4111111111111111'
-    },
-    cardBrand = {
-        visa: 'VISA'
+
+    cardCollection = {
+        visa: {
+            number: "4111111111111111",
+            type: "VISA",
+            issuer: "JPMORGAN CHASE BANK, N.A.",
+            country: "US",
+            brand: "VISA"
+        },
+        mastercard: {
+            number: "5399999999999999",
+            type: "MASTERCARD",
+            issuer: "NOOR BANK PJSC",
+            country: "AE",
+            brand: "MASTERCARD"
+        }
     },
     pathHeader = "bin/tests/",
     pathErrors = pathHeader + "errors/";
