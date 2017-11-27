@@ -1,3 +1,6 @@
+# Version 2.0.0-alpha.2
+Fixes issues in minified file.
+
 # Version 2.0.0-alpha.1
 First alpha version of the HiPay Fullservice SDK for JavaScript v2.
 
