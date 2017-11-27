@@ -24,11 +24,8 @@
 <body>
 <div id="main" class="container">
 
-
-
-
     <!-- Main component for a primary marketing message or call to action -->
-    <div class="scontainer" id ="infos-txt" class="">
+    <div class="scontainer" id ="infos-txt">
         <h1 class="main-title" id="price">HiPay Direct Post Tokenization Simulator</h1>
         <p id="order">Submit the form in oder to tokenize the credit card details using the HiPay Fullservice SDK for JavaScript (payment details won't hit the server). You will see the HiPay Fullservice platform response below.</p>
         <div id="code"></div>
@@ -43,73 +40,73 @@
 
 
     <div class="scontainer" id="form">
+        <form>
+            <p class="form-description details">
+                Enter your payment details:
+            </p>
 
-        <p class="form-description details">
-            Enter your payment details:
-        </p>
 
-
-        <div class="row">
-            <p id="container-error-form"></p>
+            <div class="row">
+                <p id="container-error-form"></p>
             </div>
-        <div class="row">
+            <div class="row">
 
-            <label class="sr-only" for="input-name">Prénom Nom</label>
-            <div class="input-group">
-                <div class="input-group-addon-icon input-group-addon"><span class="glyphicon glyphicon-user" aria-hidden="true"></span></div>
+                <label class="sr-only" for="input-name">Prénom Nom</label>
+                <div class="input-group">
+                    <div class="input-group-addon-icon input-group-addon"><span class="glyphicon glyphicon-user" aria-hidden="true"></span></div>
 
-                <input type="text" class="form-control" id="input-name" autocomplete="cc-name" x-autocompletetype="cc-name" placeholder="" value="" data-hipay-id="card-holder" data-hipay-tabable="true">
+                    <input type="text" class="form-control" id="input-name" autocomplete="cc-name" x-autocompletetype="cc-name" placeholder="" value="" data-hipay-id="card-holder" data-hipay-tabable="true">
+                </div>
+
             </div>
+            <div class="row">
 
-        </div>
-        <div class="row">
-
-            <label class="sr-only" for="input-card">Card number</label>
-            <div class="input-group">
-                <div class="input-group-addon-icon input-group-addon"><span class="glyphicon glyphicon-credit-card" aria-hidden="true"></span></div>
-                <input type="tel" class="form-control" id="input-card" autocomplete="cc-number" x-autocompletetype="cc-number" placeholder="" pattern="\d*" name="cardNumber" value="" data-hipay-id="card-number" data-hipay-tabable="true">
-            </div>
-            <div id="creditCardNumberMessageContainer" class="inputMessageContainer"></div>
-
-        </div>
-
-
-
-        <div class="row">
-
-            <label class="sr-only" for="input-expiry-date">MM / YY</label>
-            <div class="input-group">
-                <div class="input-group-addon-icon input-group-addon"><span class="glyphicon glyphicon-calendar" aria-hidden="true"></span></div>
-                <input type="text" class="form-control" id="input-expiry-date" value="" data-hipay-id="card-expiry-date" data-hipay-tabable="true">
-            </div>
-            <div id="creditCardExpiryDateMessageContainer" class="inputMessageContainer">
+                <label class="sr-only" for="input-card">Card number</label>
+                <div class="input-group">
+                    <div class="input-group-addon-icon input-group-addon"><span class="glyphicon glyphicon-credit-card" aria-hidden="true"></span></div>
+                    <input type="tel" class="form-control" id="input-card" autocomplete="cc-number" x-autocompletetype="cc-number" placeholder="" pattern="\d*" name="cardNumber" value="" data-hipay-id="card-number" data-hipay-tabable="true">
+                </div>
+                <div id="creditCardNumberMessageContainer" class="inputMessageContainer"></div>
 
             </div>
 
-        </div>
 
-        <div class="row">
 
-            <label class="sr-only" for="input-cvv">123</label>
-            <div id="container-cvv" class="input-group">
-                <div class="input-group-addon-icon input-group-addon"><span class="glyphicon glyphicon-lock" aria-hidden="true"></span></div>
-                <input class="form-control" id="input-cvv" placeholder="123" maxlength="3" value="" data-hipay-id="card-cvv" data-hipay-tabable="true">
-                <span id="cvv-button" class="input-group-addon"><button id="cvv-modal" type="button" data-toggle="modal" data-target="#cvv-modal">?</button></span>
+            <div class="row">
+
+                <label class="sr-only" for="input-expiry-date">MM / YY</label>
+                <div class="input-group">
+                    <div class="input-group-addon-icon input-group-addon"><span class="glyphicon glyphicon-calendar" aria-hidden="true"></span></div>
+                    <input type="text" class="form-control" id="input-expiry-date" value="" data-hipay-id="card-expiry-date" data-hipay-tabable="true">
+                </div>
+                <div id="creditCardExpiryDateMessageContainer" class="inputMessageContainer">
+
+                </div>
+
             </div>
-            <div id="creditCardCVVMessageContainer" class="inputMessageContainer">
-                <p id="container-cvv-help-message"></p><img id="cvv-img">
+
+            <div class="row">
+
+                <label class="sr-only" for="input-cvv">123</label>
+                <div id="container-cvv" class="input-group">
+                    <div class="input-group-addon-icon input-group-addon"><span class="glyphicon glyphicon-lock" aria-hidden="true"></span></div>
+                    <input class="form-control" id="input-cvv" placeholder="123" maxlength="3" value="" data-hipay-id="card-cvv" data-hipay-tabable="true">
+                    <span id="cvv-button" class="input-group-addon"><button id="cvv-modal" type="button" data-toggle="modal" data-target="#cvv-modal">?</button></span>
+                </div>
+                <div id="creditCardCVVMessageContainer" class="inputMessageContainer">
+                    <p id="container-cvv-help-message"></p><img id="cvv-img" src="">
+                </div>
+
             </div>
 
-        </div>
 
-
-        <div class="row">
-            <div id="submit-zone">
-                <div id="error-container"></div>
-                <button class="btn btn-large" type="button" data-toggle="modal" data-target="#other-method-modal" id="pay-button" data-hipay-id="pay-button">Tokenize</button>
+            <div class="row">
+                <div id="submit-zone">
+                    <div id="error-container"></div>
+                    <button class="btn btn-large" type="button" data-toggle="modal" data-target="#other-method-modal" id="pay-button" data-hipay-id="pay-button">Tokenize</button>
+                </div>
             </div>
-        </div>
-
+        </form>
     </div>
 
 
@@ -181,15 +178,15 @@
         var token = null;
 
 
-             addCustomEventListener(document.getElementById("link"), "click",function() {
+        addCustomEventListener(document.getElementById("link"), "click",function() {
 
 
-                 document.getElementById("input-name").value = 'John Doe';
-                 document.getElementById("input-card").value = '4111 1111 1111 1111';
-                 document.getElementById("input-expiry-date").value = '10 / 30';
-                 document.getElementById("input-cvv").value = '123';
-                 document.getElementById("pay-button").disabled = false;
-                         HiPay.Form.paymentFormDataIsValid();
+            document.getElementById("input-name").value = 'John Doe';
+            document.getElementById("input-card").value = '4111 1111 1111 1111';
+            document.getElementById("input-expiry-date").value = '10 / 30';
+            document.getElementById("input-cvv").value = '123';
+            document.getElementById("pay-button").disabled = false;
+            HiPay.Form.paymentFormDataIsValid();
 
         });
 
@@ -243,8 +240,10 @@
             var isDisabled =!HiPay.Form.paymentFormDataIsValid();
             document.getElementById("pay-button").disabled = isDisabled;
             var errorCollection = HiPay.Form.paymentFormDataGetErrors();
-console.log("errorCollection");
-console.log(errorCollection);
+            console.log("errorCollection");
+            console.log(errorCollection);
+
+            document.getElementById('container-error-form').innerHTML = '';
             for (var errorIndex in errorCollection) {
                 var elementError = document.createElement('li');
                 elementError.errorIndex
