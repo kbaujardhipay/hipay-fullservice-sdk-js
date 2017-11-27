@@ -21,7 +21,7 @@
     <script src="./lib/vendor/node_modules/lt-ie-9/lt-ie-9.min.js"></script>
     <link href="../assets/old_bws.css" media="screen" rel="stylesheet" type="text/css">
     <![endif]-->
-    <script type="text/javascript" src="./lib/vendor/hipay/hipay-fullservice-sdk-js/hipay-fullservice-sdk-2.js"></script>
+    <script type="text/javascript" src="./lib/vendor/hipay/hipay-fullservice-sdk-js/hipay-fullservice-sdk-2.min.js"></script>
 
 </head>
 
@@ -273,6 +273,7 @@
                         $("#pay-button").text("Tokenize");
                         $("#form :input").prop("disabled", false);
                         $("#form :button").prop("disabled", false);
+
 
                         if (error.errorCollection != undefined && error.errorCollection.length > 0) {
                             for (var i = 0; i < error.errorCollection.length; i++) {

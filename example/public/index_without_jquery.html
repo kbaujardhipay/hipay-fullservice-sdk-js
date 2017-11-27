@@ -242,6 +242,8 @@
             var errorCollection = HiPay.Form.paymentFormDataGetErrors();
             console.log("errorCollection");
             console.log(errorCollection);
+
+            document.getElementById('container-error-form').innerHTML = '';
             for (var errorIndex in errorCollection) {
                 var elementError = document.createElement('li');
                 elementError.errorIndex
