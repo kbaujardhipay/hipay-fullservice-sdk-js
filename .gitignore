@@ -16,3 +16,9 @@ example/vendor/
 bin/tests/errors/
 
 bin/tests/result\.xml
+
+docker/apache/var/log/apache2/access\.log
+
+docker/apache/var/log/apache2/error\.log
+
+docker/apache/var/log/apache2/other_vhosts_access\.log
