@@ -5,6 +5,7 @@
 [![GitHub license](https://img.shields.io/badge/license-Apache%202-blue.svg)](https://raw.githubusercontent.com/hipay/hipay-fullservice-sdk-js/master/LICENSE.md)
 [![Packagist](https://img.shields.io/packagist/v/hipay/hipay-enterprise-sdk-js.svg)](https://packagist.org/packages/hipay/hipay-enterprise-sdk-js#dev-master)
 [![Bower version](http://img.shields.io/bower/v/hipay/hipay-enterprise-sdk-js.svg?style=flat)](https://github.com/hipay/hipay-fullservice-sdk-js)
+[![Bower version](http://img.shields.io/bower/vpre/hipay/hipay-enterprise-sdk-js.svg?style=flat)](https://github.com/hipay/hipay-fullservice-sdk-js)
 [![CircleCI](https://circleci.com/gh/hipay/hipay-fullservice-sdk-js/tree/master.svg?style=svg)](https://circleci.com/gh/hipay/hipay-fullservice-sdk-js/tree/master)
 
 
