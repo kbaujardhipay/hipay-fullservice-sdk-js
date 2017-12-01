@@ -190,7 +190,8 @@ var HiPay = (function (HiPay) {
         'mastercard': 'card_mastercard_info',
         'diners': 'card_diners_info',
         'american-express': 'card_american_express_info',
-        'maestro': 'card_maestro_info'
+        'maestro': 'card_maestro_info',
+        'bcmc': 'card_bancontact_info'
     };
 
     var _idCVVMapper = {
@@ -329,6 +330,19 @@ var HiPay = (function (HiPay) {
             },
 
             "format":[4,4,4,4]
+        },
+        card_bancontact_info:
+        {
+            "ranges": [
+                {
+                    "first": 6703,
+                    "variable": 99
+                }
+            ],
+            "lengths": {
+                "length": 17
+            },
+            "format": [4, 4, 4, 4, 1]
         }
     };
 
@@ -788,7 +802,7 @@ var HiPay = (function (HiPay) {
             if ( serviceCreditCard.cardNumberStringFormatAfter != '') {
 
                 // if maestro cvc disabled
-                if (serviceCreditCard.idType == 'card_maestro_info') {
+                if (serviceCreditCard.idType == 'card_bancontact_info') {
 
                     var cvvElement =  _selectElementWithHipayId(_idInputMapper.cardCVV);
                     cvvElement.value = "";
@@ -1691,43 +1705,7 @@ var HiPay = (function (HiPay) {
                     }
                 }
             }
-            if ( serviceCreditCard.cardExpiryDateStringFormattedAfter.length >= 2) {
 
-
-
-                // if (serviceCreditCard.cardExpiryDateStringFormattedAfter.split(_separatorMonthYear).length < 2) {
-                //     // serviceCreditCard.cardExpiryDateStringFormattedAfter = serviceCreditCard.cardExpiryDateStringFormattedAfter.substring(0, 2) + _separatorMonthYear + serviceCreditCard.cardExpiryDateStringFormattedAfter.substring(2, serviceCreditCard.cardExpiryDateStringFormattedAfter.length);
-                //     if (charCode != 8) {
-                //         if (startA>=2) {
-                //             startA = startA + _separatorMonthYear.length;
-                //         }
-                //     } else {
-                //         if (startA > 2 && startA < (2+_separatorMonthYear.length)) {
-                //             startA = 1;
-                //         }
-                //     }
-                //
-                //     //
-                //     // if (startA>2) {
-                //     //     startA = startA + _separatorMonthYear.length;
-                //     // } else {
-                //     //    if (startA == 2) {
-                //     //
-                //     //            startA = startA + _separatorMonthYear.length;
-                //     //        }
-                //     //    }
-                //     // }
-                //     console.log("startA");
-                // } else {
-                //     if (charCode != 8) {
-                //         if (startA>=2) {
-                //             startA = startA + _separatorMonthYear.length;
-                //         }
-                //     }
-                // }
-            }
-
-            console.log(startA);
             _setElementValueWithHipayId(_idInputMapper['cardExpiryDate'], serviceCreditCard.cardExpiryDateStringFormattedAfter);
             _setCaretPosition(_selectElementWithHipayId(_idInputMapper['cardExpiryDate']), startA);
             _inputCardExpiryDateFinish( _selectElementWithHipayId(_idInputMapper.cardCVV), serviceCreditCard);
@@ -2228,7 +2206,6 @@ var HiPay = (function (HiPay) {
                     var evt = e || window.event;
                     var charCode = evt.keyCode || evt.which;
                     if (charCode == 8 || charCode == 46) {
-                    } else {
                         _instanceServiceCreditCard = new _serviceCreditCard();
                         _instanceServiceCreditCard.initCreditCardHolder(charCode);
                         evt.preventDefault ? evt.preventDefault() : evt.returnValue = false;
@@ -2379,38 +2356,38 @@ var HiPay = (function (HiPay) {
         // card type
         var my_elem = _selectElementWithHipayId(_idInputMapper.cardNumber);
 
-        var imgType = document.createElement('img');
-        imgType.className = 'card-type-custom';
-        imgType.setAttribute('data-hipay-id', _idInputMapper['cardType']);
-        imgType.src = "";
-        imgType.setAttribute('style','display:none;');
-        imgType.setAttribute('style','visibility:hidden;');
+        if (null != my_elem) {
+            var imgType = document.createElement('img');
+            imgType.className = 'card-type-custom';
+            imgType.setAttribute('data-hipay-id', _idInputMapper['cardType']);
+            imgType.src = "";
+            imgType.setAttribute('style','display:none;');
+            imgType.setAttribute('style','visibility:hidden;');
 
-        my_elem.parentNode.insertBefore(imgType, my_elem.nextSibling);
-
-
+            my_elem.parentNode.insertBefore(imgType, my_elem.nextSibling);
+        }
 
         var elementPayButton = _selectElementWithHipayId(_idInputMapper.payButton);
 
+        if (null != elementPayButton) {
+            var inputCardExpiryMonth = document.createElement('input');
+            inputCardExpiryMonth.setAttribute('tabindex', "-1");
+            inputCardExpiryMonth.setAttribute('type', "tel");
+            inputCardExpiryMonth.setAttribute('style', "position: absolute; left: -999em; width:1px");
+            inputCardExpiryMonth.setAttribute('id', "expiration-month");
+            inputCardExpiryMonth.setAttribute('data-hipay-id', "card-expiry-month");
 
-        var inputCardExpiryMonth = document.createElement('input');
-        inputCardExpiryMonth.setAttribute('tabindex', "-1");
-        inputCardExpiryMonth.setAttribute('type', "tel");
-        inputCardExpiryMonth.setAttribute('style', "position: absolute; left: -999em; width:1px");
-        inputCardExpiryMonth.setAttribute('id', "expiration-month");
-        inputCardExpiryMonth.setAttribute('data-hipay-id', "card-expiry-month");
+            elementPayButton.parentNode.appendChild(inputCardExpiryMonth);
 
-        elementPayButton.parentNode.appendChild(inputCardExpiryMonth);
+            var inputCardExpiryYear = document.createElement('input');
+            inputCardExpiryYear.setAttribute('tabindex', "-1");
+            inputCardExpiryYear.setAttribute('type', "tel");
+            inputCardExpiryYear.setAttribute('style', "position: absolute; left: -999em; width:1px");
+            inputCardExpiryYear.setAttribute('id', "expiration-year");
+            inputCardExpiryYear.setAttribute('data-hipay-id', "card-expiry-year");
 
-
-        var inputCardExpiryYear = document.createElement('input');
-        inputCardExpiryYear.setAttribute('tabindex', "-1");
-        inputCardExpiryYear.setAttribute('type', "tel");
-        inputCardExpiryYear.setAttribute('style', "position: absolute; left: -999em; width:1px");
-        inputCardExpiryYear.setAttribute('id', "expiration-year");
-        inputCardExpiryYear.setAttribute('data-hipay-id', "card-expiry-year");
-        elementPayButton.parentNode.appendChild(inputCardExpiryYear);
-
+            elementPayButton.parentNode.appendChild(inputCardExpiryYear);
+        }
 
         // add placeholder
         _initPlaceholder();
