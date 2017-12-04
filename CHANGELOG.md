@@ -1,3 +1,6 @@
+# Version 2.0.0-alpha.3
+Add CircleCI badge
+
 # Version 2.0.0-alpha.2
 Fixes issues in minified file.
 
