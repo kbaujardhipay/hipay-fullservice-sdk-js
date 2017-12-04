@@ -805,21 +805,21 @@ var HiPay = (function (HiPay) {
                 if (serviceCreditCard.idType == 'card_bancontact_info') {
 
                     var cvvElement =  _selectElementWithHipayId(_idInputMapper.cardCVV);
-                    cvvElement.value = "";
+                    if (null !== cvvElement) {
+                        cvvElement.value = "";
 
+                        if (!cvvElement.classList.contains('inputdisabled')) {
+                            // The box that we clicked has a class of bad so let's remove it and add the good class
+                            // this.classList.remove('bad');
+                            cvvElement.classList.add('inputdisabled');
+                        } else {
+                            cvvElement.classList.remove('inputdisabled');
+                            // The user obviously can't follow instructions so let's alert them of what is supposed to happen next
+                        }
 
-                    if (!cvvElement.classList.contains('inputdisabled')) {
-                        // The box that we clicked has a class of bad so let's remove it and add the good class
-                        // this.classList.remove('bad');
-                        cvvElement.classList.add('inputdisabled');
-                    } else {
-                        cvvElement.classList.remove('inputdisabled');
-                        // The user obviously can't follow instructions so let's alert them of what is supposed to happen next
-
+                        // inputdisable
+                        cvvElement.disabled = true;
                     }
-
-                    // inputdisable
-                    cvvElement.disabled = true;
                 }
 
             }
