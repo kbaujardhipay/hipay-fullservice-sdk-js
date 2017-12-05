@@ -2158,11 +2158,11 @@ var HiPay = (function (HiPay) {
                 var cardNumberHandlerKeypress = function (e) {
                     var evt = e || window.event;
                     var charCode = evt.keyCode || evt.which;
-                    evt.preventDefault ? evt.preventDefault() : evt.returnValue = false;
                     if (charCode >= 48 && charCode <= 57) {
                         /* is valid add char */
                         _instanceServiceCreditCard = new _serviceCreditCard();
                         _instanceServiceCreditCard.initCreditCardNumber(charCode);
+                        evt.preventDefault ? evt.preventDefault() : evt.returnValue = false;
                     }
                     _callbackEventFormChange();
                 }
@@ -2234,10 +2234,10 @@ var HiPay = (function (HiPay) {
                 var cardExpiryDateHandlerKeypress = function (e) {
                     var evt = e || window.event;
                     var charCode = evt.keyCode || evt.which;
-                    evt.preventDefault ? evt.preventDefault() : evt.returnValue = false;
                     if (charCode >= 48 && charCode <= 57) {
                         _instanceServiceCreditCard = new _serviceCreditCard();
                         _instanceServiceCreditCard.initCreditCardExpiryDate(charCode);
+                        evt.preventDefault ? evt.preventDefault() : evt.returnValue = false;
                     }
                     _callbackEventFormChange();
                 };
@@ -2281,10 +2281,10 @@ var HiPay = (function (HiPay) {
                 var cardCVVHandlerKeypress = function (e) {
                     var evt = e || window.event;
                     var charCode = evt.keyCode || evt.which;
-                    evt.preventDefault ? evt.preventDefault() : evt.returnValue = false;
                     if (charCode >= 48 && charCode <= 57) {
                         _instanceServiceCreditCard = new _serviceCreditCard();
                         _instanceServiceCreditCard.initCreditCardCVV(charCode);
+                        evt.preventDefault ? evt.preventDefault() : evt.returnValue = false;
                     }
                     _callbackEventFormChange();
                 };
