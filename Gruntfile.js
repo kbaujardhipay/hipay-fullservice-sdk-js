@@ -105,10 +105,14 @@ module.exports = function(grunt) {
     grunt.registerTask('default', ['sync', 'clean', 'concat', 'uglify']);
     grunt.registerTask('dist', ['concat:dist1']);
     grunt.registerTask('doc', ['default', 'yuidoc']);
+
     grunt.registerTask('deploy-doc', ['doc', 'gh-pages']);
 
 
     grunt.registerTask('test', ['casperjs:casper_test']);
+
+    grunt.registerTask('deploy', ['concat','uglify']);
+
 
     // yuidoc . --configfile yuidocs.json
 
