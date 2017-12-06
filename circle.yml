@@ -6,7 +6,7 @@ machine:
 test:
   pre:
     - npm install
-    - casperjs install
+    - npm install -g casperjs
     - sudo apt-get install sshpass
   environment:
     CIRCLE_TEST_REPORTS: /tmp/test-reports
