@@ -2263,12 +2263,19 @@ var HiPay = (function (HiPay) {
 
                 // cardExpiryDate keypress
                 var cardExpiryDateHandlerKeypress = function (e) {
+
                     var evt = e || window.event;
                     var charCode = evt.keyCode || evt.which;
-                    evt.preventDefault ? evt.preventDefault() : evt.returnValue = false;
-                    if (charCode >= 48 && charCode <= 57) {
-                        _instanceServiceCreditCard = new _serviceCreditCard();
-                        _instanceServiceCreditCard.initCreditCardExpiryDate(charCode);
+                    if (charCode == 8 || charCode == 46) {
+
+                    } else {
+                        if (typeof evt.key != "undefined" && evt.key.length === 1) {
+                            if (charCode >= 48 && charCode <= 57) {
+                                _instanceServiceCreditCard = new _serviceCreditCard();
+                                _instanceServiceCreditCard.initCreditCardExpiryDate(charCode);
+                                evt.preventDefault ? evt.preventDefault() : evt.returnValue = false;
+                            }
+                        }
                     }
                     _callbackEventFormChange();
                 };
@@ -2312,10 +2319,12 @@ var HiPay = (function (HiPay) {
                 var cardCVVHandlerKeypress = function (e) {
                     var evt = e || window.event;
                     var charCode = evt.keyCode || evt.which;
-                    evt.preventDefault ? evt.preventDefault() : evt.returnValue = false;
-                    if (charCode >= 48 && charCode <= 57) {
-                        _instanceServiceCreditCard = new _serviceCreditCard();
-                        _instanceServiceCreditCard.initCreditCardCVV(charCode);
+                    if (typeof evt.key != "undefined" && evt.key.length === 1) {
+                        if (charCode >= 48 && charCode <= 57) {
+                            _instanceServiceCreditCard = new _serviceCreditCard();
+                            _instanceServiceCreditCard.initCreditCardCVV(charCode);
+                            evt.preventDefault ? evt.preventDefault() : evt.returnValue = false;
+                        }
                     }
                     _callbackEventFormChange();
                 };
