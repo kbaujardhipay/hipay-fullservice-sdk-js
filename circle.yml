@@ -17,7 +17,7 @@ deployment:
     tag: /.*?/
     commands:
       - grunt deploy
-      - bash ./setup.sh test
+      - bash setup.sh test
       - bash ./bin/deploy/deploy_project.sh
 
 #    - docker-compose run grunt compile
