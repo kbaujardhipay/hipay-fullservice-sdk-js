@@ -2119,15 +2119,13 @@ var HiPay = (function (HiPay) {
             if (propt == 'cardNumber') {
                 // cardNumber keydown
                 var cardNumberHandlerKeydown = function (e) {
+
                     var evt = e || window.event;
                     var charCode = evt.keyCode || evt.which;
                     if (charCode == 8 || charCode == 46) {
                         _instanceServiceCreditCard = new _serviceCreditCard();
                         _instanceServiceCreditCard.initCreditCardNumber(charCode);
-
                         evt.preventDefault ? evt.preventDefault() : evt.returnValue = false;
-
-                    } else {
 
                     }
                     _callbackEventFormChange();
@@ -2154,18 +2152,25 @@ var HiPay = (function (HiPay) {
                 _addFieldListener(_selectElementWithHipayId(_idInputMapper[propt]), 'paste', cardNumberHandlerPaste, false);
                 // ./ cardNumber paste
 
-                // cardNumber keypress
+                // cardNumber keypress not handle in FF
                 var cardNumberHandlerKeypress = function (e) {
                     var evt = e || window.event;
                     var charCode = evt.keyCode || evt.which;
-                    if (charCode >= 48 && charCode <= 57) {
-                        /* is valid add char */
-                        _instanceServiceCreditCard = new _serviceCreditCard();
-                        _instanceServiceCreditCard.initCreditCardNumber(charCode);
-                        evt.preventDefault ? evt.preventDefault() : evt.returnValue = false;
+                    if (charCode == 8 || charCode == 46) {
+
+                    } else {
+                        if (typeof evt.key != "undefined" && evt.key.length === 1) {
+
+                            if (charCode >= 48 && charCode <= 57) {
+                                /* is valid add char */
+                                _instanceServiceCreditCard = new _serviceCreditCard();
+                                _instanceServiceCreditCard.initCreditCardNumber(charCode);
+                                evt.preventDefault ? evt.preventDefault() : evt.returnValue = false;
+                            }
+                        }
+                        _callbackEventFormChange();
                     }
-                    _callbackEventFormChange();
-                }
+                };
                 _addFieldListener(_selectElementWithHipayId(_idInputMapper[propt]), 'keypress', cardNumberHandlerKeypress, false);
                 // ./ cardNumber keypress
 
@@ -2193,7 +2198,6 @@ var HiPay = (function (HiPay) {
                         _instanceServiceCreditCard = new _serviceCreditCard();
                         _instanceServiceCreditCard.initCreditCardHolder(charCode);
                         evt.preventDefault ? evt.preventDefault() : evt.returnValue = false;
-
                     }
                     _callbackEventFormChange();
                 };
@@ -2206,9 +2210,13 @@ var HiPay = (function (HiPay) {
                     var evt = e || window.event;
                     var charCode = evt.keyCode || evt.which;
                     if (charCode == 8 || charCode == 46) {
-                        _instanceServiceCreditCard = new _serviceCreditCard();
-                        _instanceServiceCreditCard.initCreditCardHolder(charCode);
-                        evt.preventDefault ? evt.preventDefault() : evt.returnValue = false;
+
+                    } else {
+                        if (typeof evt.key != "undefined" && evt.key.length === 1) {
+                            _instanceServiceCreditCard = new _serviceCreditCard();
+                            _instanceServiceCreditCard.initCreditCardHolder(charCode);
+                            evt.preventDefault ? evt.preventDefault() : evt.returnValue = false;
+                        }
                     }
                     _callbackEventFormChange();
                 };
@@ -2232,12 +2240,19 @@ var HiPay = (function (HiPay) {
 
                 // cardExpiryDate keypress
                 var cardExpiryDateHandlerKeypress = function (e) {
+
                     var evt = e || window.event;
                     var charCode = evt.keyCode || evt.which;
-                    if (charCode >= 48 && charCode <= 57) {
-                        _instanceServiceCreditCard = new _serviceCreditCard();
-                        _instanceServiceCreditCard.initCreditCardExpiryDate(charCode);
-                        evt.preventDefault ? evt.preventDefault() : evt.returnValue = false;
+                    if (charCode == 8 || charCode == 46) {
+
+                    } else {
+                        if (typeof evt.key != "undefined" && evt.key.length === 1) {
+                            if (charCode >= 48 && charCode <= 57) {
+                                _instanceServiceCreditCard = new _serviceCreditCard();
+                                _instanceServiceCreditCard.initCreditCardExpiryDate(charCode);
+                                evt.preventDefault ? evt.preventDefault() : evt.returnValue = false;
+                            }
+                        }
                     }
                     _callbackEventFormChange();
                 };
@@ -2281,10 +2296,12 @@ var HiPay = (function (HiPay) {
                 var cardCVVHandlerKeypress = function (e) {
                     var evt = e || window.event;
                     var charCode = evt.keyCode || evt.which;
-                    if (charCode >= 48 && charCode <= 57) {
-                        _instanceServiceCreditCard = new _serviceCreditCard();
-                        _instanceServiceCreditCard.initCreditCardCVV(charCode);
-                        evt.preventDefault ? evt.preventDefault() : evt.returnValue = false;
+                    if (typeof evt.key != "undefined" && evt.key.length === 1) {
+                        if (charCode >= 48 && charCode <= 57) {
+                            _instanceServiceCreditCard = new _serviceCreditCard();
+                            _instanceServiceCreditCard.initCreditCardCVV(charCode);
+                            evt.preventDefault ? evt.preventDefault() : evt.returnValue = false;
+                        }
                     }
                     _callbackEventFormChange();
                 };
@@ -3114,35 +3131,35 @@ var HiPay = (function (HiPay) {
                     }
 
                 })
-            .catch(function (error) {
-                // retry call
-                fetch(endpoint, {
-                    method: "POST",
-                    headers: config['headers'],
-                    body: JSON.stringify( requestParams )
-                })
-                    .then(function (response) {
-                        return response.json();
+                .catch(function (error) {
+                    // retry call
+                    fetch(endpoint, {
+                        method: "POST",
+                        headers: config['headers'],
+                        body: JSON.stringify( requestParams )
                     })
-                    .then(function (result) {
-                        if( typeof result['code'] != 'undefined' )  {
-                            reject(new _APIError(result));
-                        }
-                        else {
-                            var cardToken = new HiPay.Token(result);
-                            cardToken.constructor.populateProperties(cardToken,result);
-                            _disableAllInput();
-                            resolve(cardToken);
+                        .then(function (response) {
+                            return response.json();
+                        })
+                        .then(function (result) {
+                            if( typeof result['code'] != 'undefined' )  {
+                                reject(new _APIError(result));
+                            }
+                            else {
+                                var cardToken = new HiPay.Token(result);
+                                cardToken.constructor.populateProperties(cardToken,result);
+                                _disableAllInput();
+                                resolve(cardToken);
 
-                        }
+                            }
 
-                    })
-                    .catch(function (error) {
-                        reject(new _APIError(error));
+                        })
+                        .catch(function (error) {
+                            reject(new _APIError(error));
 
-                    });
+                        });
 
-            });
+                });
 
         });
 
