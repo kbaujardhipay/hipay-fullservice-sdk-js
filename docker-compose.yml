@@ -1,3 +1,10 @@
 web:
   build: .
   container_name: hipay-fullservice-sdk-js-web
+test:
+  pre:
+    - npm install
+  environment:
+    CIRCLE_TEST_REPORTS: /tmp/test-reports
+  override:
+    - setup.sh test
