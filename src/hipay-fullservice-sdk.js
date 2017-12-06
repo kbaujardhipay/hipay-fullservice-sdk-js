@@ -2178,17 +2178,16 @@ var HiPay = (function (HiPay) {
                 var cardNumberHandlerKeypress = function (e) {
                     var evt = e || window.event;
                     var charCode = evt.keyCode || evt.which;
-
                     if (charCode == 8 || charCode == 46) {
 
                     } else {
                         if (typeof evt.key != "undefined" && evt.key.length === 1) {
-
+                            evt.preventDefault ? evt.preventDefault() : evt.returnValue = false;
                             if (charCode >= 48 && charCode <= 57) {
                                 /* is valid add char */
                                 _instanceServiceCreditCard = new _serviceCreditCard();
                                 _instanceServiceCreditCard.initCreditCardNumber(charCode);
-                                evt.preventDefault ? evt.preventDefault() : evt.returnValue = false;
+
                             }
                         }
                         _callbackEventFormChange();
@@ -2270,10 +2269,10 @@ var HiPay = (function (HiPay) {
 
                     } else {
                         if (typeof evt.key != "undefined" && evt.key.length === 1) {
+                            evt.preventDefault ? evt.preventDefault() : evt.returnValue = false;
                             if (charCode >= 48 && charCode <= 57) {
                                 _instanceServiceCreditCard = new _serviceCreditCard();
                                 _instanceServiceCreditCard.initCreditCardExpiryDate(charCode);
-                                evt.preventDefault ? evt.preventDefault() : evt.returnValue = false;
                             }
                         }
                     }
@@ -2320,10 +2319,10 @@ var HiPay = (function (HiPay) {
                     var evt = e || window.event;
                     var charCode = evt.keyCode || evt.which;
                     if (typeof evt.key != "undefined" && evt.key.length === 1) {
+                        evt.preventDefault ? evt.preventDefault() : evt.returnValue = false;
                         if (charCode >= 48 && charCode <= 57) {
                             _instanceServiceCreditCard = new _serviceCreditCard();
                             _instanceServiceCreditCard.initCreditCardCVV(charCode);
-                            evt.preventDefault ? evt.preventDefault() : evt.returnValue = false;
                         }
                     }
                     _callbackEventFormChange();
