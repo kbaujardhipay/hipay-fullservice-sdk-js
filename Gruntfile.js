@@ -43,7 +43,8 @@ module.exports = function(grunt) {
         uglify: {
             my_target: {
                 files: {
-                    'dist/hipay-fullservice-sdk-2.min.js': ['dist/hipay-fullservice-sdk-2.js']
+                    'dist/hipay-fullservice-sdk-2.min.js': ['dist/hipay-fullservice-sdk-2.js'],
+                    'example/public/lib/vendor/hipay/hipay-fullservice-sdk-js/hipay-fullservice-sdk-2.min.js': ['example/public/lib/vendor/hipay/hipay-fullservice-sdk-js/hipay-fullservice-sdk-2.js'],
                 }
             }
         },
