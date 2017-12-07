@@ -3582,10 +3582,6 @@ var HiPay = (function (HiPay) {
         _initAllFieldsEventListener();
     };
 
-    HiPay.Form.initListeners = function() {
-        _initAllFieldsEventListener();
-    };
-
     HiPay.Form.initCardHolderListeners = function () {
         _initCardHolderFieldEventListener();
     };
