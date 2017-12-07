@@ -1251,6 +1251,12 @@ var HiPay = (function (HiPay) {
         serviceCreditCard.initCreditCardNumber = function(charCode, stringPaste){
             serviceCreditCard.lastCharCode = charCode;
 
+            // if (typeof charCode == "undefined" || charCode == '') {
+            //     setTimeout(function(){
+            //         HiPay.Form.paymentFormDataGetErrors();
+            //         // alert(_selectElementValueWithHipayId(_idInputMapper['cardNumber']));
+            //     }, 0);
+            // }
             if (typeof charCode == "undefined" || charCode == '' || charCode == 8 || charCode == 46) {
                 serviceCreditCard.lastCharString = '';
             }
@@ -1980,10 +1986,12 @@ var HiPay = (function (HiPay) {
                 }
             }
         }
-
+        console.log('error reset');
+        console.log(errors);
 
         var errors = HiPay.Form.paymentFormDataGetErrors();
-console.log(errors);
+        console.log("errors");
+        console.log(errors);
         for (var indexError in errors) {
             if (_selectElementWithHipayId(_idInputMapper[indexInput]) != null) {
                 if (_selectElementWithHipayId(_idInputMapper[indexError]).classList.contains == "function") {
@@ -2156,6 +2164,9 @@ console.log(errors);
 
                     var evt = e || window.event;
                     var charCode = evt.keyCode || evt.which;
+                    console.log("keydown");
+                    console.log(evt.keyCode);
+                    console.log(evt.key);
                     if (charCode == 8 || charCode == 46) {
                         _instanceServiceCreditCard = new _serviceCreditCard();
                         _instanceServiceCreditCard.initCreditCardNumber(charCode);
@@ -2185,8 +2196,21 @@ console.log(errors);
                 _addFieldListener(_selectElementWithHipayId(_idInputMapper[propt]), 'paste', cardNumberHandlerPaste, false);
                 // ./ cardNumber paste
 
+                // cardNumber cut
+                var cardNumberHandlerCut = function (e) {
+                    setTimeout(function(){
+                        _instanceServiceCreditCard = new _serviceCreditCard();
+                        _instanceServiceCreditCard.initCreditCardNumber("");
+                        _callbackEventFormChange();
+                    }, 0);
+                };
+                _addFieldListener(_selectElementWithHipayId(_idInputMapper[propt]), 'cut', cardNumberHandlerCut, false);
+                // ./ cardNumber cut
+
+
                 // cardNumber keypress not handle in FF
                 var cardNumberHandlerKeypress = function (e) {
+                    console.log("keypress");
                     var evt = e || window.event;
                     var charCode = evt.keyCode || evt.which;
                     if (charCode == 8 || charCode == 46) {
@@ -2210,13 +2234,16 @@ console.log(errors);
                 // cardNumber change
                 var cardNumberHandlerChange = function (e) {
                     var evt = e || window.event;
+                    var charCode = evt.keyCode || evt.which;
+                    console.log("charCode");
+                    console.log(charCode);
                     evt.preventDefault ? evt.preventDefault() : evt.returnValue = false;
                     _instanceServiceCreditCard = new _serviceCreditCard();
                     _selectElementWithHipayId(_idInputMapper['cardNumber']).focus();
-
-                    _instanceServiceCreditCard.initCreditCardNumber("", _selectElementValueWithHipayId(_idInputMapper['cardNumber']));
-
+                    // _instanceServiceCreditCard.initCreditCardNumber("", _selectElementValueWithHipayId(_idInputMapper['cardNumber']));
+                    _instanceServiceCreditCard.initCreditCardNumber("");
                     _callbackEventFormChange();
+
                 };
                 _addFieldListener(_selectElementWithHipayId(_idInputMapper[propt]), 'change', cardNumberHandlerChange, false);
                 // ./ cardNumber change
@@ -2257,6 +2284,25 @@ console.log(errors);
                 _addFieldListener(_selectElementWithHipayId(_idInputMapper[propt]), 'paste', cardHolderHandlerPaste, false);
                 // ./ cardHolder paste
 
+                // cardHolder cut
+                var cardHolderHandlerCut = function (e) {
+                    setTimeout(function(){
+                        _instanceServiceCreditCard = new _serviceCreditCard();
+                        _instanceServiceCreditCard.initCreditCardHolder("");
+                        _callbackEventFormChange();
+                    }, 0);
+                };
+                _addFieldListener(_selectElementWithHipayId(_idInputMapper[propt]), 'cut', cardHolderHandlerCut, false);
+                // ./ cardHolder cut
+
+
+
+
+
+
+
+                // ./ cardHolder cut
+
                 // cardHolder keypress
                 var cardHolderHandlerKeypress = function (e) {
                     var evt = e || window.event;
@@ -2275,19 +2321,20 @@ console.log(errors);
                 _addFieldListener(_selectElementWithHipayId(_idInputMapper[propt]), 'keypress', cardHolderHandlerKeypress, false);
                 // ./ cardHolder keypress
 
-                    // cardHolder change
-                    var cardNumberHandlerChange = function (e) {
-                        var evt = e || window.event;
-                        evt.preventDefault ? evt.preventDefault() : evt.returnValue = false;
-                        _instanceServiceCreditCard = new _serviceCreditCard();
-                        _selectElementWithHipayId(_idInputMapper['cardHolder']).focus();
+                // cardHolder change
+                var cardNumberHandlerChange = function (e) {
+                    var evt = e || window.event;
+                    evt.preventDefault ? evt.preventDefault() : evt.returnValue = false;
+                    _instanceServiceCreditCard = new _serviceCreditCard();
+                    _selectElementWithHipayId(_idInputMapper['cardHolder']).focus();
 
-                        _instanceServiceCreditCard.initCreditCardHolder("", _selectElementValueWithHipayId(_idInputMapper['cardHolder']));
+                    // _instanceServiceCreditCard.initCreditCardHolder("", _selectElementValueWithHipayId(_idInputMapper['cardHolder']));
+                    _instanceServiceCreditCard.initCreditCardHolder("");
 
-                        _callbackEventFormChange();
-                    };
-                    _addFieldListener(_selectElementWithHipayId(_idInputMapper[propt]), 'change', cardNumberHandlerChange, false);
-                    // ./ cardHolder change
+                    _callbackEventFormChange();
+                };
+                _addFieldListener(_selectElementWithHipayId(_idInputMapper[propt]), 'change', cardNumberHandlerChange, false);
+                // ./ cardHolder change
 
             }
             else if (propt == 'cardExpiryDate') {
@@ -2668,7 +2715,7 @@ console.log(errors);
         }
 
 
-console.log(errorCollection['cardHolder']);
+
 
 
         // Credit card expiry date
@@ -2698,6 +2745,9 @@ console.log(errorCollection['cardHolder']);
                 }
             }
         }
+
+        console.log("errorCollection");
+        console.log(errorCollection);
         return errorCollection;
     };
 
@@ -2731,8 +2781,8 @@ console.log(errorCollection['cardHolder']);
      *
      */
     HiPay.Form.paymentFormDataIsValid = function() {
-console.log("_selectElementValueWithHipayId(_idInputMapper");
-console.log(_selectElementValueWithHipayId(_idInputMapper["cardHolder"]));
+        console.log("_selectElementValueWithHipayId(_idInputMapper");
+        console.log(_selectElementValueWithHipayId(_idInputMapper["cardHolder"]));
 
         var params = {
 
