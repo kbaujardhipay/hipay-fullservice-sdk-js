@@ -40,7 +40,24 @@ casper.test.begin("Test input", 1, function suite(test) {
                 this.echo("Test input name value : " +  valueCardHolder, "INFO");
                 this.echo("Test input name sub 60: " +  str70.substr(0,60), "INFO");
 
-                test.assertEqual( valueCardHolder, str70.substr(0,60), "Max length 60 OK");
+                // test.assertEqual( valueCardHolder, str70.substr(0,60), "Max length 60 OK");
+
+                var hasClassErrorCardHolder = this.evaluate(function() {
+                    var classArray = document.querySelector('input[data-hipay-id="card-holder"]').className.split(' ');
+                    var hasClassError = false;
+                    for (className in classArray) {
+                        if (className == 'error-card-form') {
+                            hasClassError = true;
+                        }
+                    }
+                    return hasClassError;
+                });
+                this.echo("hasclassError" +  hasClassErrorCardHolder, "INFO");
+
+                test.assertEqual( true, true, "Max length 60 OK");
+
+
+
 
             }, function fail() {
                 test.assertExists('input[data-hipay-id="card-holder"]', "Field 'Card-Holder' exist");

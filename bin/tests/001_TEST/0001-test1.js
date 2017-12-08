@@ -7,7 +7,7 @@
         //var tab = line.split(";");
 
 
-        casper.test.begin("Test cartes", 14, function suite(test) {
+        casper.test.begin("Test cartes", 2, function suite(test) {
 
             casper.start(baseURL);
             // var links = [
@@ -21,7 +21,7 @@
 
                     casper.then(function () {
                         // Step 1
-                        this.echo("Filling Payment form for" + card.type, "INFO");
+                        this.echo("Filling Payment form for " + card.type, "INFO");
                         this.waitForSelector('input[data-hipay-id="card-holder"]', function success() {
                             casper.fillSelectors('div#form', {
                                 'input[data-hipay-id="card-holder"]': "Card Holder",

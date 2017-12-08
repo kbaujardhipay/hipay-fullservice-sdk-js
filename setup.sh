@@ -66,6 +66,13 @@ fi
 
 if [ "$1" = 'test' ];then
 
+     docker-compose -f docker-compose.yml -f docker-compose.stage.yml stop
+         docker-compose -f docker-compose.yml -f docker-compose.stage.yml rm -fv
+         rm -Rf example/public/lib/vendor
+         rm -Rf example/public/lib/node_modules
+         docker-compose -f docker-compose.yml -f docker-compose.stage.yml build --no-cache
+         docker-compose -f docker-compose.yml -f docker-compose.stage.yml up -d
+
    # Init SDK HipPay CasperJS
    cd bin/tests/000_lib
    bower install hipay-casperjs-lib#develop --allow-root

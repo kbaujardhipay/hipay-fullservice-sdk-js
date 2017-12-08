@@ -145,13 +145,13 @@ casper.test.begin("Test input", 10, function suite(test) {
 
     casper.thenOpen(baseURL, function() {
         casper.then(function () {
-            // Test Bancontact
+            // Test Bancontact bcmc
             this.echo("Filling card number", "INFO");
             this.waitForSelector('input[data-hipay-id="card-number"]', function success() {
                 var strCardNumber = '67030000000000003';
                 var strCardNumberFormated = '6703 0000 0000 0000 3';
                 var strNameType = 'BANCONTACT';
-                var srcImgType = './img/type/ic_credit_card_maestro.png';
+                var srcImgType = './img/type/ic_credit_card_bcmc.png';
                 this.echo("Test " + strNameType + " : " + strCardNumber, "INFO");
                 this.sendKeys('input[data-hipay-id="card-number"]', strCardNumber);
 
