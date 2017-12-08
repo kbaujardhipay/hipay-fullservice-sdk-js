@@ -71,7 +71,7 @@ if [ "$1" = 'test' ];then
    bower install hipay-casperjs-lib#develop --allow-root
    cd ../../../;
 
-   BASE_URL=http://localhost/:4748
+   BASE_URL=http://localhost:4748/
 
    casperjs test $pathLibHipay $pathPreFile ${pathDir}/[0-9][0-9][0-9][0-9]-*.js --url=$BASE_URL --xunit=${header}result.xml --ignore-ssl-errors=true --ssl-protocol=any
 fi
