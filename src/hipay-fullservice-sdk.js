@@ -3310,7 +3310,6 @@ var HiPay = (function (HiPay) {
                 for (productAvailableIndex in _availablePaymentProductsCollection) {
                     _availableAndEnabledPaymentProductsCollection.push(_availablePaymentProductsCollection[productAvailableIndex]['code']);
                 }
-console.log(_availableAndEnabledPaymentProductsCollection);
             }
         }
     };
