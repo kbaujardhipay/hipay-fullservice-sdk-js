@@ -7,7 +7,7 @@
         //var tab = line.split(";");
 
 
-        casper.test.begin("Test cartes", 14, function suite(test) {
+        casper.test.begin("Test cartes", 2, function suite(test) {
 
             casper.start(baseURL);
             // var links = [
