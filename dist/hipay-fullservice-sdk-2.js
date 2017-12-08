@@ -2756,7 +2756,8 @@ var HiPay = (function (HiPay) {
         card_mastercard_info: "ic_credit_card_mastercard.png",
         card_diners_info: "ic_credit_card_diners.png",
         card_american_express_info: "ic_credit_card_amex.png",
-        card_maestro_info: "ic_credit_card_maestro.png"
+        card_maestro_info: "ic_credit_card_maestro.png",
+        card_bancontact_info: "ic_credit_card_bancontact.png"
     }
 
     var _creditCardCVVMaxLength = 3;

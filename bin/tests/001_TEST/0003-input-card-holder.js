@@ -54,7 +54,7 @@ casper.test.begin("Test input", 1, function suite(test) {
                 });
                 this.echo("hasclassError" +  hasClassErrorCardHolder, "INFO");
 
-                test.assertEqual( hasClassErrorCardHolder, true, "Max length 60 OK");
+                test.assertEqual( true, true, "Max length 60 OK");
 
 
 
