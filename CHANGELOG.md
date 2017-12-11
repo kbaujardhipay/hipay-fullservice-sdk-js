@@ -1,5 +1,10 @@
+# Version 2.0.0-alpha.4
+Add BCMC card.
+Add public init listener.
+Fixes issues with Firefox.
+
 # Version 2.0.0-alpha.3
-Add CircleCI badge
+Add CircleCI badge.
 
 # Version 2.0.0-alpha.2
 Fixes issues in minified file.
