@@ -5,9 +5,10 @@ casper.test.begin("Test input", 6, function suite(test) {
             // Test placeholder Card Holder
             this.echo("Test input name", "INFO");
             this.waitForSelector('input[data-hipay-id="card-holder"]', function success() {
+                this.echo("Placeholder : " + this.getElementAttribute('input[data-hipay-id="card-holder"]','placeholder'), "INFO");
                 test.assertEqual( this.getElementAttribute('input[data-hipay-id="card-holder"]','placeholder'),'FirstName LastName', "Placeholder 'Card-Holder' OK");
             }, function fail() {
-                    test.assertExists('input[data-hipay-id="card-holder"]', "Field 'Card Holder' exist");
+                    test.assertExists('input[data-hipay-id="card-holder"]', "Field 'Card Holder 2' exist");
             }, 1000);
         }).then(function () {
             // Test placeholder Card Number
