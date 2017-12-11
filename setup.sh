@@ -82,3 +82,15 @@ if [ "$1" = 'test' ];then
 
    casperjs test $pathLibHipay $pathPreFile ${pathDir}/[0-9][0-9][0-9][0-9]-*.js --url=$BASE_URL --xunit=${header}result.xml --ignore-ssl-errors=true --ssl-protocol=any
 fi
+
+if [ "$1" = 'test-dev' ];then
+
+   # Init SDK HipPay CasperJS
+   cd bin/tests/000_lib
+   bower install hipay-casperjs-lib#develop --allow-root
+   cd ../../../;
+
+   BASE_URL=http://localhost/
+
+   casperjs test $pathLibHipay $pathPreFile ${pathDir}/[0-9][0-9][0-9][0-9]-*.js --url=$BASE_URL --xunit=${header}result.xml --ignore-ssl-errors=true --ssl-protocol=any
+fi
