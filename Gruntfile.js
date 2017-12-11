@@ -43,7 +43,8 @@ module.exports = function(grunt) {
         uglify: {
             my_target: {
                 files: {
-                    'dist/hipay-fullservice-sdk-2.min.js': ['dist/hipay-fullservice-sdk-2.js']
+                    'dist/hipay-fullservice-sdk-2.min.js': ['dist/hipay-fullservice-sdk-2.js'],
+                    'example/public/lib/vendor/hipay/hipay-fullservice-sdk-js/hipay-fullservice-sdk-2.min.js': ['example/public/lib/vendor/hipay/hipay-fullservice-sdk-js/hipay-fullservice-sdk-2.js'],
                 }
             }
         },
@@ -104,10 +105,14 @@ module.exports = function(grunt) {
     grunt.registerTask('default', ['sync', 'clean', 'concat', 'uglify']);
     grunt.registerTask('dist', ['concat:dist1']);
     grunt.registerTask('doc', ['default', 'yuidoc']);
+
     grunt.registerTask('deploy-doc', ['doc', 'gh-pages']);
 
 
     grunt.registerTask('test', ['casperjs:casper_test']);
+
+    grunt.registerTask('deploy', ['concat','uglify']);
+
 
     // yuidoc . --configfile yuidocs.json
 

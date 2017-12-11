@@ -66,6 +66,25 @@ fi
 
 if [ "$1" = 'test' ];then
 
+     docker-compose -f docker-compose.yml -f docker-compose.stage.yml stop
+         docker-compose -f docker-compose.yml -f docker-compose.stage.yml rm -fv
+         rm -Rf example/public/lib/vendor
+         rm -Rf example/public/lib/node_modules
+         docker-compose -f docker-compose.yml -f docker-compose.stage.yml build --no-cache
+         docker-compose -f docker-compose.yml -f docker-compose.stage.yml up -d
+
+   # Init SDK HipPay CasperJS
+   cd bin/tests/000_lib
+   bower install hipay-casperjs-lib#develop --allow-root
+   cd ../../../;
+
+   BASE_URL=http://localhost/
+
+   casperjs test $pathLibHipay $pathPreFile ${pathDir}/[0-9][0-9][0-9][0-9]-*.js --url=$BASE_URL --xunit=${header}result.xml --ignore-ssl-errors=true --ssl-protocol=any
+fi
+
+if [ "$1" = 'test-dev' ];then
+
    # Init SDK HipPay CasperJS
    cd bin/tests/000_lib
    bower install hipay-casperjs-lib#develop --allow-root

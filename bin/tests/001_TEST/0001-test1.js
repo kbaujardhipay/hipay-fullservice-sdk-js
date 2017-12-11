@@ -10,27 +10,33 @@
         casper.test.begin("Test cartes", 14, function suite(test) {
 
             casper.start(baseURL);
+            casper.capture('bin/tests/screenshots/start.png');
             // var links = [
             //     'http://google.com/',
             //     'http://yahoo.com/',
             //     'http://bing.com/'
             // ];
-
+            test.info(baseURL);
             casper.each(cardCollection, function(self, card) {
                 self.thenOpen(baseURL, function() {
 
+                    this.capture('bin/tests/screenshots/start2.png');
+
                     casper.then(function () {
                         // Step 1
-                        this.echo("Filling Payment form for" + card.type, "INFO");
+                        this.echo("Filling Payment form for " + card.type, "INFO");
+
                         this.waitForSelector('input[data-hipay-id="card-holder"]', function success() {
-                            casper.fillSelectors('div#form', {
+                            test.info("Filling card holder");
+                            casper.fillSelectors('div#form form', {
                                 'input[data-hipay-id="card-holder"]': "Card Holder",
                                 'input[data-hipay-id="card-expiry-date"]': "12 / 30",
-                                'input[data-hipay-id="card-cvv"]': "123",
+                                'input[data-hipay-id="card-cvv"]': "123"
                             }, false);
+                            test.info("Filling card number");
                             this.sendKeys('input[data-hipay-id="card-number"]', card.number);
                             this.click('button[data-hipay-id="pay-button"]');
-                            test.info("Filling OK")
+                            test.info("Filling OK");
                         }, function fail() {
                             test.assertExists('input[data-hipay-id="card-holder"]', "Field 'Card-Holder' exist");
                         }, 1000);
@@ -106,6 +112,9 @@
 
                         }, function fail() {
                             test.assertExists('input[data-hipay-id="card-holder"]', "Field 'Card-Holder' exist");
+
+                            test.assertExists('div#tokenize-content-token' , "Container tokenize-content-token exist");
+                            test.assertExists('div#tokenize-content-message', "Container tokenize-content-message exist");
                         }, 25000);
 
 
