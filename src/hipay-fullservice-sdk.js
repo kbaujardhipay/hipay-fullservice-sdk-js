@@ -2226,12 +2226,9 @@ var HiPay = (function (HiPay) {
 
         // cardNumber keypress not handle in FF
         var cardNumberHandlerKeypress = function (e) {
-
             var evt = e || window.event;
             var charCode = evt.keyCode || evt.which;
             if (charCode == 8 || charCode == 46) {
-
-            } else {
                 if (typeof evt.key != "undefined" && evt.key.length === 1) {
                     evt.preventDefault ? evt.preventDefault() : evt.returnValue = false;
                     if (charCode >= 48 && charCode <= 57) {
@@ -2324,8 +2321,6 @@ var HiPay = (function (HiPay) {
             var evt = e || window.event;
             var charCode = evt.keyCode || evt.which;
             if (charCode == 8 || charCode == 46) {
-
-            } else {
                 if (typeof evt.key != "undefined" && evt.key.length === 1) {
                     _instanceServiceCreditCard = new _serviceCreditCard();
                     _instanceServiceCreditCard.initCreditCardHolder(charCode);
@@ -2377,12 +2372,9 @@ var HiPay = (function (HiPay) {
 
         // cardExpiryDate keypress
         var cardExpiryDateHandlerKeypress = function (e) {
-
             var evt = e || window.event;
             var charCode = evt.keyCode || evt.which;
             if (charCode == 8 || charCode == 46) {
-
-            } else {
                 if (typeof evt.key != "undefined" && evt.key.length === 1) {
                     evt.preventDefault ? evt.preventDefault() : evt.returnValue = false;
                     if (charCode >= 48 && charCode <= 57) {
@@ -2440,7 +2432,7 @@ var HiPay = (function (HiPay) {
         var cardCVVHandlerKeypress = function (e) {
             var evt = e || window.event;
             var charCode = evt.keyCode || evt.which;
-            if (typeof evt.key != "undefined" && evt.key.length === 1) {
+            if (!(typeof evt.key != "undefined" && evt.key.length === 1)) {
                 evt.preventDefault ? evt.preventDefault() : evt.returnValue = false;
                 if (charCode >= 48 && charCode <= 57) {
                     _instanceServiceCreditCard = new _serviceCreditCard();
