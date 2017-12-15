@@ -1,3 +1,6 @@
+# Version 2.0.0-alpha.5
+Fixes issues with FF.
+
 # Version 2.0.0-alpha.4
 Add BCMC card.
 Add public init listener.
