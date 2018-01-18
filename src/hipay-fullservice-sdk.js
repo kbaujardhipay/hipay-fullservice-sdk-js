@@ -171,8 +171,6 @@ var HiPay = (function (HiPay) {
         return _translationJSON[HiPay.Form.locale][id];
     };
 
-    var _cvvContainerId = "container-cvv-help-message";
-
     var _idInputMapper = {
         cardNumber: 'card-number',
         cardType: 'card-type',
@@ -220,35 +218,29 @@ var HiPay = (function (HiPay) {
                     "variable": null
                 }
             ],
-
             "lengths": {
                 "length": 16,
                 "variable": null
             },
-
             "format":[4,4,4]
         },
         card_mastercard_info:
         {
             "ranges":[
-
                 {
                     "first": 51,
                     "variable": 4
                 }
             ],
-
             "lengths": {
                 "length": 16,
                 "variable": null
             },
-
             "format":[4,4,4]
         },
         card_diners_info:
         {
             "ranges":[
-
                 {
                     "first": 300,
                     "variable": 5
@@ -283,13 +275,11 @@ var HiPay = (function (HiPay) {
                 "length": 14,
                 "variable": 1
             },
-
             "format":[4,6]
         },
         card_american_express_info:
         {
             "ranges":[
-
                 {
                     "first": 34,
                     "variable": null
@@ -301,35 +291,28 @@ var HiPay = (function (HiPay) {
                 }
 
             ],
-
             "lengths": {
                 "length": 15,
                 "variable": null
             },
-
             "format":[4,6]
         },
         card_maestro_info:
         {
             "ranges":[
-
                 {
                     "first": 50,
                     "variable": null
                 },
-
                 {
                     "first": 56,
                     "variable": 13
                 }
-
             ],
-
             "lengths": {
                 "length": 12,
                 "variable": 7
             },
-
             "format":[4,4,4,4]
         },
         card_bcmc_info:
@@ -606,7 +589,8 @@ var HiPay = (function (HiPay) {
                 var arrayFormatCVV = ['34', '35', '36', '37'];
                 var creditCardNumber = _selectElementValueWithHipayId(_idInputMapper['cardNumber']);
                 for (var indexFormatCVV = 0; indexFormatCVV < arrayFormatCVV.length; indexFormatCVV++) {
-                    if (creditCardNumber != "" && typeof arrayFormatCVV[indexFormatCVV]  != "undefined"
+                    if (creditCardNumber != ""
+                        && typeof arrayFormatCVV[indexFormatCVV]  != "undefined"
                         && creditCardNumber.indexOf(arrayFormatCVV[indexFormatCVV]) === 0
                     ) {
                         serviceCreditCard.creditCardCVVLengthMax = 4;
