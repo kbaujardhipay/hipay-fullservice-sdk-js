@@ -1869,10 +1869,12 @@ var HiPay = (function (HiPay) {
     };
 
     var _updatePlaceholderCVV = function(cardTypeId) {
-        if (cardTypeId && cardTypeId === _idProductAPIMapper['american-express']) {
-            _selectElementWithHipayId(_idInputMapper["cardCVV"]).placeholder = _getLocaleTranslationWithId("FORM_PLACEHOLDER_CARD_CVV_AMEX");
-        } else {
-            _selectElementWithHipayId(_idInputMapper["cardCVV"]).placeholder = _getLocaleTranslationWithId("FORM_PLACEHOLDER_CARD_CVV");
+        if (_selectElementWithHipayId(_idInputMapper["cardCVV"])) {
+            if (cardTypeId && cardTypeId === _idProductAPIMapper['american-express']) {
+                _selectElementWithHipayId(_idInputMapper["cardCVV"]).placeholder = _getLocaleTranslationWithId("FORM_PLACEHOLDER_CARD_CVV_AMEX");
+            } else {
+                _selectElementWithHipayId(_idInputMapper["cardCVV"]).placeholder = _getLocaleTranslationWithId("FORM_PLACEHOLDER_CARD_CVV");
+            }
         }
     };
 
