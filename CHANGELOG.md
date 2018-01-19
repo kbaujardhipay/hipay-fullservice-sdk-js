@@ -1,3 +1,7 @@
+# Version 2.0.0-alpha.6
+Fixes Allow the usage of ctrl key in input form on firefox
+Fixes Check if the CVV fields exist in the form before updating it
+
 # Version 2.0.0-alpha.5
 Fixes issues with FF.
 
