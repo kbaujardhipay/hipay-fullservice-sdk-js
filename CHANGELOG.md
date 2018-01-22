@@ -1,3 +1,6 @@
+# Version 2.0.0-alpha.7
+Fixes Trigger the keypress event on charcode
+
 # Version 2.0.0-alpha.6
 Fixes Allow the usage of ctrl key in input form on firefox
 Fixes Check if the CVV fields exist in the form before updating it

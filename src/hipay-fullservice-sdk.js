@@ -1950,15 +1950,13 @@ var HiPay = (function (HiPay) {
             var evt = e || window.event;
             var charCode = evt.keyCode || evt.which;
 
-            if (charCode == 8 || charCode == 46) {
-                if (typeof evt.key != "undefined" && evt.key.length === 1) {
-                    if (!evt.ctrlKey) {
-                        evt.preventDefault ? evt.preventDefault() : evt.returnValue = false;
-                    }
-                    if (charCode >= 48 && charCode <= 57) {
-                        _instanceServiceCreditCard = new _serviceCreditCard();
-                        _instanceServiceCreditCard.initCreditCardNumber(charCode);
-                    }
+            if (typeof evt.key != "undefined" && evt.key.length === 1) {
+                if (!evt.ctrlKey) {
+                    evt.preventDefault ? evt.preventDefault() : evt.returnValue = false;
+                }
+                if (charCode >= 48 && charCode <= 57) {
+                    _instanceServiceCreditCard = new _serviceCreditCard();
+                    _instanceServiceCreditCard.initCreditCardNumber(charCode);
                 }
                 _callbackEventFormChange();
             }
