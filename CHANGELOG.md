@@ -1,3 +1,6 @@
+# Version 2.0.0-alpha.8
+Fixes Use the return of the isValid method to validate a card
+
 # Version 2.0.0-alpha.7
 Fixes Trigger the keypress event on charcode
 
