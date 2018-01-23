@@ -3620,19 +3620,19 @@ var HiPay = (function (HiPay) {
                     isPotentiallyValid = true;
                 }
 
-                if (serviceCreditCard.idType == 'card_maestro_info' && creditCardCVVString == "") {
+                if (serviceCreditCard.idType == _idProductAPIMapper.bcmc && creditCardCVVString == "") {
                     isPotentiallyValid = true;
                 }
 
                 if (isPotentiallyValid == false) {
-                    validatorCreditCardCVV.isValid(creditCardCVVString);
+                    isPotentiallyValid = validatorCreditCardCVV.isValid(creditCardCVVString);
                 }
 
                 return isPotentiallyValid;
             };
 
             validatorCreditCardCVV.isValid = function (creditCardCVVString) {
-                if (serviceCreditCard.idType == 'card_maestro_info') {
+                if (serviceCreditCard.idType == _idProductAPIMapper.bcmc) {
                     return true;
                 }
 
