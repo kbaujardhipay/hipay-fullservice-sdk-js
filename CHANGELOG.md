@@ -1,3 +1,6 @@
+# Version 2.0.0-alpha.9
+Fixes The SDK isn't working on some old safari version
+
 # Version 2.0.0-alpha.8
 Fixes Use the return of the isValid method to validate a card
 
