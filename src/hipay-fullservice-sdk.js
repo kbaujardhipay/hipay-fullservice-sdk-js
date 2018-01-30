@@ -324,7 +324,8 @@ var HiPay = (function (HiPay) {
                 }
             ],
             "lengths": {
-                "length": 17
+                "length": 16,
+                "variable": 3
             },
             "format": [4, 4, 4, 4, 1]
         }
@@ -364,6 +365,16 @@ var HiPay = (function (HiPay) {
     function isIE () {
         var myNav = navigator.userAgent.toLowerCase();
         return (myNav.indexOf('msie') != -1) ? parseInt(myNav.split('msie')[1]) : false;
+    };
+
+    function evtIsPrintable(evt) {
+        if (typeof evt.which == "undefined") {
+            return true;
+        } else if (typeof evt.which == "number" && evt.which > 0) {
+            return !evt.ctrlKey && !evt.metaKey && !evt.altKey && evt.which != 8;
+        }
+
+        return false;
     };
 
     var _isBrowser = new Function("try {return this===window;}catch(e){ return false;}");
@@ -1950,7 +1961,7 @@ var HiPay = (function (HiPay) {
             var evt = e || window.event;
             var charCode = evt.keyCode || evt.which;
 
-            if (typeof evt.key != "undefined" && evt.key.length === 1) {
+            if (evtIsPrintable(evt)) {
                 if (!evt.ctrlKey) {
                     evt.preventDefault ? evt.preventDefault() : evt.returnValue = false;
                 }
@@ -2027,7 +2038,7 @@ var HiPay = (function (HiPay) {
             var charCode = evt.keyCode || evt.which;
 
             if (charCode == 8 || charCode == 46) {
-                if (typeof evt.key != "undefined" && evt.key.length === 1) {
+                if (evtIsPrintable(evt)) {
                     if (!evt.ctrlKey) {
                         evt.preventDefault ? evt.preventDefault() : evt.returnValue = false;
                         _instanceServiceCreditCard = new _serviceCreditCard();
@@ -2083,7 +2094,7 @@ var HiPay = (function (HiPay) {
 
             if (charCode == 8 || charCode == 46) {
             } else {
-                if (typeof evt.key != "undefined" && evt.key.length === 1) {
+                if (evtIsPrintable(evt)) {
                     if (!evt.ctrlKey) {
                         evt.preventDefault ? evt.preventDefault() : evt.returnValue = false;
                     }
@@ -2141,7 +2152,7 @@ var HiPay = (function (HiPay) {
         var cardCVVHandlerKeypress = function (e) {
             var evt = e || window.event;
             var charCode = evt.keyCode || evt.which;
-            if (typeof evt.key != "undefined" && evt.key.length === 1) {
+            if (evtIsPrintable(evt)) {
                 if (!evt.ctrlKey) {
                     evt.preventDefault ? evt.preventDefault() : evt.returnValue = false;
                 }
@@ -2567,7 +2578,7 @@ var HiPay = (function (HiPay) {
         }
     };
 
-    if(Object.defineProperty && isIE() < 10) {
+    if (Object.defineProperty && isIE() < 10 && (! 'classList' in Element.prototype)) {
         Object.defineProperty(Element.prototype, 'classList', {
             get: function () {
                 var self = this, bValue = self.className.split(" ");
